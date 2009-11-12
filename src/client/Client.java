@@ -26,8 +26,10 @@ public class Client extends StaticScreenGame {
 	static final int WORLD_WIDTH = 600, WORLD_HEIGHT = 600;
 	
 	GameState gameState;
-	NetObject netPlayer;
-	Player player;
+	NetObject netPlayer0;
+	NetObject netPlayer1;
+	Player player0;
+	Player player1;
 	
 	BodyLayer<Body> WorldLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 	BodyLayer<Body> MovableLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
@@ -39,9 +41,11 @@ public class Client extends StaticScreenGame {
 		PaintableCanvas.loadDefaultFrames("player", 10, 10, 1, JIGSHAPE.CIRCLE, null);
 		
 		gameState = new GameState();	
-		netPlayer = new NetObject(1, new Vector2D(98.999999,100));
+		netPlayer0 = new NetObject(1, new Vector2D(98.999999,100));
+		netPlayer1 = new NetObject(2, new Vector2D(98.999999,100));
 		
-		gameState.addPlayer(netPlayer);
+		gameState.addPlayer(netPlayer0);
+		gameState.addPlayer(netPlayer1);
 		
 		System.out.println(gameState.encode());
 		gameState.decode(gameState.encode());
@@ -51,9 +55,13 @@ public class Client extends StaticScreenGame {
 		bListen.start();
 		
 		TcpClient control = new TcpClient("127.0.0.1", 5001);
+		//TcpClient control = new TcpClient("10.97.53.76", 5001);
 		
-		player = new Player("player", new Vector2D(100,100), netPlayer, control);
-		MovableLayer.add(player);
+		player0 = new Player("player", new Vector2D(100,100), netPlayer0, control);
+		player1 = new Player("player", new Vector2D(100,100), netPlayer1, control);
+
+		MovableLayer.add(player0);
+		MovableLayer.add(player1);
 		
 		gameObjectLayers.add(InterfaceLayer); // add the layer to window.
 		gameObjectLayers.add(WorldLayer); // add the layer to window.
@@ -66,10 +74,10 @@ public class Client extends StaticScreenGame {
 		keyboard.poll();
 		
 		
-		if(keyboard.isPressed(KeyEvent.VK_LEFT)) player.moveLeft();
-		if(keyboard.isPressed(KeyEvent.VK_RIGHT)) player.moveRight();
-		if(keyboard.isPressed(KeyEvent.VK_UP)) player.moveUp();
-		if(keyboard.isPressed(KeyEvent.VK_DOWN)) player.moveDown();
+		if(keyboard.isPressed(KeyEvent.VK_LEFT)) player1.moveLeft();
+		if(keyboard.isPressed(KeyEvent.VK_RIGHT)) player1.moveRight();
+		if(keyboard.isPressed(KeyEvent.VK_UP)) player1.moveUp();
+		if(keyboard.isPressed(KeyEvent.VK_DOWN)) player1.moveDown();
 
 		if( mouse.isLeftButtonPressed()) {
 			System.out.println("Weapon fire keypress" + mouse.getLocation());

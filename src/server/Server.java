@@ -21,12 +21,15 @@ public class Server {
 	
 	public static void main (String[] vars) {
 		GameState gameState = new GameState();
-		NetObject player0 = new NetObject(1, new Vector2D(100,100));		
+		NetObject player0 = new NetObject(1, new Vector2D(100,100));
+		NetObject player1 = new NetObject(2, new Vector2D(100,100));	
 		gameState.addPlayer(player0);
+		gameState.addPlayer(player1);
 		
 		Broadcaster bcaster = new Broadcaster(BCAST_PORT, gameState);
 		bcaster.start();
 		bcaster.addIP(client_IP);
+		//bcaster.addIP("10.97.53.61");
 		
 		TcpServer controlServer = new TcpServer(5001, gameState);
 		controlServer.run();
