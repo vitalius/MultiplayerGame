@@ -1,8 +1,12 @@
+package server;
+
 import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.LinkedList;
+
+import net.GameState;
 
 /**
  * Broadcasts game state to a set of IPs
@@ -23,29 +27,19 @@ public class Broadcaster extends Thread {
 	
 	private LinkedList<String> ipList = new LinkedList<String>();
 	
-	private String bcastString = new String();
+	private GameState gs;
 	
-	
-	public Broadcaster (int p) {	
+	public Broadcaster (int p, GameState g) {	
 	   running = true;
 	   port = p;
-
+	   gs = g;
+	   
 	   try {
 		   socket = new DatagramSocket();
 	   } catch (IOException e) {
 		   System.out.println("Server Error: Can't create");
 	   }	
 	}
-	
-	/**
-	 * Sets string to broadcast, used by server
-	 * 
-	 * @param s
-	 */
-	public void setBcastString(String s) {
-		bcastString = s;
-	}
-	
 	
 	/**
 	 * Add an IP address to the broadcasting list
@@ -77,7 +71,7 @@ public class Broadcaster extends Thread {
 			if (ipList.size() < 1)
 				continue;
     		
-			buf = bcastString.getBytes();
+			buf = gs.encode().getBytes();
 			
 		    try {
 		    	for(String s : ipList) {

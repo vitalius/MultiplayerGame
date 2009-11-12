@@ -1,15 +1,15 @@
-package gameObject;
+package aux;
 
 import jig.engine.physics.vpe.VanillaAARectangle;
 import jig.engine.util.Vector2D;
 
-public class Player extends VanillaAARectangle {
-	public Player(String a) {
+public class SolidObject extends VanillaAARectangle {
+	public SolidObject(String a) {
 		super(a);
 		position = new Vector2D(0, 0);
 	}
 
-	public Player(String a, Vector2D init) {
+	public SolidObject(String a, Vector2D init) {
 		super(a);
 		position = init;
 	}

@@ -1,6 +1,4 @@
-package main;
-
-import gameObject.*;
+package aux;
 
 import java.awt.Color;
 import java.awt.Font;

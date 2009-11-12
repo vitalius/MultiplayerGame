@@ -1,13 +1,19 @@
+package client;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-public class NetIO extends Thread {
+import net.GameState;
+
+import server.Server;
+
+public class BroadcastListener extends Thread {
 	
 	private DatagramSocket socket;
 	private GameState gs;
 	
-	public NetIO (GameState gameState) {
+	public BroadcastListener (GameState gameState) {
 		gs = gameState;
 		try {
 			socket = new DatagramSocket(Server.BCAST_PORT);
@@ -23,7 +29,7 @@ public class NetIO extends Thread {
 	 * 
 	 * @return
 	 */
-	public String readPacket() {
+	public String readBPacket() {
 		DatagramPacket packet;
 		byte[] buf = new byte[256];
 		packet = new DatagramPacket(buf, buf.length);
@@ -42,7 +48,7 @@ public class NetIO extends Thread {
 	 */
 	public void run() {
 		while(true) {
-			String s = readPacket();
+			String s = readBPacket();
 			gs.decode(s);
 			System.out.println(s);
 		}
