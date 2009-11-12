@@ -1,55 +1,42 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import jig.engine.PaintableCanvas;
+import jig.engine.PaintableCanvas.JIGSHAPE;
+import jig.engine.hli.StaticScreenGame;
+import jig.engine.util.Vector2D;
 
 /**
- * This is a comment
+ * Client
  * 
- * @author vitaliy
+ * @author Vitaliy
  *
  */
 
-public class Client {
-	public static void main (String[] vars) {
-
-		Socket kkSocket = null;
+public class Client extends StaticScreenGame {
+	
+	static final int WORLD_WIDTH = 600, WORLD_HEIGHT = 600;
+	
+	public Client() {
+		super(WORLD_WIDTH, WORLD_HEIGHT, false);
+		PaintableCanvas.loadDefaultFrames("player", 10, 10, 1, JIGSHAPE.CIRCLE, null);
 		
-	    BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+		GameState gameState = new GameState();	
+		Player player0 = new Player(1, new Vector2D(100,100));
 		
-		try {
-			kkSocket = new Socket("localhost", 4444);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		gameState.addPlayer(player0);
 		
-		try {
-			PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-		                            kkSocket.getInputStream()));
-			
-			String fromServer;
-			String fromUser;
-			
-			while ((fromServer = in.readLine()) != null) {
-			    System.out.println("Server: " + fromServer);
-			    if (fromServer.equals("Bye."))
-			        break;
-			    fromUser = stdIn.readLine();
-			    if (fromUser != null) {
-			        System.out.println("Client: " + fromUser);
-			        out.println(fromUser);
-			    }
-			}
-			
-
-		} catch (IOException e) {
-			System.exit(1);
-		}
+		System.out.println(gameState.encode());
+		gameState.decode(gameState.encode());
+		
+		/* Start thread reading current game state */
+		NetIO netIO = new NetIO(gameState);
+		netIO.start();
+	}
+	
+	public void update(long deltaMs) {
+		
+	}
+	
+	public static void main (String[] vars) {		
+		Client c = new Client();
+		c.run();
 	}
 }

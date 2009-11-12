@@ -1,56 +1,27 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
+import jig.engine.util.Vector2D;
 
 /**
- * This is a comment
+ * Server
  * 
  * @author vitaliy
  *
  */
 
 public class Server {
+	
+	public static final int BCAST_PORT = 5000;
+	
+	public static String client_IP = "127.0.0.1";
+	
 	public static void main (String[] vars) {
-		ServerSocket serverSocket = null;
-		Socket clientSocket = null;
-		
-		try {
-		    serverSocket = new ServerSocket(4444);
-		} catch (IOException e) {
-		    System.out.println("Could not listen on port: 4444");
-		    System.exit(-1);
-		}
-		
-		
-		try {
-		    clientSocket = serverSocket.accept();
-			PrintWriter out = new PrintWriter(
-	                clientSocket.getOutputStream(), true);
-			BufferedReader in = new BufferedReader(
-			                  new InputStreamReader(
-			                      clientSocket.getInputStream()));
-			String inputLine, outputLine;
+				
+		Broadcaster bcaster = new Broadcaster(BCAST_PORT);
+		bcaster.start();
+		bcaster.addIP(client_IP);
 			
-			//initiate conversation with client
-			StateProtocol kkp = new StateProtocol();
-			outputLine = kkp.processInput(null);
-			out.println(outputLine);
-			
-			while ((inputLine = in.readLine()) != null) {	
-			   outputLine = kkp.processInput(inputLine);
-			   out.println(outputLine);
-			   
-			   if (outputLine.equals("Bye."))
-			     break;
-			}
-		    
-		} catch (IOException e) {
-		    System.out.println("Accept failed: 4444");
-		    System.exit(-1);
-		}
-		
+		GameState gameState = new GameState();
+		Player player0 = new Player(1, new Vector2D(100,100));		
+		gameState.addPlayer(player0);
+		bcaster.setBcastString(gameState.encode());
 	}
 }
