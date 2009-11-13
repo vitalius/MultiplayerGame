@@ -6,6 +6,7 @@ import jig.engine.util.Vector2D;
 public class GameState {
 
 	public static final int ACTION_MOVE = 0;
+	public static final int ADD_PLAYER  = 1;
 	
 	private int seq_num = 0;
 	
@@ -73,6 +74,9 @@ public class GameState {
 			double x = Double.valueOf(token[2]).doubleValue();
 			double y = Double.valueOf(token[3]).doubleValue();
 			playerList.get(id).setPosition(new Vector2D(x,y));
+			break;
+		case ADD_PLAYER:
+			seq_num++;
 			break;
 		}
 		
