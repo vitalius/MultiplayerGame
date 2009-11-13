@@ -3,6 +3,7 @@ package server;
 import net.GameState;
 import net.NetObject;
 
+import jig.engine.hli.StaticScreenGame;
 import jig.engine.util.Vector2D;
 
 /**
@@ -12,8 +13,12 @@ import jig.engine.util.Vector2D;
  *
  */
 
-public class Server {
+public class Server  extends StaticScreenGame {
 	
+	public Server() {
+		super(600, 1000, false);
+	}
+
 	public static final int BCAST_PORT = 5000;
 	public static final int TCP_PORT   = 5001;
 	
