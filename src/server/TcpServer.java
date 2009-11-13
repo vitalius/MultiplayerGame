@@ -44,7 +44,8 @@ public class TcpServer extends Thread {
 				clientSock.close(); 
 				
 			} catch (IOException e) {
-				e.printStackTrace();
+				//System.out.println("Socket exception.");
+				//e.printStackTrace();
 			}		
 		}
 	}

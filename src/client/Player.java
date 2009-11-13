@@ -41,6 +41,10 @@ public class Player extends VanillaAARectangle {
 		Vector2D pos = nObj.getPosition();
 		tcp.sendMove(nObj.getId(), new Vector2D(pos.getX(), pos.getY()+5));
 	}
+	
+	public void moveStop() {
+		setVelocity(new Vector2D(0,0));
+	}
 
 	@Override
 	public void update(long deltaMs) {
