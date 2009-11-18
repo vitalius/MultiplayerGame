@@ -1,7 +1,6 @@
 LICENSE GOES HERE
-Just testing commit.
-testing
-one more time
 
-Josh push test
-thank you
+Three programs so far...
+Server
+Client
+WorldMapTester

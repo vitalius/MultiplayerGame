@@ -1,0 +1,21 @@
+2
+Level
+Not much in this level!
+0
+10 10
+10 20
+10 40
+10 80
+50 50 100 5
+100 100 10 10
+EndLevel
+Level
+Second level with no changes!
+0
+10 10
+10 20
+10 40
+10 80
+50 50 100 5
+100 100 10 10
+EndLevel
