@@ -114,9 +114,9 @@ public class LevelSet {
 				// Load objects, if any.
 				thisLine = s.readLine();
 				System.out.println(thisLine);
-				while (thisLine != null && thisLine.compareTo("EndLevel") != 0) {
+				while (thisLine != null && thisLine.compareTo("MovingObjects") != 0) {
 					String[] a = thisLine.split(" ");
-					if (a.length < 4) {
+					if (a.length < 5) {
 						s.close();
 						res = null;
 						System.out
@@ -127,13 +127,39 @@ public class LevelSet {
 					int y = java.lang.Integer.parseInt(a[1]);
 					int w = java.lang.Integer.parseInt(a[2]);
 					int h = java.lang.Integer.parseInt(a[3]);
-					ObjectData aa = new ObjectData(x, y, w, h);
+					int r = java.lang.Integer.parseInt(a[4]);
+					ObjectData aa = new ObjectData(x, y, w, h, r);
 					thisMap.Objects.add(aa);
 					System.out.println(aa);
 					thisLine = s.readLine();
 					System.out.println(thisLine);
 				}
 
+				// Load movable objects, if any.
+				thisLine = s.readLine();
+				System.out.println(thisLine);
+				while (thisLine != null && thisLine.compareTo("EndLevel") != 0) {
+					String[] a = thisLine.split(" ");
+					if (a.length < 5) {
+						s.close();
+						res = null;
+						System.out
+								.println("Error: Object parameters is missing in least one number!");
+						return null;
+					}
+					int x = java.lang.Integer.parseInt(a[0]);
+					int y = java.lang.Integer.parseInt(a[1]);
+					int w = java.lang.Integer.parseInt(a[2]);
+					int h = java.lang.Integer.parseInt(a[3]);
+					int r = java.lang.Integer.parseInt(a[4]);
+					ObjectData aa = new ObjectData(x, y, w, h, r);
+					thisMap.MovableObjects.add(aa);
+					System.out.println(aa);
+					thisLine = s.readLine();
+					System.out.println(thisLine);
+				}
+
+				
 				res.add(thisMap);
 			}
 			s.close();
