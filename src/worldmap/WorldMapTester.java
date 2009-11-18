@@ -37,8 +37,6 @@ public class WorldMapTester extends StaticScreenGame {
 		}
 
 		BodyLayer<Body> WorldLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
-		
-		makeGround(WorldLayer);
 
 		LevelMap level = levels.getThisLevel(0);
 
