@@ -7,15 +7,24 @@ import jig.engine.hli.StaticScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
 import jig.engine.physics.BodyLayer;
+import jig.engine.physics.ecpe.CattoPhysicsEngine;
 import jig.engine.util.Vector2D;
 
 public class WorldMapTester extends StaticScreenGame {
 
 	private static final int WORLD_WIDTH = 500;
 	private static final int WORLD_HEIGHT = 500;
+	
+	CattoPhysicsEngine physics;
 
 	public WorldMapTester() {
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
+		
+		physics = new CattoPhysicsEngine(new Vector2D(0, 40));
+		physics.setDrawArbiters(true);
+		
+		
+		
 		PaintableCanvas.loadDefaultFrames("player", 10, 10, 1, JIGSHAPE.CIRCLE,
 				null);
 		LevelSet levels = new LevelSet("/res/Levelset.txt");
@@ -26,6 +35,8 @@ public class WorldMapTester extends StaticScreenGame {
 		}
 
 		BodyLayer<Body> WorldLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
+		
+		makeGround(WorldLayer);
 
 		LevelMap level = levels.getThisLevel(0);
 
