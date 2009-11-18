@@ -1,0 +1,36 @@
+
+
+The format is pretty straightforward. There must be no empty lines.
+
+This must appear first, and it tells game how many levels are in this levelset.
+1
+
+All level section starts with Level, and next line is title of this level, 
+followed by type of game, like 0 for melee, 1 for flag, etc.
+Level
+Not much in this level!
+0
+
+Next up is list of the four X, Y positions for four spawn spots.
+10 10
+10 20
+10 40
+10 80
+
+Next is basic X, Y, Width, Height, Rotation of boxes acting as floor, walls, etc.
+Rotation is in degrees.
+50 250 250 20 0
+50 240 10 10 0
+290 240 10 10 0
+
+The list of movable objects like boxes must be headed with MovingObjects, 
+followed by lists of X, Y, Width, Height, Rotation of all movable objects.
+Rotation is in degrees.
+MovingObjects
+100 140 10 10 0
+111 140 10 10 0
+100 151 10 10 0
+111 151 10 10 0
+
+Each level map data must end with EndLevel line by itself.
+EndLevel

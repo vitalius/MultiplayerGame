@@ -1,5 +1,7 @@
 package worldmap;
 
+import java.awt.Color;
+
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.PaintableCanvas.JIGSHAPE;
@@ -11,13 +13,13 @@ import jig.engine.util.Vector2D;
 
 public class WorldMapTester extends StaticScreenGame {
 
-	private static final int WORLD_WIDTH = 500;
+	private static final int WORLD_WIDTH = 800;
 	private static final int WORLD_HEIGHT = 500;
 
 	public WorldMapTester() {
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
 		PaintableCanvas.loadDefaultFrames("player", 10, 10, 1, JIGSHAPE.CIRCLE,
-				null);
+				Color.red);
 		LevelSet levels = new LevelSet("/res/Levelset.txt");
 
 		if (levels.getNumLevels() == 0) {
@@ -44,8 +46,19 @@ public class WorldMapTester extends StaticScreenGame {
 			ObjectData s = level.Objects.get(x);
 			System.out.println(s);
 			PaintableCanvas.loadDefaultFrames("objectbox" + x, s.width, s.height, 1,
-					JIGSHAPE.RECTANGLE, null);
+					JIGSHAPE.RECTANGLE, Color.black);
 			TempObj a = new TempObj("objectbox" + x);
+			System.out.println(s.x + " " + s.y);
+			a.setPosition(new Vector2D(s.x, s.y));
+			WorldLayer.add(a);
+		}
+
+		for (int x = 0; x < level.MovableObjects.size(); x++) {
+			ObjectData s = level.MovableObjects.get(x);
+			System.out.println(s);
+			PaintableCanvas.loadDefaultFrames("objectmovebox" + x, s.width, s.height, 1,
+					JIGSHAPE.RECTANGLE, Color.blue);
+			TempObj a = new TempObj("objectmovebox" + x);
 			System.out.println(s.x + " " + s.y);
 			a.setPosition(new Vector2D(s.x, s.y));
 			WorldLayer.add(a);
