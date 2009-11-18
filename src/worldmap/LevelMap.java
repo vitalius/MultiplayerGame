@@ -11,7 +11,7 @@ public class LevelMap {
 	public String LevelTitle;				// Title of game
 	public int LevelType;					// Type of game
 	LinkedList<Vector2D> playerInitSpots;	// Spawn spots - Team spawn spots if TeamPlay type.
-	LinkedList<TempObj> Objects;			// Solid objects IE floor, wall, etc.
+	LinkedList<ObjectData> Objects;			// Solid objects IE floor, wall, etc.
 
 	//LinkedList<Vector2D> TeamFlags;			// add when flag type is added.
 	// anything else needed?
@@ -20,6 +20,6 @@ public class LevelMap {
 		LevelTitle = "";
 		LevelType = MeleePlay;
 		playerInitSpots = new LinkedList<Vector2D>();
-		Objects = new LinkedList<TempObj>();
+		Objects = new LinkedList<ObjectData>();
 	}
 }
