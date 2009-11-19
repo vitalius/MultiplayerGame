@@ -1,15 +1,15 @@
 package worldmap;
 
-import jig.engine.physics.vpe.VanillaAARectangle;
+import physics.Box;
 
-public class TempObj extends VanillaAARectangle {
+public class TempObj extends Box {
 
 
 	public TempObj(String rsc) {
 		super(rsc);
 	}
 
-	@Override
-	public void update(long deltaMs) {
-	}
+	//@Override
+	//public void update(long deltaMs) {
+	//}
 }
