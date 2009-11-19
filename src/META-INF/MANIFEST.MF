@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
  # $ jar cvfm f.jar ../Documents/workspace/Project-2/src/META-INF/MANIFEST.MF -C ../Documents/workspace/Project-2/bin/ . && java -jar f.jar 
-Main-Class: client.Client
+Main-Class: clients.Client
 Class-Path: lib/jig-1.7.5.jar lib/
