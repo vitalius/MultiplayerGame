@@ -31,7 +31,7 @@ public class Server {
 		/* Build few objects with random velocities for test */
 		Random r = new Random(System.currentTimeMillis());
 		GameState c = new GameState();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 3; i++) {
 			c.add(new NetObject(i, 
 					new Vector2D(300,300), 
 					NetObject.PLAYER, 

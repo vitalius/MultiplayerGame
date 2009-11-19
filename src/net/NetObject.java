@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import jig.engine.util.Vector2D;
-import client.SpriteObject;
+import clients.SpriteObject;
 
 public class NetObject {
 	
