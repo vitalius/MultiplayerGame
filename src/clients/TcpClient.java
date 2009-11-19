@@ -1,13 +1,9 @@
-package client;
+package clients;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
-import net.GameState;
-
-import jig.engine.util.Vector2D;
 
 
 public class TcpClient {
@@ -19,11 +15,8 @@ public class TcpClient {
 		serverIP = server;
 		port = p;
 	}
-
-	public void sendMove(int id, Vector2D p) {
-		
-		String sendString = id+":"+GameState.ACTION_MOVE+":"+p.getX()+":"+p.getY();
-		
+	
+	public void sendSocket(String sendString) {
 		Socket socket;
 		try {
 			socket = new Socket(serverIP, port);
@@ -36,5 +29,4 @@ public class TcpClient {
 			e.printStackTrace();
 		}
 	}
-	
 }
