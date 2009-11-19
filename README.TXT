@@ -1,3 +1,6 @@
 LICENSE GOES HERE
-Just testing commit.
-testing
+
+Three programs so far...
+Server
+Client
+WorldMapTester

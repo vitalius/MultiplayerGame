@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package client;
 
 import net.Action;
@@ -66,6 +67,10 @@ public class Player {
 		}
 	}
 	
+	/**
+	 * Doesn't work yet, DO NOT USE
+	 * @param ip
+	 */
 	public void join(String ip) {
 		Action join = new Action(id, Action.JOIN, ip);
 		tcp.sendSocket(prot.encodeAction(join));

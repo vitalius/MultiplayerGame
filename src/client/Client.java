@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
@@ -19,7 +20,7 @@ import jig.engine.physics.BodyLayer;
  * Client
  * 
  * @author Vitaliy
- *
+ * 
  */
 
 public class Client extends StaticScreenGame {
@@ -37,17 +38,18 @@ public class Client extends StaticScreenGame {
 	BodyLayer<Body> InterfaceLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 	
 	Collection<NetObject> noList = null;
-	
+
 	public Client() {
-		
+
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
+
 		PaintableCanvas.loadDefaultFrames("player", 10, 10, 1, JIGSHAPE.CIRCLE, null);
 		gm = new GameStateManager();
-		
+
 		/* Start thread to sync gameState with server */
 		BroadcastListener bListen = new BroadcastListener(gm);
 		bListen.start();
-		
+
 		TcpClient control = new TcpClient("127.0.0.1", 5001);
 		
 		player = new Player(0, control);
@@ -72,9 +74,8 @@ public class Client extends StaticScreenGame {
 		}
 		else
 			player.move(Player.HALT);
-
 	}
-	
+
 	public void update(long deltaMs) {
 		super.update(deltaMs);
 
@@ -88,7 +89,7 @@ public class Client extends StaticScreenGame {
 			System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
 	}
-	
+
 	public void render(RenderingContext rc) {
 		super.render(rc);
 		
@@ -100,8 +101,8 @@ public class Client extends StaticScreenGame {
 		}
 		
 	}
-	
-	public static void main (String[] vars) {		
+
+	public static void main(String[] vars) {
 		Client c = new Client();
 		c.run();
 	}
