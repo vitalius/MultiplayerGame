@@ -4,36 +4,26 @@ import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.LinkedList;
-
-import net.GameState;
+import java.util.Hashtable;
 
 /**
  * Broadcasts game state to a set of IPs
  * 
  * The broadcasting is done via UDP
  * 
- * @author vitaliy
+ * @author Vitaliy
  *
  */
-public class Broadcaster extends Thread {
+public class Broadcaster {
 	
-	public static final int BCAST_DELAY    = 100;
-	public static final int BCAST_BUF_SIZE = 256;
-	
-	private boolean running;
 	private DatagramSocket socket;
 	private int port;
 	
-	private LinkedList<String> ipList = new LinkedList<String>();
+	private Hashtable<Integer, String> ipList = new Hashtable<Integer, String>();
 	
-	private GameState gs;
-	
-	public Broadcaster (int p, GameState g) {	
-	   running = true;
+	public Broadcaster (int p) {	
 	   port = p;
-	   gs = g;
-	   
+
 	   try {
 		   socket = new DatagramSocket();
 	   } catch (IOException e) {
@@ -45,49 +35,42 @@ public class Broadcaster extends Thread {
 	 * Add an IP address to the broadcasting list
 	 * 
 	 * @param ip
+	 * @return 
 	 */
-	public void addIP(String ip) {
-		System.out.println("Adding "+ip+" to broadcasting list.");
-		ipList.add(ip);
+	public void addIP(int id, String ip) {
+		System.out.println("Adding "+id+" at "+ip+" to broadcasting list.");
+		ipList.put(id, ip);
+	}
+	
+	public void clearIPs() {
+		ipList.clear();
 	}
 	
 	/**
-	 * Run this thread and keep broadcasting the game state to all
-	 * IPs in the broadcast list
+	 * Spam GameState gs to all clients (IPs in the ipList)
+	 * 
+	 * @param gs
 	 */
-	public void run() {
+	public void spam(String state) {
 		
-		byte[] buf = new byte[BCAST_BUF_SIZE];
+		byte[] buf = new byte[NetworkEngine.BCAST_BUF_SIZE];
 		
-	    while (running) {
-
-            try {
-				Thread.sleep(BCAST_DELAY);
-			} catch (InterruptedException e1) {
-				System.out.println("Error in Thread.sleep.");
-				e1.printStackTrace();
-			}
-            
-			if (ipList.size() < 1)
-				continue;
+		if (ipList.size() < 1)
+			return;
     		
-			buf = gs.encode().getBytes();
+		buf = state.getBytes();
 			
-		    try {
-		    	for(String s : ipList) {
-		    		DatagramPacket packet = new DatagramPacket(buf, buf.length,
+		try {
+			for(String s : ipList.values()) {
+		    	DatagramPacket packet = new DatagramPacket(buf, buf.length,
 		    				InetAddress.getByName(s), port);
 	
-		    		socket.send(packet);
-		    		//System.out.println("Sending: "+ new String (packet.getData(),0,packet.getLength()));
-		    	}
+		    	socket.send(packet);
+		    	//System.out.println("Sending: "+ new String (packet.getData(),0,packet.getLength()));
+		    }
 	            
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            running = false;
-	        }
-	    }
-	    socket.close();
-	}	
-	
+	     } catch (IOException e) {
+	        e.printStackTrace();
+	     }
+	}
 }

@@ -4,21 +4,20 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import net.GameState;
-
-import server.Server;
+import net.GameStateManager;
+import server.NetworkEngine;
 
 public class BroadcastListener extends Thread {
 	
 	private DatagramSocket socket;
-	private GameState gs;
+	private GameStateManager gm;
 	
-	public BroadcastListener (GameState gameState) {
-		gs = gameState;
+	public BroadcastListener (GameStateManager g) {
+		gm = g;
 		try {
-			socket = new DatagramSocket(Server.BCAST_PORT);
+			socket = new DatagramSocket(NetworkEngine.BCAST_PORT);
 		} catch (IOException e) {
-			System.out.println("Error: Can't open port "+Server.BCAST_PORT);
+			System.out.println("Error: Can't open port "+NetworkEngine.BCAST_PORT);
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -31,7 +30,7 @@ public class BroadcastListener extends Thread {
 	 */
 	public String readBPacket() {
 		DatagramPacket packet;
-		byte[] buf = new byte[256];
+		byte[] buf = new byte[NetworkEngine.BCAST_BUF_SIZE];
 		packet = new DatagramPacket(buf, buf.length);
 
 		try {
@@ -49,8 +48,8 @@ public class BroadcastListener extends Thread {
 	public void run() {
 		while(true) {
 			String s = readBPacket();
-			gs.decode(s);
-			System.out.println(s);
+			gm.sync(s);
+			//System.out.println(s);
 		}
 	}
 	

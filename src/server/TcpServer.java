@@ -2,20 +2,19 @@ package server;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import net.GameState;
+import net.GameStateManager;
 
 
 public class TcpServer extends Thread {
 	
 	private ServerSocket servSock;
-	private GameState gs;
+	private GameStateManager gm;
 	
-	public TcpServer(int p, GameState g) {
-		gs = g;
+	public TcpServer(int p, GameStateManager g) {
+		gm = g;
 		try {
 			servSock = new ServerSocket(p);
 		} catch (IOException e) {
@@ -25,27 +24,24 @@ public class TcpServer extends Thread {
 	}
 	
 	public void run() {
-		int msgSize; 
-		byte[] buf = new byte[512]; 
+		String msg;
+		byte[] buf = new byte[NetworkEngine.TCP_BUF_SIZE]; 
 		
 		for(;;) {
 			try {
 				
 				Socket clientSock = servSock.accept();
 				InputStream in = clientSock.getInputStream();
-				OutputStream out = clientSock.getOutputStream();
-
-				while ((msgSize = in.read(buf)) != -1)
-					out.write(buf, 0, msgSize);
-				
-				//System.out.println(new String(buf));
-				gs.processAction(new String(buf));
+				in.read(buf, 0, NetworkEngine.TCP_BUF_SIZE);
+		
+				msg = new String(buf);
+				//System.out.println(msg + " len:"+msg.length());
+				gm.processAction(msg);
 				
 				clientSock.close(); 
 				
 			} catch (IOException e) {
-				//System.out.println("Socket exception.");
-				//e.printStackTrace();
+				e.printStackTrace();
 			}		
 		}
 	}

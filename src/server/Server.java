@@ -1,42 +1,60 @@
 package server;
 
-import net.GameState;
-import net.NetObject;
+import java.util.Random;
 
-import jig.engine.hli.StaticScreenGame;
 import jig.engine.util.Vector2D;
+
+
+import net.GameState;
+import net.GameStateManager;
+import net.NetObject;
 
 /**
  * Server
  * 
- * @author vitaliy
+ * @author Vitaliy
  *
  */
 
-public class Server  extends StaticScreenGame {
+public class Server {
 	
-	public Server() {
-		super(600, 1000, false);
-	}
-
-	public static final int BCAST_PORT = 5000;
-	public static final int TCP_PORT   = 5001;
-	
-	public static String client_IP = "127.0.0.1";
+	/* This is a static, constant time between frames, all clients run as fast as the server runs */
+	public static int DELTA_MS = 30;
 	
 	public static void main (String[] vars) {
-		GameState gameState = new GameState();
-		NetObject player0 = new NetObject(1, new Vector2D(100,100));
-		NetObject player1 = new NetObject(2, new Vector2D(100,100));	
-		gameState.addPlayer(player0);
-		gameState.addPlayer(player1);
+		GameStateManager gm = new GameStateManager();
+		NetworkEngine ne = new NetworkEngine(gm);
 		
-		Broadcaster bcaster = new Broadcaster(BCAST_PORT, gameState);
-		bcaster.start();
-		bcaster.addIP(client_IP);
-		//bcaster.addIP("10.97.53.61");
+		/* Basic box, size of clients window screen to test networking */
+		CollisionDetection cd = new CollisionDetection();
 		
-		TcpServer controlServer = new TcpServer(5001, gameState);
-		controlServer.run();
+		/* Build few objects with random velocities for test */
+		Random r = new Random(System.currentTimeMillis());
+		GameState c = new GameState();
+		for (int i = 0; i < 10; i++) {
+			c.add(new NetObject(i, 
+					new Vector2D(300,300), 
+					NetObject.PLAYER, 
+					new Vector2D(r.nextDouble()-0.5,r.nextDouble()-0.5)));
+		}
+		gm.update(c);
+		/* end of network test building */
+		
+		for (;;) {
+			ne.update();
+			
+			for(NetObject n : gm.getState().getNetObjects()) {
+				cd.checkBox(n);
+				n.update(DELTA_MS);
+			}
+			
+			// Limit FPS to 200
+			try {
+				Thread.sleep(DELTA_MS);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }
