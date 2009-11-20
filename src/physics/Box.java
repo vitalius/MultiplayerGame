@@ -67,7 +67,7 @@ public class Box extends Body implements Comparable<Box> {
 	 */
 	public Box(final List<ImageResource> frameset) {
 		super(frameset);
-		set(Double.MAX_VALUE, .2, 1.0);
+		set(Double.MAX_VALUE, .2, 1.0, 0.0);
 		id = nextBodyId++;
 	}
 	
@@ -79,7 +79,7 @@ public class Box extends Body implements Comparable<Box> {
 	 */
 	public Box(final String rsc) {
 		super(rsc);
-		set(Double.MAX_VALUE, .2, 1.0);
+		set(Double.MAX_VALUE, .2, 1.0, 0.0);
 		id = nextBodyId++;
 	}
 
@@ -113,9 +113,9 @@ public class Box extends Body implements Comparable<Box> {
 	 * @param restitution
 	 *            the coefficient of restitution
 	 */
-	public void set(final double m, final double f, final double restitution) {
+	public void set(final double m, final double f, final double restitution, double rot) {
 		position = new Vector2D(0.0, 0.0);
-		rotation = 0.0;
+		rotation = rot;//0.0;
 		velocity = new Vector2D(0.0, 0.0);
 		angularVelocity = 0.0;
 		force = new Vector2D(0.0, 0.0);

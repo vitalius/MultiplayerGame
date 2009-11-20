@@ -2,6 +2,7 @@ package worldmap;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 import jig.engine.PaintableCanvas;
@@ -22,6 +23,12 @@ public class WorldMapTester extends StaticScreenGame {
 	CattoPhysicsEngine physics;
 	String boxResource, plankResource;
 
+	BodyLayer<Box> boxes;
+
+	LevelSet levels;
+	LevelMap level;
+
+	// Will be initially playerless. Press 1-4 to add players in team 1-4.
 	public WorldMapTester() {
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
 
@@ -31,7 +38,8 @@ public class WorldMapTester extends StaticScreenGame {
 		fre.setActivation(true);
 
 		ResourceFactory factory = ResourceFactory.getFactory();
-		
+
+		// Create texture for stuff
 		BufferedImage[] b = new BufferedImage[1];
 		b[0] = new BufferedImage(1600, 10, BufferedImage.TYPE_INT_RGB);
 		Graphics g = b[0].getGraphics();
@@ -63,143 +71,137 @@ public class WorldMapTester extends StaticScreenGame {
 		g.fillRect(0, 0, 32, 32);
 		g.dispose();
 		factory.putFrames("smallbox", b);
+
+		// Load entire level.
+		levels = new LevelSet("/res/Levelset.txt");
 		
+		// Is there actual level?
+		if (levels.getNumLevels() == 0) {
+			System.err.println("Error: Levels loading failed.\n");
+			System.exit(1);
+		}
 	}
-	
-	public void LevelTest() {
-		
-		Box b;
-		BodyLayer<Box> boxes = new AbstractBodyLayer.NoUpdate<Box>();
+
+	public void LevelTest(int levelNum) {
+
+		boxes = new AbstractBodyLayer.NoUpdate<Box>();
 
 		gameObjectLayers.clear();
 		physics.clear();
 
-		addGround(boxes);
-		addPlatforms(boxes);
-		addSmallBoxes(boxes);
-		b = new Box("player");
-		b.set(400, .2, 1.0);
-		b.setPosition(new Vector2D(392, 0));
-		boxes.add(b);
-
-		gameObjectLayers.add(boxes);
-		physics.manageViewableSet(boxes);
-		
-		run();
-	}
-	
-	private void addGround(final BodyLayer<Box> boxes) {
-		Box b;
-		b = new Box("ground");
-		b.set(Double.MAX_VALUE, .2, 1.0);
-		b.setPosition(new Vector2D(0,WORLD_HEIGHT-b.getHeight()));
-		boxes.add(b);
-		return;
-	}
-	
-	private void addPlatforms(final BodyLayer<Box> boxes) {
-		Box b;
-		b = new Box("platform");
-		b.set(Double.MAX_VALUE, .2, 1.0);
-		b.setPosition(new Vector2D(100, 500));
-		boxes.add(b);
-		b = new Box("platform");
-		b.set(Double.MAX_VALUE, .2, 1.0);
-		b.setPosition(new Vector2D(350, 500));
-		boxes.add(b);
-		b = new Box("platform");
-		b.set(Double.MAX_VALUE, .2, 1.0);
-		b.setPosition(new Vector2D(600, 500));
-		boxes.add(b);
-		b = new Box("platform");
-		b.set(Double.MAX_VALUE, .2, 1.0);
-		b.setPosition(new Vector2D(350, 300));
-		boxes.add(b);
-		return;
-	}
-	
-	private void addSmallBoxes(final BodyLayer<Box> boxes) {
-		Box b;
-		b = new Box("smallbox");
-		b.set(100, .2, 1.0);
-		b.setPosition(new Vector2D(150, 450));
-		boxes.add(b);
-		b = new Box("smallbox");
-		b.set(100, .2, 1.0);
-		b.setPosition(new Vector2D(400, 450));
-		boxes.add(b);
-		b = new Box("smallbox");
-		b.set(100, .2, 1.0);
-		b.setPosition(new Vector2D(650, 450));
-		boxes.add(b);
-		b = new Box("smallbox");
-		b.set(100, .2, 1.0);
-		b.setPosition(new Vector2D(400, 250));
-		boxes.add(b);
-		return;
-	}
-	
-	public void BuildLevel() {
-		
-		PaintableCanvas.loadDefaultFrames("player", 10, 10, 1, JIGSHAPE.CIRCLE,
-				Color.red);
-		LevelSet levels = new LevelSet("/res/Levelset.txt");
-
-		if (levels.getNumLevels() == 0) {
-			System.err.println("Error: Level loading failed.\n");
+		// Get specified level.
+		level = levels.getThisLevel(levelNum);
+		// Is there actual level?
+		if (level == null) {
+			System.err.println("Error: Level wasn't correctly loaded.\n");
 			System.exit(1);
 		}
 
-		BodyLayer<Box> WorldLayer = new AbstractBodyLayer.NoUpdate<Box>();
-		
+		// Build world from level data
+		BuildLevel(boxes);
 
-		gameObjectLayers.clear();
-		physics.clear();
+		// Add layer to window.
+		gameObjectLayers.add(boxes);
+		physics.manageViewableSet(boxes);
 
-		LevelMap level = levels.getThisLevel(0);
-
-		System.out.println(level.playerInitSpots.size());
-
-		for (int x = 0; x < level.playerInitSpots.size(); x++) {
-			TempObj a = new TempObj("player");
-			a.setPosition(level.playerInitSpots.get(x));
-			System.out.println(a.getPosition());
-			WorldLayer.add(a);
-		}
-
-		System.out.println(level.Objects.size());
-
-		for (int x = 0; x < level.Objects.size(); x++) {
-			ObjectData s = level.Objects.get(x);
-			System.out.println(s);
-			PaintableCanvas.loadDefaultFrames("objectbox" + x, s.width, s.height, 1,
-					JIGSHAPE.RECTANGLE, Color.black);
-			TempObj a = new TempObj("objectbox" + x);
-			System.out.println(s.x + " " + s.y);
-			a.setPosition(new Vector2D(s.x, s.y));
-			WorldLayer.add(a);
-		}
-
-		for (int x = 0; x < level.MovableObjects.size(); x++) {
-			ObjectData s = level.MovableObjects.get(x);
-			System.out.println(s);
-			PaintableCanvas.loadDefaultFrames("objectmovebox" + x, s.width, s.height, 1,
-					JIGSHAPE.RECTANGLE, Color.blue);
-			TempObj a = new TempObj("objectmovebox" + x);
-			System.out.println(s.x + " " + s.y);
-			a.setPosition(new Vector2D(s.x, s.y));
-			WorldLayer.add(a);
-		}
-
-		gameObjectLayers.add(WorldLayer);// add the layer to window.
-		physics.manageViewableSet(WorldLayer);
 		run();
 	}
+	
+	private void addGround(final BodyLayer<Box> boxes, int X, int Y, double R) {
+		Box b;
+		b = new Box("ground");
+		b.set(Double.MAX_VALUE, .2, 1.0, R);
+		b.setPosition(new Vector2D(X, Y));
+		boxes.add(b);
+		return;
+	}
 
+	private void addPlatform(final BodyLayer<Box> boxes, int X, int Y, double R) {
+		Box b;
+		b = new Box("platform");
+		b.set(Double.MAX_VALUE, .2, 1.0, R);
+		b.setPosition(new Vector2D(X, Y));
+		boxes.add(b);
+		return;
+	}
+
+	private void addSmallBox(final BodyLayer<Box> boxes, int X, int Y, double R) {
+		Box b;
+		b = new Box("smallbox");
+		b.set(100, .2, 1.0, R);
+		b.setPosition(new Vector2D(X, Y));
+		boxes.add(b);
+		return;
+	}
+
+	private void addPlayer(final BodyLayer<Box> boxes, int Team) {
+		Box b;
+		b = new Box("player");
+		b.set(100, .2, 1.0, 0.0);
+		Vector2D a = level.playerInitSpots.get(Team);
+		b.setPosition(new Vector2D(a.getX(), a.getY()));
+		boxes.add(b);
+		return;
+	}
+
+	// Build world from level data.
+	public void BuildLevel(final BodyLayer<Box> boxes) {
+
+		// Used for showing location of spawn spots. (Temp, change to debug only when finished)
+		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
+				JIGSHAPE.CIRCLE, Color.red);
+		for (int x = 0; x < level.playerInitSpots.size(); x++) {
+			TempObj a = new TempObj("playerSpawn");
+			a.setPosition(level.playerInitSpots.get(x));
+			//System.out.println(a.getPosition());
+			boxes.add(a);
+		}
+
+		// Create objects based on object type.
+		for (int x = 0; x < level.Objects.size(); x++) {
+			ObjectData s = level.Objects.get(x);
+			//System.out.println(s);
+			if (s.type.compareTo("ground") == 0) {
+				addGround(boxes, s.x, s.y, s.rotation);
+			} else if (s.type.compareTo("platform") == 0) {
+				addPlatform(boxes, s.x, s.y, s.rotation);
+			} else if (s.type.compareTo("smallbox") == 0) {
+				addSmallBox(boxes, s.x, s.y, s.rotation);
+			}
+		}
+	}
+
+	int slowdownAdd = 0; // used to slow down spawn speed!
 	@Override
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
 		physics.applyLawsOfPhysics(deltaMs);
+		keyboard.poll();
+		slowdownAdd += deltaMs;
+		if (keyboard.isPressed(KeyEvent.VK_1)) {
+			if (slowdownAdd > 500) {
+				slowdownAdd = 0;
+				addPlayer(boxes, 0);
+			}
+		}
+		if (keyboard.isPressed(KeyEvent.VK_2)) {
+			if (slowdownAdd > 500) {
+				slowdownAdd = 0;
+				addPlayer(boxes, 1);
+			}
+		}
+		if (keyboard.isPressed(KeyEvent.VK_3)) {
+			if (slowdownAdd > 500) {
+				slowdownAdd = 0;
+				addPlayer(boxes, 2);
+			}
+		}
+		if (keyboard.isPressed(KeyEvent.VK_4)) {
+			if (slowdownAdd > 500) {
+				slowdownAdd = 0;
+				addPlayer(boxes, 3);
+			}
+		}
 	}
 
 	@Override
@@ -210,6 +212,6 @@ public class WorldMapTester extends StaticScreenGame {
 
 	public static void main(String[] args) {
 		WorldMapTester p = new WorldMapTester();
-		p.LevelTest();
+		p.LevelTest(0);// first level for now.
 	}
 }
