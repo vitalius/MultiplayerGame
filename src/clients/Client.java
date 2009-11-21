@@ -2,7 +2,9 @@ package clients;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 
+import net.GameState;
 import net.GameStateManager;
 import net.NetObject;
 
@@ -24,7 +26,7 @@ import jig.engine.physics.BodyLayer;
 
 public class Client extends StaticScreenGame {
 	
-	public static final int WORLD_WIDTH = 600, WORLD_HEIGHT = 600;
+	public static final int WORLD_WIDTH = 800, WORLD_HEIGHT = 600;
 	
 	boolean keyPressed = false;
 	boolean keyReleased = true;
@@ -79,8 +81,12 @@ public class Client extends StaticScreenGame {
 		super.update(deltaMs);
 
 		noList = gm.getState().getNetObjects();
-		for (NetObject no : noList)
-			no.update(deltaMs);		
+		try {
+			for (NetObject no : noList)
+				no.update(deltaMs);		
+		} catch (ConcurrentModificationException e2) {
+			
+		}
 	
 		keyboardMovementHandler();
 		
@@ -93,9 +99,13 @@ public class Client extends StaticScreenGame {
 		super.render(rc);
 		
 		try {
-			for (NetObject no : gm.getState().getNetObjects())
-				no.getSprite().render(rc);
+			GameState gs = gm.getState();
+			Collection<NetObject> nos = gs.getNetObjects();
+			for (NetObject no : nos)
+				no.render(rc);
 		} catch (NullPointerException e) {
+			
+		} catch (ConcurrentModificationException e2) {
 			
 		}
 		
