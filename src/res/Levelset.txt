@@ -11,6 +11,9 @@ platform 350 500 0
 platform 600 500 0
 platform 350 300 0
 smallbox 150 450 0
+smallbox 150 450 0
+smallbox 150 450 0
+smallbox 150 450 0
 smallbox 400 450 0
 smallbox 650 450 0
 smallbox 400 250 0

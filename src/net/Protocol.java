@@ -88,7 +88,7 @@ public class Protocol {
 			double vx = Double.valueOf(attr[4]).doubleValue();
 			double vy = Double.valueOf(attr[5]).doubleValue();
 			
-			NetObject n = new NetObject(id, new Vector2D(x,y), type, true);
+			NetObject n = new NetObject("player", new Vector2D(x,y), type, true);
 			n.setVelocity(new Vector2D(vx,vy));
 			retState.add(n);
 		}

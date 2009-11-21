@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
@@ -20,9 +19,9 @@ public class WorldMapTester extends StaticScreenGame {
 
 	private static final int WORLD_WIDTH = 800;
 	private static final int WORLD_HEIGHT = 600;
+	
 	CattoPhysicsEngine physics;
-	String boxResource, plankResource;
-
+	Box player;
 	BodyLayer<Box> boxes;
 
 	LevelSet levels;
@@ -141,6 +140,7 @@ public class WorldMapTester extends StaticScreenGame {
 		Vector2D a = level.playerInitSpots.get(Team);
 		b.setPosition(new Vector2D(a.getX(), a.getY()));
 		boxes.add(b);
+		player = b;
 		return;
 	}
 
@@ -170,13 +170,25 @@ public class WorldMapTester extends StaticScreenGame {
 			}
 		}
 	}
-
+	
 	int slowdownAdd = 0; // used to slow down spawn speed!
-	@Override
-	public void update(final long deltaMs) {
-		super.update(deltaMs);
-		physics.applyLawsOfPhysics(deltaMs);
+	public void keyboardMovementHandler(final long deltaMs) {
 		keyboard.poll();
+		
+        boolean down = keyboard.isPressed(KeyEvent.VK_DOWN);
+        boolean up = keyboard.isPressed(KeyEvent.VK_UP);
+		boolean left = keyboard.isPressed(KeyEvent.VK_LEFT);
+		boolean right = keyboard.isPressed(KeyEvent.VK_RIGHT);
+		
+		if (left || right || down || up) {
+			if(left) player.setVelocity(new Vector2D(-50,0));
+			if(right) player.setVelocity(new Vector2D(50,0));
+			if(up) player.setVelocity(new Vector2D(0,-50));
+			if(down) player.setVelocity(new Vector2D(0,50));
+		}
+		else
+			if(down) player.setVelocity(new Vector2D(0,0));
+		
 		slowdownAdd += deltaMs;
 		if (keyboard.isPressed(KeyEvent.VK_1)) {
 			if (slowdownAdd > 500) {
@@ -202,6 +214,13 @@ public class WorldMapTester extends StaticScreenGame {
 				addPlayer(boxes, 3);
 			}
 		}
+	}
+
+	@Override
+	public void update(final long deltaMs) {
+		super.update(deltaMs);
+		physics.applyLawsOfPhysics(deltaMs);
+		keyboardMovementHandler(deltaMs);
 	}
 
 	@Override

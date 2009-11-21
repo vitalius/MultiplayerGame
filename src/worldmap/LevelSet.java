@@ -18,7 +18,7 @@ public class LevelSet {
 
 	private LinkedList<LevelMap> levels; // Levels
 
-	LevelSet(String file) {
+	public LevelSet(String file) {
 		levels = readLevelSet(file);
 	}
 

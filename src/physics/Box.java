@@ -54,7 +54,7 @@ public class Box extends Body implements Comparable<Box> {
 
 	protected double invMomentOfInertia;
 
-	int id;
+	protected int id;
 
 	/**
 	 * Creates a new Box with the specified image resources.
@@ -140,6 +140,10 @@ public class Box extends Body implements Comparable<Box> {
 			momentOfInertia = Double.MAX_VALUE;
 			invMomentOfInertia = 0.0;
 		}
+	}
+	
+	public void set(final double m, final double f, final double restitution) {
+		set( m, f, restitution, 0);
 	}
 
 	/**
@@ -245,7 +249,7 @@ public class Box extends Body implements Comparable<Box> {
 	 */
 	@Override
 	public void update(final long deltaMs) {
-		throw new UnsupportedOperationException(
-				"Boxes should only be updated via a CattoPhysicsEngine");
+		//throw new UnsupportedOperationException(
+		//		"Boxes should only be updated via a CattoPhysicsEngine");
 	}
 }
