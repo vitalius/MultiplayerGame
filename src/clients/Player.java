@@ -2,6 +2,7 @@ package clients;
 
 import net.Action;
 import net.Protocol;
+
 import jig.engine.util.Vector2D;
 
 /**
@@ -24,12 +25,12 @@ public class Player {
 
 
 	public int moveState;
-	private int id;
+	private int playerId;
 	private TcpClient tcp;
 	private Protocol prot;
 	
-	public Player(int player_id, TcpClient t) {
-		id = player_id;
+	public Player(int id, TcpClient t) {
+		playerId = id;
 		tcp = t;
 		moveState = HALT;
 		prot = new Protocol();
@@ -44,23 +45,23 @@ public class Player {
 		moveState = d;
 		switch(moveState) {
 			case LEFT:
-				move = new Action(id, Action.CHANGE_VELOCITY, new Vector2D(-DELTA_V, 0));
+				move = new Action(playerId, Action.CHANGE_VELOCITY, new Vector2D(-DELTA_V, 0));
 				tcp.sendSocket(prot.encodeAction(move));				
 				break;
 			case RIGHT:
-				move = new Action(id, Action.CHANGE_VELOCITY, new Vector2D(DELTA_V, 0));
+				move = new Action(playerId, Action.CHANGE_VELOCITY, new Vector2D(DELTA_V, 0));
 				tcp.sendSocket(prot.encodeAction(move));				
 				break;
 			case UP:
-				move = new Action(id, Action.CHANGE_VELOCITY, new Vector2D(0, -DELTA_V));
+				move = new Action(playerId, Action.CHANGE_VELOCITY, new Vector2D(0, -DELTA_V));
 				tcp.sendSocket(prot.encodeAction(move));				
 				break;
 			case DOWN:
-				move = new Action(id, Action.CHANGE_VELOCITY, new Vector2D(0, DELTA_V));
+				move = new Action(playerId, Action.CHANGE_VELOCITY, new Vector2D(0, DELTA_V));
 				tcp.sendSocket(prot.encodeAction(move));				
 				break;
 			case HALT:
-				move = new Action(id, Action.CHANGE_VELOCITY, new Vector2D(0, 0));
+				move = new Action(playerId, Action.CHANGE_VELOCITY, new Vector2D(0, 0));
 				tcp.sendSocket(prot.encodeAction(move));				
 				break;
 		}
@@ -71,7 +72,7 @@ public class Player {
 	 * @param ip
 	 */
 	public void join(String ip) {
-		Action join = new Action(id, Action.JOIN, ip);
+		Action join = new Action(playerId, Action.JOIN, ip);
 		tcp.sendSocket(prot.encodeAction(join));
 	}
 }

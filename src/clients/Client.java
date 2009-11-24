@@ -1,11 +1,9 @@
 package clients;
 
 import java.awt.event.KeyEvent;
-import java.util.Collection;
 import java.util.ConcurrentModificationException;
 
-import net.GameState;
-import net.GameStateManager;
+import net.NetStateManager;
 import net.NetObject;
 
 import jig.engine.PaintableCanvas;
@@ -31,21 +29,26 @@ public class Client extends StaticScreenGame {
 	boolean keyPressed = false;
 	boolean keyReleased = true;
 	
-	GameStateManager gm;
+	NetStateManager gm;
 	Player player;
 
 	BodyLayer<Body> WorldLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 	BodyLayer<Body> MovableLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 	BodyLayer<Body> InterfaceLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 	
-	Collection<NetObject> noList = null;
+	ClientGameState clientGm;
 
 	public Client() {
 
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
 
-		PaintableCanvas.loadDefaultFrames("player", 10, 10, 1, JIGSHAPE.CIRCLE, null);
-		gm = new GameStateManager();
+		PaintableCanvas.loadDefaultFrames("player", 40, 40, 1, JIGSHAPE.RECTANGLE, null);
+		PaintableCanvas.loadDefaultFrames("ground", 10, 10, 1, JIGSHAPE.RECTANGLE, null);
+		PaintableCanvas.loadDefaultFrames("smallbox", 100, 100, 1, JIGSHAPE.RECTANGLE, null);
+		PaintableCanvas.loadDefaultFrames("platform", 10, 10, 1, JIGSHAPE.RECTANGLE, null);
+		
+		gm = new NetStateManager();
+		clientGm = new ClientGameState();
 
 		/* Start thread to sync gameState with server */
 		BroadcastListener bListen = new BroadcastListener(gm);
@@ -80,10 +83,11 @@ public class Client extends StaticScreenGame {
 	public void update(long deltaMs) {
 		super.update(deltaMs);
 
-		noList = gm.getState().getNetObjects();
 		try {
-			for (NetObject no : noList)
-				no.update(deltaMs);		
+			for (NetObject no : gm.getState().getNetObjects())
+				no.update(deltaMs);
+			
+			clientGm.sync(gm);
 		} catch (ConcurrentModificationException e2) {
 			
 		}
@@ -99,10 +103,8 @@ public class Client extends StaticScreenGame {
 		super.render(rc);
 		
 		try {
-			GameState gs = gm.getState();
-			Collection<NetObject> nos = gs.getNetObjects();
-			for (NetObject no : nos)
-				no.render(rc);
+			for (Body sprite : clientGm.getSprites())
+				sprite.render(rc);
 		} catch (NullPointerException e) {
 			
 		} catch (ConcurrentModificationException e2) {

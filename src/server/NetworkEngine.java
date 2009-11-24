@@ -1,6 +1,6 @@
 package server;
 
-import net.GameStateManager;
+import net.NetStateManager;
 import net.Protocol;
 
 public class NetworkEngine {
@@ -11,11 +11,11 @@ public class NetworkEngine {
 	public static final int TCP_PORT   = 5001;
 	
 	private Broadcaster bcaster;
-	private GameStateManager gm;
+	private NetStateManager gm;
 	private Protocol prot;
 	private TcpServer tcpControl;
 	
-	public NetworkEngine(GameStateManager g) {
+	public NetworkEngine(NetStateManager g) {
 		gm = g;
 		prot = new Protocol();
 		bcaster = new Broadcaster(BCAST_PORT);

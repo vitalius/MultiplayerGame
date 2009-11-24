@@ -1,9 +1,15 @@
 package clients;
 
-import jig.engine.Sprite;
+import jig.engine.physics.vpe.VanillaSphere;
 
-public class SpriteObject extends Sprite{
+
+public class SpriteObject extends VanillaSphere {
 	public SpriteObject(String res) {
 		super(res);
+	}
+
+	@Override
+	public void update(long deltaMs) {
+		
 	}
 }

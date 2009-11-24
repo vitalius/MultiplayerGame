@@ -191,7 +191,9 @@ public class Box extends Body implements Comparable<Box> {
 		rotation = r;
 	}
 
-	
+	public double getRotation() {
+		return rotation;
+	}
 
 	/**
 	 * @return the hashcode for this box (just the box's unique id)

@@ -3,21 +3,21 @@ package net;
 import java.util.Hashtable;
 
 
-public class GameStateManager {
+public class NetStateManager {
 	
-	private GameState current = null;
+	private NetState current = null;
 	private Protocol prot = null;
 	
-	public GameStateManager () {
-		current = new GameState();
+	public NetStateManager () {
+		current = new NetState();
 		prot = new Protocol();
 	}
 	
-	public GameState getState() {
+	public NetState getState() {
 		return current;
 	}
 	
-	public void update (GameState g) {
+	public void update (NetState g) {
 		current = g;
 	}
 	
@@ -26,7 +26,7 @@ public class GameStateManager {
 	}
 	
 	public void sync (String s) {
-		GameState d = prot.decode(s);
+		NetState d = prot.decode(s);
 		current.setSeqNum(d.getSeqNum());
 		Hashtable<Integer, NetObject> objectList = current.getHashtable();
 		
@@ -35,6 +35,7 @@ public class GameStateManager {
 			if(objectList.containsKey(n.getId())) {
 				objectList.get(n.getId()).setPosition(n.getPosition());
 				objectList.get(n.getId()).setVelocity(n.getVelocity());
+				objectList.get(n.getId()).setRotation(n.getRotation());
 			}
 			else
 				objectList.put(n.getId(), n);

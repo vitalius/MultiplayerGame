@@ -20,8 +20,8 @@ import jig.engine.hli.StaticScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
-import net.GameState;
-import net.GameStateManager;
+import net.NetState;
+import net.NetStateManager;
 import net.NetObject;
 
 /**
@@ -39,9 +39,10 @@ public class Server extends StaticScreenGame{
 	/* This is a static, constant time between frames, all clients run as fast as the server runs */
 	public static int DELTA_MS = 30;
 	
-	private GameStateManager gm;
+	private NetStateManager netState;
 	private NetworkEngine ne;
 	private CattoPhysicsEngine pe;
+	private ServerGameState gameState;
 	
 	private LevelSet levels;
 	private LevelMap level;
@@ -49,8 +50,9 @@ public class Server extends StaticScreenGame{
 	public Server(int width, int height, boolean preferFullscreen) {
 		super(width, height, preferFullscreen);
 		
-		gm = new GameStateManager();
-		ne = new NetworkEngine(gm);
+		netState = new NetStateManager();
+		ne = new NetworkEngine(netState);
+		gameState = new ServerGameState();
 		pe = new CattoPhysicsEngine(new Vector2D(0, 40));
 		pe.setDrawArbiters(true);
 		fre.setActivation(true);
@@ -92,7 +94,7 @@ public class Server extends StaticScreenGame{
 		
 		/* Build few objects with random velocities for test */
 		//Random r = new Random(System.currentTimeMillis());
-		GameState c = new GameState();
+		
 		/*for (int i = 0; i < 3; i++) {
 			c.add(new NetObject("player", i, 
 					new Vector2D(300,300), 
@@ -118,46 +120,46 @@ public class Server extends StaticScreenGame{
 		}
 
 		// Build world from level data
-		BuildLevel(c);
+		BuildLevel(gameState);
 
 		// Add layer to window.
 		//gameObjectLayers.add(c.boxes);
 		//pe.manageViewableSet(c.boxes);
 		
-		gm.update(c);
+		netState.update(gameState.getNetState());
 		/* end of network test building */
 	}
 	
-	private void addGround(final GameState gs, int X, int Y, double R) {
-		NetObject b;
-		b = new NetObject("ground");
+	private void addGround(ServerGameState gs, int X, int Y, double R) {
+		Box b;
+		b = new Box("ground");
 		b.set(Double.MAX_VALUE, .2, 1.0, R);
 		b.setPosition(new Vector2D(X, Y));
 		gs.add(b);
 		return;
 	}
 
-	private void addPlatform(final GameState gs, int X, int Y, double R) {
-		NetObject b;
-		b = new NetObject("platform");
+	private void addPlatform(ServerGameState gs, int X, int Y, double R) {
+		Box b;
+		b = new Box("platform");
 		b.set(Double.MAX_VALUE, .2, 1.0, R);
 		b.setPosition(new Vector2D(X, Y));
 		gs.add(b);
 		return;
 	}
 
-	private void addSmallBox(final GameState gs, int X, int Y, double R) {
-		NetObject b;
-		b = new NetObject("smallbox");
+	private void addSmallBox(ServerGameState gs, int X, int Y, double R) {
+		Box b;
+		b = new Box("smallbox");
 		b.set(100, .2, 1.0, R);
 		b.setPosition(new Vector2D(X, Y));
 		gs.add(b);
 		return;
 	}
 
-	private void addPlayer(final GameState gs, int Team) {
-		NetObject b;
-		b = new NetObject("player");
+	private void addPlayer(ServerGameState gs, int Team) {
+		Box b;
+		b = new Box("player");
 		b.set(100, .2, 1.0, 0.0);
 		Vector2D a = level.playerInitSpots.get(Team);
 		b.setPosition(new Vector2D(a.getX(), a.getY()));
@@ -166,15 +168,15 @@ public class Server extends StaticScreenGame{
 	}
 
 	// Build world from level data.
-	public void BuildLevel(final GameState gs) {
+	public void BuildLevel(final ServerGameState gs) {
 
 		// Used for showing location of spawn spots. (Temp, change to debug only when finished)
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
 		for (int x = 0; x < level.playerInitSpots.size(); x++) {
-			NetObject a = new NetObject("playerSpawn", level.playerInitSpots.get(x));
+			//Box a = new Box("playerSpawn", level.playerInitSpots.get(x));
 			//System.out.println(a.getPosition());
-			gs.add(a);
+			//gs.add(a);
 		}
 
 		// Create objects based on object type.
@@ -233,6 +235,7 @@ public class Server extends StaticScreenGame{
 			gameLoop(deltaMs);	
 			
 			ne.update();
+			gameState.update();
 			
 			// Limit FPS to 200
 			try {
@@ -262,8 +265,8 @@ public class Server extends StaticScreenGame{
 		
 		s.gameObjectLayers.clear();
 		s.pe.clear();
-		s.gameObjectLayers.add(s.gm.getState().boxes);
-		s.pe.manageViewableSet(s.gm.getState().boxes);
+		s.gameObjectLayers.add(s.gameState.getBoxes());
+		s.pe.manageViewableSet(s.gameState.getBoxes());
 		s.run();
 		
 	}

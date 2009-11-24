@@ -52,7 +52,7 @@ public class Protocol {
 		return returnAction;
 	}
 	
-	public String encode(GameState gs) {
+	public String encode(NetState gs) {
 		String output = gs.getSeqNum()+"#";
 		
 		for (NetObject p : gs.getNetObjects()) {
@@ -61,7 +61,8 @@ public class Protocol {
 			output += (float)p.getPosition().getX()+"$";
 			output += (float)p.getPosition().getY()+"$";
 			output += (float)p.getVelocity().getX()+"$";
-			output += (float)p.getVelocity().getY();
+			output += (float)p.getVelocity().getY()+"$";
+			output += (float)p.getRotation();
 			output += "%";
 		}
 		
@@ -69,8 +70,8 @@ public class Protocol {
 	}
 
 
-	public GameState decode(String input) {
-		GameState retState = new GameState();
+	public NetState decode(String input) {
+		NetState retState = new NetState();
 		String[] token = input.split("#");
 		
 		// Sequence number
@@ -87,9 +88,11 @@ public class Protocol {
 			double y = Double.valueOf(attr[3]).doubleValue();
 			double vx = Double.valueOf(attr[4]).doubleValue();
 			double vy = Double.valueOf(attr[5]).doubleValue();
+			double r = Double.valueOf(attr[6]).doubleValue();
 			
-			NetObject n = new NetObject("player", new Vector2D(x,y), type, true);
+			NetObject n = new NetObject(id, new Vector2D(x,y), type);
 			n.setVelocity(new Vector2D(vx,vy));
+			n.setRotation(r);
 			retState.add(n);
 		}
 		

@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import net.GameStateManager;
+import net.NetStateManager;
 import server.NetworkEngine;
 
 public class BroadcastListener extends Thread {
 	
 	private DatagramSocket socket;
-	private GameStateManager gm;
+	private NetStateManager gm;
 	
-	public BroadcastListener (GameStateManager g) {
+	public BroadcastListener (NetStateManager g) {
 		gm = g;
 		try {
 			socket = new DatagramSocket(NetworkEngine.BCAST_PORT);
