@@ -1,0 +1,52 @@
+
+
+Objects to be defined, functions assocated with all objects.
+
+All movable objects should have this..
+ function that returns type of object.
+ function to handle die event.
+ function to handle being damaged from any object - has code to handle depending on what other object is, and
+  may be based on amount of force applied to it, or others.
+ function to set or return object health. (some objects has infinite health)
+ 
+Possible ideas: 
+Death objects: Would destroy everything that touches it. Could be useful as pit of death bottom, etc.
+Death border: two parameters that set world abolute limit which objects that pass it will be removed from map.
+	Would be good for memory cleanup of boxes, etc that fall into holes.
+	
+If any of those are implemented, all but ground or platform must have destroy bypass for those.
+
+ground:
+Infinite health, no damage accepted. Cannot be moved.
+Zero damage on all objects hitting it.
+
+platform: Same as ground.
+
+smallbox:
+unknown health (undefined, maybe 10x the player health?)
+( probably have various sizes versions of this? )
+When got hit with object...
+Damage to players: zero.
+Damage to weapons hitting it: depends on type.
+
+player:
+some X HP, assume 1000 for now.
+When got hit with object...
+Damage to players: zero.
+Damage to weapons hitting it: depends on type.
+
+Now for to be added objects:
+
+bullet: (lets assume only one: bullets for now...)
+One HP.
+When got hit with object...
+Damage to players: 10.
+Damage to weapons hitting it: 100% depends on type.
+
+Possibly this too..
+healthpack:
+100 HP (yes can be destroyed. :) )
+When got hit with object...
+Damage to players: -100. (restore health)
+Damage to weapons hitting it: depends on type.
+

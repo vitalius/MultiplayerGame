@@ -191,28 +191,28 @@ public class WorldMapTester extends StaticScreenGame {
 		
 		slowdownAdd += deltaMs;
 		if (keyboard.isPressed(KeyEvent.VK_1)) {
-			if (slowdownAdd > 500) {
+			//if (slowdownAdd > 500) {
 				slowdownAdd = 0;
 				addPlayer(boxes, 0);
-			}
+			//}
 		}
 		if (keyboard.isPressed(KeyEvent.VK_2)) {
-			if (slowdownAdd > 500) {
+			//if (slowdownAdd > 500) {
 				slowdownAdd = 0;
 				addPlayer(boxes, 1);
-			}
+			//}
 		}
 		if (keyboard.isPressed(KeyEvent.VK_3)) {
-			if (slowdownAdd > 500) {
+			//if (slowdownAdd > 500) {
 				slowdownAdd = 0;
 				addPlayer(boxes, 2);
-			}
+			//}
 		}
 		if (keyboard.isPressed(KeyEvent.VK_4)) {
-			if (slowdownAdd > 500) {
+			//if (slowdownAdd > 500) {
 				slowdownAdd = 0;
 				addPlayer(boxes, 3);
-			}
+			//}
 		}
 	}
 

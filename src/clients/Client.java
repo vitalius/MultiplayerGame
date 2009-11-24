@@ -17,9 +17,6 @@ import jig.engine.physics.BodyLayer;
 
 /**
  * Client
- * 
- * @author Vitaliy
- * 
  */
 
 public class Client extends StaticScreenGame {
@@ -71,10 +68,12 @@ public class Client extends StaticScreenGame {
 		boolean right = keyboard.isPressed(KeyEvent.VK_RIGHT);
 		
 		if (left || right || down || up) {
-			if(left) player.move(Player.LEFT);
-			if(right) player.move(Player.RIGHT);
-			if(up) player.move(Player.UP);
-			if(down) player.move(Player.DOWN);
+			int x = 0, y = 0;
+			if(left) x--;
+			if(right) x++;
+			if(up) y--;
+			if(down) x++;
+			player.move(x, y);
 		}
 		else
 			player.move(Player.HALT);
