@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 
 import jig.engine.physics.vpe.VanillaSphere;
+import jig.engine.util.Vector2D;
 
 import net.NetStateManager;
 import net.NetObject;
@@ -43,7 +44,14 @@ public class ClientGameState {
 	public void sync(NetStateManager gameState) {
 		for (NetObject no : gameState.getState().getNetObjects()) {
 			if (spriteList.containsKey(no.getId())) {
-				spriteList.get(no.getId()).setPosition(no.getPosition());
+				
+				// fixing the offset, because in jig, rectangle extending VanillaShere is just a giant sphere
+				SpriteObject s = (SpriteObject)spriteList.get(no.getId());
+				Vector2D p = no.getPosition();
+				Vector2D newPos = new Vector2D(p.getX()-(s.getRadius()-s.getImgWidth()/2), 
+											   p.getY()-(s.getRadius()-s.getImgHeight()/2));
+				spriteList.get(no.getId()).setPosition(newPos);
+				
 				spriteList.get(no.getId()).setVelocity(no.getVelocity());
 				spriteList.get(no.getId()).setRotation(no.getRotation());
 			} else

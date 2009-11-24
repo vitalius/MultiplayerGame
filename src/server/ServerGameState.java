@@ -25,9 +25,12 @@ public class ServerGameState {
 	/**
 	 * Adds a 'Box' to the boxList
 	 * and create a corresponding NetObject to send to the clients
-	 * @param b
+	 * 
+	 * 
+	 * @param b - Box
+	 * @param type - type of object, this can be a player, a bullet, etc
 	 */
-	public void add(Box box) {
+	public void add(Box box, int type) {
 		int id = generator.nextInt(65000);  // this is a hack, IDs are random number
 		
 		if(boxList.containsKey(id))
@@ -37,7 +40,7 @@ public class ServerGameState {
 		
 		// Need to figure out which type of box it is. PLAYER, BULLET, PANEL, etc
 		// all objects are PLAYERs right now
-		netState.add(new NetObject(id, box.getPosition(), NetObject.PLAYER));
+		netState.add(new NetObject(id, box.getPosition(), type));
 	}
 	
 	public void update() {

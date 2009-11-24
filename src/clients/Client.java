@@ -42,10 +42,10 @@ public class Client extends StaticScreenGame {
 
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
 
-		PaintableCanvas.loadDefaultFrames("player", 40, 40, 1, JIGSHAPE.RECTANGLE, null);
-		PaintableCanvas.loadDefaultFrames("ground", 10, 10, 1, JIGSHAPE.RECTANGLE, null);
-		PaintableCanvas.loadDefaultFrames("smallbox", 100, 100, 1, JIGSHAPE.RECTANGLE, null);
-		PaintableCanvas.loadDefaultFrames("platform", 10, 10, 1, JIGSHAPE.RECTANGLE, null);
+		PaintableCanvas.loadDefaultFrames("player", 30, 40, 1, JIGSHAPE.RECTANGLE, null);
+		PaintableCanvas.loadDefaultFrames("ground", 1600, 10, 1, JIGSHAPE.RECTANGLE, null);
+		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1, JIGSHAPE.RECTANGLE, null);
+		PaintableCanvas.loadDefaultFrames("platform", 100, 10, 1, JIGSHAPE.RECTANGLE, null);
 		
 		gm = new NetStateManager();
 		clientGm = new ClientGameState();

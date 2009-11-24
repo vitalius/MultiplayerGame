@@ -135,7 +135,7 @@ public class Server extends StaticScreenGame{
 		b = new Box("ground");
 		b.set(Double.MAX_VALUE, .2, 1.0, R);
 		b.setPosition(new Vector2D(X, Y));
-		gs.add(b);
+		gs.add(b, NetObject.GROUND);
 		return;
 	}
 
@@ -144,7 +144,7 @@ public class Server extends StaticScreenGame{
 		b = new Box("platform");
 		b.set(Double.MAX_VALUE, .2, 1.0, R);
 		b.setPosition(new Vector2D(X, Y));
-		gs.add(b);
+		gs.add(b, NetObject.PLATFORM);
 		return;
 	}
 
@@ -153,7 +153,7 @@ public class Server extends StaticScreenGame{
 		b = new Box("smallbox");
 		b.set(100, .2, 1.0, R);
 		b.setPosition(new Vector2D(X, Y));
-		gs.add(b);
+		gs.add(b, NetObject.SMALLBOX);
 		return;
 	}
 
@@ -163,7 +163,7 @@ public class Server extends StaticScreenGame{
 		b.set(100, .2, 1.0, 0.0);
 		Vector2D a = level.playerInitSpots.get(Team);
 		b.setPosition(new Vector2D(a.getX(), a.getY()));
-		gs.add(b);
+		gs.add(b, NetObject.PLAYER);
 		return;
 	}
 
@@ -174,9 +174,10 @@ public class Server extends StaticScreenGame{
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
 		for (int x = 0; x < level.playerInitSpots.size(); x++) {
-			//Box a = new Box("playerSpawn", level.playerInitSpots.get(x));
-			//System.out.println(a.getPosition());
-			//gs.add(a);
+			Box a = new Box("playerSpawn");
+			a.setPosition(level.playerInitSpots.get(x));
+			System.out.println(a.getPosition());
+			gs.add(a, NetObject.PLAYER);
 		}
 
 		// Create objects based on object type.
