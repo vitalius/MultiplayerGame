@@ -6,6 +6,7 @@ import java.util.Random;
 import world.GameObject;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
+import jig.engine.util.Vector2D;
 import net.NetObject;
 import net.NetState;
 
@@ -13,7 +14,7 @@ public class ServerGameState {
 
 	private NetState netState;
 	
-	private Hashtable<Integer, GameObject> boxList = new Hashtable<Integer, GameObject>();
+	private Hashtable<Integer, GameObject> goList = new Hashtable<Integer, GameObject>();
 	
 	private Random generator = new Random();
 	
@@ -22,6 +23,7 @@ public class ServerGameState {
 	}
 	
 	/**
+	 * 
 	 * Adds a 'Box' to the boxList
 	 * and create a corresponding NetObject to send to the clients
 	 * 
@@ -29,23 +31,23 @@ public class ServerGameState {
 	 * @param b - Box
 	 * @param type - type of object, this can be a player, a bullet, etc
 	 */
-	public void add(GameObject box, int type) {
+	public void add(GameObject go, int type) {
 		int id = generator.nextInt(65000);  // this is a hack, IDs are random number
 		
-		if(boxList.containsKey(id))
+		if(goList.containsKey(id))
 			return;
 		
-		boxList.put(id, box);
+		goList.put(id, go);
 		
 		// Need to figure out which type of box it is. PLAYER, BULLET, PANEL, etc
 		// all objects are PLAYERs right now
-		netState.add(new NetObject(id, box.getPosition(), type));
+		netState.add(new NetObject(id, go.getPosition(), type));
 	}
 	
 	public void update() {
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
-		for(Integer i : boxList.keySet()) {
-			GameObject b = boxList.get(i);
+		for(Integer i : goList.keySet()) {
+			GameObject b = goList.get(i);
 			NetObject no = netList.get(i);
 			no.setPosition(b.getPosition());
 			
@@ -64,7 +66,7 @@ public class ServerGameState {
 	 */
 	public BodyLayer<GameObject> getBoxes() {
 		BodyLayer<GameObject> boxLayer = new AbstractBodyLayer.IterativeUpdate<GameObject>();
-		for(GameObject b : boxList.values())
+		for(GameObject b : goList.values())
 			boxLayer.add(b);
 		return boxLayer;
 	}
