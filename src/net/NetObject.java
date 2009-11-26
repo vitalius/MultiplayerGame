@@ -10,6 +10,7 @@ public class NetObject {
 	public static final int GROUND   = 1;
 	public static final int PLATFORM = 2;
 	public static final int SMALLBOX = 3;
+	public static final int PLAYERSPAWN   = 4;
 	
 	private int id;
 	private Vector2D position;

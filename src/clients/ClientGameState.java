@@ -37,6 +37,9 @@ public class ClientGameState {
 		case NetObject.GROUND:
 			spriteList.put(no.getId(), new SpriteObject("ground"));
 			break;
+		case NetObject.PLAYERSPAWN:
+			spriteList.put(no.getId(), new SpriteObject("playerSpawn"));
+			break;
 		}
 		
 	}
