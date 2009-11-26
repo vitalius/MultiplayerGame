@@ -52,7 +52,7 @@ public class ServerGameState {
 			
 			//System.out.println(b.getVelocity());
 			// Box's velocity vector is way too high for some reason, maybe it should be scaled by DELTA_MS, i dunno
-			//no.setVelocity(b.getVelocity());
+			no.setVelocity(b.getVelocity());
 			
 			no.setRotation(b.getRotation());
 		}

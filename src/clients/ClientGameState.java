@@ -51,7 +51,7 @@ public class ClientGameState {
 				Vector2D newPos = new Vector2D(p.getX()-(s.getRadius()-s.getImgWidth()/2), 
 											   p.getY()-(s.getRadius()-s.getImgHeight()/2));
 				spriteList.get(no.getId()).setPosition(newPos);
-				
+				//System.out.println(no.getVelocity());
 				spriteList.get(no.getId()).setVelocity(no.getVelocity());
 				spriteList.get(no.getId()).setRotation(no.getRotation());
 			} else
