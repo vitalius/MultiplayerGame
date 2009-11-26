@@ -6,12 +6,6 @@ import jig.engine.util.Vector2D;
 
 public class NetObject {
 	
-	public static final int PLAYER   = 0;
-	public static final int GROUND   = 1;
-	public static final int PLATFORM = 2;
-	public static final int SMALLBOX = 3;
-	public static final int PLAYERSPAWN   = 4;
-	
 	private int id;
 	private Vector2D position;
 	private Vector2D velocity;
@@ -43,7 +37,6 @@ public class NetObject {
 	}
 	
 	public void init (int objectId, Vector2D p) {
-		type = PLAYER;
 		id = objectId;
 		rotation = 0;
 		setPosition(p);

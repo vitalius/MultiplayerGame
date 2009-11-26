@@ -1,4 +1,4 @@
-package worldmap;
+package world;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -12,7 +12,6 @@ import jig.engine.hli.StaticScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
-import physics.Box;
 import physics.CattoPhysicsEngine;
 
 public class WorldMapTester extends StaticScreenGame {
@@ -21,8 +20,8 @@ public class WorldMapTester extends StaticScreenGame {
 	private static final int WORLD_HEIGHT = 600;
 	
 	CattoPhysicsEngine physics;
-	Box player;
-	BodyLayer<Box> boxes;
+	GameObject player;
+	BodyLayer<GameObject> boxes;
 
 	LevelSet levels;
 	LevelMap level;
@@ -83,7 +82,7 @@ public class WorldMapTester extends StaticScreenGame {
 
 	public void LevelTest(int levelNum) {
 
-		boxes = new AbstractBodyLayer.NoUpdate<Box>();
+		boxes = new AbstractBodyLayer.NoUpdate<GameObject>();
 
 		gameObjectLayers.clear();
 		physics.clear();
@@ -105,37 +104,10 @@ public class WorldMapTester extends StaticScreenGame {
 
 		run();
 	}
-	
-	private void addGround(final BodyLayer<Box> boxes, int X, int Y, double R) {
-		Box b;
-		b = new Box("ground");
-		b.set(Double.MAX_VALUE, .2, 1.0, R);
-		b.setPosition(new Vector2D(X, Y));
-		boxes.add(b);
-		return;
-	}
 
-	private void addPlatform(final BodyLayer<Box> boxes, int X, int Y, double R) {
-		Box b;
-		b = new Box("platform");
-		b.set(Double.MAX_VALUE, .2, 1.0, R);
-		b.setPosition(new Vector2D(X, Y));
-		boxes.add(b);
-		return;
-	}
-
-	private void addSmallBox(final BodyLayer<Box> boxes, int X, int Y, double R) {
-		Box b;
-		b = new Box("smallbox");
-		b.set(100, .2, 1.0, R);
-		b.setPosition(new Vector2D(X, Y));
-		boxes.add(b);
-		return;
-	}
-
-	private void addPlayer(final BodyLayer<Box> boxes, int Team) {
-		Box b;
-		b = new Box("player");
+	private void addPlayer(final BodyLayer<GameObject> boxes, int Team) {
+		GameObject b;
+		b = new GameObject("player");
 		b.set(100, .2, 1.0, 0.0);
 		Vector2D a = level.playerInitSpots.get(Team);
 		b.setPosition(new Vector2D(a.getX(), a.getY()));
@@ -145,13 +117,13 @@ public class WorldMapTester extends StaticScreenGame {
 	}
 
 	// Build world from level data.
-	public void BuildLevel(final BodyLayer<Box> boxes) {
+	public void BuildLevel(final BodyLayer<GameObject> boxes) {
 
 		// Used for showing location of spawn spots. (Temp, change to debug only when finished)
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
 		for (int x = 0; x < level.playerInitSpots.size(); x++) {
-			TempObj a = new TempObj("playerSpawn");
+			GameObject a = new GameObject("playerSpawn");
 			a.setPosition(level.playerInitSpots.get(x));
 			//System.out.println(a.getPosition());
 			boxes.add(a);
@@ -159,15 +131,9 @@ public class WorldMapTester extends StaticScreenGame {
 
 		// Create objects based on object type.
 		for (int x = 0; x < level.Objects.size(); x++) {
-			ObjectData s = level.Objects.get(x);
+			GameObject s = level.Objects.get(x);
 			//System.out.println(s);
-			if (s.type.compareTo("ground") == 0) {
-				addGround(boxes, s.x, s.y, s.rotation);
-			} else if (s.type.compareTo("platform") == 0) {
-				addPlatform(boxes, s.x, s.y, s.rotation);
-			} else if (s.type.compareTo("smallbox") == 0) {
-				addSmallBox(boxes, s.x, s.y, s.rotation);
-			}
+			boxes.add(s);
 		}
 	}
 	

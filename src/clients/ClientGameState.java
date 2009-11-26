@@ -3,6 +3,8 @@ package clients;
 import java.util.Collection;
 import java.util.Hashtable;
 
+import world.GameObject;
+
 import jig.engine.physics.vpe.VanillaSphere;
 import jig.engine.util.Vector2D;
 
@@ -25,19 +27,19 @@ public class ClientGameState {
 			return;
 		
 		switch(no.getType()) {
-		case NetObject.PLAYER:
+		case GameObject.PLAYER:
 			spriteList.put(no.getId(), new SpriteObject("player"));
 			break;
-		case NetObject.PLATFORM:
+		case GameObject.PLATFORM:
 			spriteList.put(no.getId(), new SpriteObject("platform"));
 			break;
-		case NetObject.SMALLBOX:
+		case GameObject.SMALLBOX:
 			spriteList.put(no.getId(), new SpriteObject("smallbox"));
 			break;
-		case NetObject.GROUND:
+		case GameObject.GROUND:
 			spriteList.put(no.getId(), new SpriteObject("ground"));
 			break;
-		case NetObject.PLAYERSPAWN:
+		case GameObject.PLAYERSPAWN:
 			spriteList.put(no.getId(), new SpriteObject("playerSpawn"));
 			break;
 		}

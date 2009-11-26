@@ -1,4 +1,4 @@
-package worldmap;
+package old;
 
 // Object data for store till level is loaded.
 public class ObjectData {

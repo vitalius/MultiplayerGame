@@ -1,4 +1,4 @@
-package worldmap;
+package world;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -116,20 +116,33 @@ public class LevelSet {
 				//System.out.println(thisLine);
 				while (thisLine != null && thisLine.compareTo("EndLevel") != 0) {
 					String[] a = thisLine.split(" ");
-					if (a.length < 4) {
+					if (a.length < 7) {
 						s.close();
 						res = null;
 						System.out
 								.println("Error: Object parameters is missing in least one number!");
 						return null;
 					}
-					String T = a[0];
+					String rsc = a[0];
 					int x = java.lang.Integer.parseInt(a[1]);
 					int y = java.lang.Integer.parseInt(a[2]);
-					int r = java.lang.Integer.parseInt(a[3]);
-					ObjectData aa = new ObjectData(T, x, y, r);
-					thisMap.Objects.add(aa);
-					//System.out.println(aa);
+					int rot = java.lang.Integer.parseInt(a[3]);
+					Double mass = java.lang.Double.parseDouble(a[4]);
+					if(mass < 0) {
+						mass = Double.MAX_VALUE;
+					}
+					Double fric = java.lang.Double.parseDouble(a[5]);
+					Double rest = java.lang.Double.parseDouble(a[6]);
+					GameObject go = new GameObject(rsc);
+					if (rsc == "player") { go.setType(GameObject.PLAYER); }
+					else if (rsc.compareTo("ground") == 0) { go.setType(GameObject.GROUND); }
+					else if (rsc.compareTo("platform") == 0) { go.setType(GameObject.PLATFORM); }
+					else if (rsc.compareTo("smallbox") == 0) { go.setType(GameObject.SMALLBOX); }
+					else if (rsc.compareTo("playerspawn") == 0) { go.setType(GameObject.PLAYERSPAWN); }
+					go.set(mass, fric, rest, rot);
+					go.setPosition(new Vector2D(x,y));
+					thisMap.Objects.add(go);
+					//System.out.println(go);
 					thisLine = s.readLine();
 					//System.out.println(thisLine);
 				}
