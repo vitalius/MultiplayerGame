@@ -1,5 +1,6 @@
 package clients;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ConcurrentModificationException;
 
@@ -39,10 +40,11 @@ public class Client extends StaticScreenGame {
 
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
 
-		PaintableCanvas.loadDefaultFrames("player", 30, 40, 1, JIGSHAPE.RECTANGLE, null);
-		PaintableCanvas.loadDefaultFrames("ground", 1600, 10, 1, JIGSHAPE.RECTANGLE, null);
-		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1, JIGSHAPE.RECTANGLE, null);
-		PaintableCanvas.loadDefaultFrames("platform", 100, 10, 1, JIGSHAPE.RECTANGLE, null);
+		PaintableCanvas.loadDefaultFrames("player", 30, 40, 1, JIGSHAPE.RECTANGLE, Color.red);
+		PaintableCanvas.loadDefaultFrames("ground", 1600, 10, 1, JIGSHAPE.RECTANGLE, Color.green);
+		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1, JIGSHAPE.RECTANGLE, Color.blue);
+		PaintableCanvas.loadDefaultFrames("platform", 100, 10, 1, JIGSHAPE.RECTANGLE, Color.green);
+		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1, JIGSHAPE.CIRCLE, Color.red);
 		
 		gm = new NetStateManager();
 		clientGm = new ClientGameState();
@@ -54,6 +56,7 @@ public class Client extends StaticScreenGame {
 		TcpClient control = new TcpClient("127.0.0.1", 5001);
 		
 		player = new Player(0, control);
+		
 	}
 	
 	/**
@@ -62,21 +65,18 @@ public class Client extends StaticScreenGame {
 	public void keyboardMovementHandler() {
 		keyboard.poll();
 		
-        boolean down = keyboard.isPressed(KeyEvent.VK_DOWN);
-        boolean up = keyboard.isPressed(KeyEvent.VK_UP);
-		boolean left = keyboard.isPressed(KeyEvent.VK_LEFT);
-		boolean right = keyboard.isPressed(KeyEvent.VK_RIGHT);
+        boolean down = keyboard.isPressed(KeyEvent.VK_DOWN) || keyboard.isPressed(KeyEvent.VK_S);
+        boolean up = keyboard.isPressed(KeyEvent.VK_UP) || keyboard.isPressed(KeyEvent.VK_W);
+		boolean left = keyboard.isPressed(KeyEvent.VK_LEFT) || keyboard.isPressed(KeyEvent.VK_A);
+		boolean right = keyboard.isPressed(KeyEvent.VK_RIGHT) || keyboard.isPressed(KeyEvent.VK_D);
 		
-		if (left || right || down || up) {
-			int x = 0, y = 0;
-			if(left) x--;
-			if(right) x++;
-			if(up) y--;
-			if(down) x++;
-			player.move(x, y);
-		}
-		else
-			player.move(Player.HALT);
+		int x = 0, y = 0;
+		if(left) x--;
+		if(right) x++;
+		if(up) y--;
+		if(down) y++;
+		//System.out.println(x + " " +  y);
+		player.move(x, y);
 	}
 
 	public void update(long deltaMs) {

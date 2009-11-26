@@ -92,6 +92,14 @@ public class Server extends StaticScreenGame{
 		g.dispose();
 		factory.putFrames("smallbox", b);
 		
+		b = new BufferedImage[1];
+		b[0] = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+		g = b[0].getGraphics();
+		g.setColor(Color.red);
+		g.fillOval(0, 0, 10, 10);
+		g.dispose();
+		factory.putFrames("playerSpawn", b);
+		
 		/* Build few objects with random velocities for test */
 		//Random r = new Random(System.currentTimeMillis());
 		
@@ -170,14 +178,12 @@ public class Server extends StaticScreenGame{
 	// Build world from level data.
 	public void BuildLevel(final ServerGameState gs) {
 
-		// Used for showing location of spawn spots. (Temp, change to debug only when finished)
-		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
-				JIGSHAPE.CIRCLE, Color.red);
 		for (int x = 0; x < level.playerInitSpots.size(); x++) {
-			Box a = new Box("playerSpawn");
+			// box not applicable due to being a place to spawn not an object.
+			TempObj a = new TempObj("playerSpawn");
 			a.setPosition(level.playerInitSpots.get(x));
 			System.out.println(a.getPosition());
-			gs.add(a, NetObject.PLAYER);
+			gs.add(a, NetObject.PLAYERSPAWN);
 		}
 
 		// Create objects based on object type.
