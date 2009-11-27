@@ -142,7 +142,7 @@ public class Server extends StaticScreenGame{
 		if(up) y--;
 		if(down) y++;
 		//System.out.println(x + " " +  y);
-		player.move(x, y);
+		if(x!=0 || y!=0) player.move(x, y);
 	}
 	
 	public void update(final long deltaMs) {
