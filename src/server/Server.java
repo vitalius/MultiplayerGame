@@ -44,7 +44,7 @@ public class Server extends StaticScreenGame{
 		netState = new NetStateManager();
 		gameState = new ServerGameState();
 		ne = new NetworkEngine(this);
-		pe = new CattoPhysicsEngine(new Vector2D(0, 40));
+		pe = new CattoPhysicsEngine(new Vector2D(0, 100));
 		pe.setDrawArbiters(true);
 		fre.setActivation(true);
 		
