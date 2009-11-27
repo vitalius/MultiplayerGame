@@ -6,7 +6,7 @@ import java.util.Hashtable;
 public class NetStateManager {
 	
 	private NetState current = null;
-	private Protocol prot = null;
+	public Protocol prot = null;
 	
 	public NetStateManager () {
 		current = new NetState();
@@ -39,24 +39,6 @@ public class NetStateManager {
 			}
 			else
 				objectList.put(n.getId(), n);
-		}
-	}
-	
-	
-	public void processAction (final String s) {
-		Action a = prot.decodeAction(s);
-		Hashtable<Integer, NetObject> objectList = current.getHashtable();
-		
-		if (!objectList.containsKey(a.getId()))
-			return;
-		
-		switch(a.getType()) {
-		case Action.CHANGE_VELOCITY:
-			objectList.get(a.getId()).setVelocity(a.getArg());
-			break;
-		case Action.CHANGE_POSITION:
-			objectList.get(a.getId()).setPosition(a.getArg());
-			break;	
 		}
 	}
 }

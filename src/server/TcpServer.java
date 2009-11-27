@@ -5,15 +5,13 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import net.NetStateManager;
-
 
 public class TcpServer extends Thread {
 	
 	private ServerSocket servSock;
-	private NetStateManager gm;
+	private Server gm;
 	
-	public TcpServer(int p, NetStateManager g) {
+	public TcpServer(int p, Server g) {
 		gm = g;
 		try {
 			servSock = new ServerSocket(p);

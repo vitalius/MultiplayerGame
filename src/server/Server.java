@@ -3,7 +3,10 @@ package server;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.Hashtable;
+
 import physics.CattoPhysicsEngine;
+import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import jig.engine.GameClock;
@@ -11,12 +14,11 @@ import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
 import jig.engine.hli.StaticScreenGame;
 import jig.engine.util.Vector2D;
+import net.Action;
 import net.NetStateManager;
 
 /**
  * Server
- * 
- * @author Vitaliy
  *
  */
 
@@ -28,19 +30,19 @@ public class Server extends StaticScreenGame{
 	/* This is a static, constant time between frames, all clients run as fast as the server runs */
 	public static int DELTA_MS = 30;
 	
-	private NetStateManager netState;
-	private NetworkEngine ne;
-	private CattoPhysicsEngine pe;
-	private ServerGameState gameState;
-	private LevelSet levels;
-	private LevelMap level;
+	public NetStateManager netState;
+	public NetworkEngine ne;
+	public CattoPhysicsEngine pe;
+	public ServerGameState gameState;
+	public LevelSet levels;
+	public LevelMap level;
 	
 	public Server(int width, int height, boolean preferFullscreen) {
 		super(width, height, preferFullscreen);
 		
 		netState = new NetStateManager();
 		gameState = new ServerGameState();
-		ne = new NetworkEngine(netState, gameState);
+		ne = new NetworkEngine(this);
 		pe = new CattoPhysicsEngine(new Vector2D(0, 40));
 		pe.setDrawArbiters(true);
 		fre.setActivation(true);
@@ -109,6 +111,76 @@ public class Server extends StaticScreenGame{
 		level.buildLevel(gameState);
 		
 		netState.update(gameState.getNetState());
+	}
+	
+	/**
+	 * Just like client has a "keyboardHandler" method that capture key strokes 
+	 * and acts on them, this method gets action request from clients
+	 * and updates the game server state.
+	 * 
+	 * TcpServer listens on client requests and calls this method
+	 * 
+	 * @param action = encoded action string
+	 */
+	public void processAction(String action) {
+		
+		Action a = netState.prot.decodeAction(action);
+		
+		// Get hashtable of all physics objects currently in the game
+		Hashtable<Integer, GameObject> objectList = gameState.getHashtable();
+		
+		// If there is no such object ID on the server, simply return and do nothing
+		if (!objectList.containsKey(a.getId()) && a.getType() != Action.JOIN)
+			return;
+		
+		switch(a.getType()) {			
+		//////////////////////////////////////////////
+		// Handling players input, keystrokes
+		case Action.INPUT:
+			//System.out.println("Player id: "+a.getId());
+			//System.out.println("up:"+a.up+" down:"+a.down+" left:"+a.left+" right:"+a.right+" jump:"+a.jump);
+			
+			GameObject playerOjbect = objectList.get(a.getId());
+			
+			// Cool idea from Rolf for handling input
+			int x = 0, y = 0;
+			
+			if (a.up)    --y;
+			if (a.down)  ++y;
+			if (a.left)  --x;
+			if (a.right) ++x;
+			
+			Vector2D newVelocity = new Vector2D(100*x, 100*y);
+			playerOjbect.setVelocity(newVelocity);
+			
+			break;
+			
+			
+		/////////////////////////////////////////////
+		// Adding a player
+		case Action.JOIN:
+			System.out.println("Adding player id:"+a.getId());
+			
+			ne.addPlayer(a.getId(), a.getMsg());
+			GameObject player = new GameObject("player");
+			player.setPosition(new Vector2D(100,100));
+			gameState.add(a.getId(), player, GameObject.PLAYER);	
+
+			// Reseting physics/render layers
+			gameObjectLayers.clear();
+			gameObjectLayers.add(gameState.getBoxes());
+			pe.clear();
+			pe.manageViewableSet(gameState.getBoxes());
+			
+			break;
+			
+		case Action.CHANGE_VELOCITY:
+			objectList.get(a.getId()).setVelocity(a.getArg());
+			break;
+		case Action.CHANGE_POSITION:
+			objectList.get(a.getId()).setPosition(a.getArg());
+			break;
+		}
 	}
 	
 	public void update(final long deltaMs) {

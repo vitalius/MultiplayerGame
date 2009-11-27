@@ -41,6 +41,18 @@ public class ServerGameState {
 		// all objects are PLAYERs right now
 		netState.add(new NetObject(id, box.getPosition(), type));
 	}
+
+	/**
+	 * This method is called when adding a player because id is already provided
+	 * 
+	 */	
+	public void add(int id, GameObject box, int type) {
+		if(boxList.containsKey(id))
+			return;
+		
+		boxList.put(id, box);
+		netState.add(new NetObject(id, box.getPosition(), type));
+	}	
 	
 	public void update() {
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
@@ -57,7 +69,9 @@ public class ServerGameState {
 		}
 	}
 	
-	
+	public Hashtable<Integer, GameObject> getHashtable() {
+		return boxList;
+	}
 	/**
 	 * Returns a Layer which can be added to rendering layer
 	 * @return
