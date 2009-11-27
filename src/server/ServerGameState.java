@@ -2,11 +2,9 @@ package server;
 
 import java.util.Hashtable;
 import java.util.Random;
-
 import world.GameObject;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
-import jig.engine.util.Vector2D;
 import net.NetObject;
 import net.NetState;
 
@@ -49,10 +47,10 @@ public class ServerGameState {
 	 * 
 	 */	
 	public void add(int id, GameObject box, int type) {
-		if(boxList.containsKey(id))
+		if(goList.containsKey(id))
 			return;
 		
-		boxList.put(id, box);
+		goList.put(id, box);
 		netState.add(new NetObject(id, box.getPosition(), type));
 	}	
 	
@@ -72,7 +70,7 @@ public class ServerGameState {
 	}
 	
 	public Hashtable<Integer, GameObject> getHashtable() {
-		return boxList;
+		return goList;
 	}
 	/**
 	 * Returns a Layer which can be added to rendering layer

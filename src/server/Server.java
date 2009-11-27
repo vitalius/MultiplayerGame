@@ -2,6 +2,7 @@ package server;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
@@ -9,7 +10,6 @@ import physics.CattoPhysicsEngine;
 import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
-import jig.engine.GameClock;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
 import jig.engine.hli.StaticScreenGame;
@@ -36,6 +36,7 @@ public class Server extends StaticScreenGame{
 	public ServerGameState gameState;
 	public LevelSet levels;
 	public LevelMap level;
+	public GameObject player;
 	
 	public Server(int width, int height, boolean preferFullscreen) {
 		super(width, height, preferFullscreen);
@@ -62,7 +63,7 @@ public class Server extends StaticScreenGame{
 		b[0] = new BufferedImage(16, 32, BufferedImage.TYPE_INT_RGB);
 		g = b[0].getGraphics();
 		g.setColor(Color.red);
-		g.fillRect(0, 0, 30, 40);
+		g.fillRect(0, 0, 16, 32);
 		g.dispose();
 		factory.putFrames("player", b);
 
@@ -110,8 +111,36 @@ public class Server extends StaticScreenGame{
 		// Build world from level data
 		level.buildLevel(gameState);
 		
+		// Add a player to test movement, remove when not needed
+		GameObject p;
+ 		p = new GameObject("player");
+ 		p.set(100, .2, 1.0, 0.0);
+ 		Vector2D a = level.playerInitSpots.get(0);
+ 		p.setPosition(new Vector2D(a.getX(), a.getY()));
+ 		gameState.add(p, GameObject.PLAYER);
+ 		player = p;
+		
 		netState.update(gameState.getNetState());
 	}
+	  	
+	 
+	 	// this can be removed when the server no longer needs to test player movement
+	 	public void keyboardMovementHandler() {
+	 		keyboard.poll();
+	 		
+	         boolean down = keyboard.isPressed(KeyEvent.VK_DOWN) || keyboard.isPressed(KeyEvent.VK_S);
+	         boolean up = keyboard.isPressed(KeyEvent.VK_UP) || keyboard.isPressed(KeyEvent.VK_W);
+	 		boolean left = keyboard.isPressed(KeyEvent.VK_LEFT) || keyboard.isPressed(KeyEvent.VK_A);
+	 		boolean right = keyboard.isPressed(KeyEvent.VK_RIGHT) || keyboard.isPressed(KeyEvent.VK_D);
+	 		
+	 		int x = 0, y = 0;
+	 		if(left) x--;
+	 		if(right) x++;
+	 		if(up) y--;
+	 		if(down) y++;
+	 		//System.out.println(x + " " +  y);
+	 		if(x!=0 || y!=0) player.move(x, y);
+	 	}
 	
 	/**
 	 * Just like client has a "keyboardHandler" method that capture key strokes 
@@ -151,7 +180,7 @@ public class Server extends StaticScreenGame{
 			if (a.right) ++x;
 			
 			Vector2D newVelocity = new Vector2D(100*x, 100*y);
-			playerOjbect.setVelocity(newVelocity);
+			if(x != 0 || y != 0) playerOjbect.setVelocity(newVelocity);
 			
 			break;
 			
@@ -163,7 +192,9 @@ public class Server extends StaticScreenGame{
 			
 			ne.addPlayer(a.getId(), a.getMsg());
 			GameObject player = new GameObject("player");
-			player.setPosition(new Vector2D(100,100));
+			player.set(100, .2, 1.0, 0.0);
+			Vector2D spawn = level.playerInitSpots.get(0);
+	 		player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
 			gameState.add(a.getId(), player, GameObject.PLAYER);	
 
 			// Reseting physics/render layers
@@ -186,68 +217,15 @@ public class Server extends StaticScreenGame{
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
 		pe.applyLawsOfPhysics(deltaMs);
-		//keyboardMovementHandler(deltaMs);
+		ne.update();
+		gameState.update();
+		keyboardMovementHandler();
 	}
 	
 	@Override
 	public void render(final RenderingContext gc) {
 		super.render(gc);
 		pe.renderPhysicsMarkup(gc);
-	}
-	
-	public void run() {		
-		beforeRunning();
-		
-		// do two updates to warm up the JVM
-		// ...then establish the global time
-		gameLoop(0);
-		gameLoop(0);
-		
-		theClock.begin();
-		
-		running = true;
-		long partialMs = 0;
-		long deltaTime;
-		long deltaMs;
-		while (running && !gameframe.isExitAndCloseRequested()) {
-			theClock.tick();
-			// if we're running really fast, then each frame may complete
-			// in a very small fraction of a second (less than 1 ms).
-			// in this case, we've got a bit of a problem, since the naive
-			// approach would simply convert deltaTime to deltaMs by dividing
-			// by NANOS_PER_MS.  That, would case deltaMS to always equal 0.
-			// So instead, we'll keep track of the remainder and add that the
-			// next time through.  This way we're not loosing those 'partial' 
-			// milliseconds.
-			deltaTime = theClock.getDeltaGameTime() + partialMs;
-			deltaMs = deltaTime / GameClock.NANOS_PER_MS;
-			partialMs = deltaTime % GameClock.NANOS_PER_MS;
-			gameLoop(deltaMs);	
-			
-			ne.update();
-			gameState.update();
-			
-			// Limit FPS to 200
-			try {
-				Thread.sleep(DELTA_MS);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		gameframe.closeAndExit();
-	}
-	
-	private void gameLoop(long deltaMs)
-	{
-		//render
-		RenderingContext rc = gameframe.getRenderingContext();
-		render(rc);
-		gameframe.displayBackBuffer();
-		gameframe.clearBackBuffer();
-
-		//update
-		update(deltaMs);	
 	}
 	
 	public static void main (String[] vars) {

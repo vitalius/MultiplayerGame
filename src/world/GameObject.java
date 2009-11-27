@@ -1,9 +1,6 @@
 package world;
 
-import java.awt.event.KeyEvent;
-
 import jig.engine.util.Vector2D;
-import net.Action;
 import physics.Box;
 
 public class GameObject extends Box {

@@ -45,7 +45,7 @@ public class Client extends StaticScreenGame {
 
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
 
-		PaintableCanvas.loadDefaultFrames("player", 30, 40, 1, JIGSHAPE.RECTANGLE, Color.red);
+		PaintableCanvas.loadDefaultFrames("player", 16, 32, 1, JIGSHAPE.RECTANGLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("ground", 1600, 10, 1, JIGSHAPE.RECTANGLE, Color.green);
 		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1, JIGSHAPE.RECTANGLE, Color.blue);
 		PaintableCanvas.loadDefaultFrames("platform", 100, 10, 1, JIGSHAPE.RECTANGLE, Color.green);
