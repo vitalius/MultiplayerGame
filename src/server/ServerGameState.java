@@ -3,10 +3,9 @@ package server;
 import java.util.Hashtable;
 import java.util.Random;
 
+import world.GameObject;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
-
-import physics.Box;
 import net.NetObject;
 import net.NetState;
 
@@ -14,7 +13,7 @@ public class ServerGameState {
 
 	private NetState netState;
 	
-	private Hashtable<Integer, Box> boxList = new Hashtable<Integer, Box>();
+	private Hashtable<Integer, GameObject> boxList = new Hashtable<Integer, GameObject>();
 	
 	private Random generator = new Random();
 	
@@ -30,7 +29,7 @@ public class ServerGameState {
 	 * @param b - Box
 	 * @param type - type of object, this can be a player, a bullet, etc
 	 */
-	public void add(Box box, int type) {
+	public void add(GameObject box, int type) {
 		int id = generator.nextInt(65000);  // this is a hack, IDs are random number
 		
 		if(boxList.containsKey(id))
@@ -46,13 +45,13 @@ public class ServerGameState {
 	public void update() {
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for(Integer i : boxList.keySet()) {
-			Box b = boxList.get(i);
+			GameObject b = boxList.get(i);
 			NetObject no = netList.get(i);
 			no.setPosition(b.getPosition());
 			
 			//System.out.println(b.getVelocity());
 			// Box's velocity vector is way too high for some reason, maybe it should be scaled by DELTA_MS, i dunno
-			//no.setVelocity(b.getVelocity());
+			no.setVelocity(b.getVelocity());
 			
 			no.setRotation(b.getRotation());
 		}
@@ -63,9 +62,9 @@ public class ServerGameState {
 	 * Returns a Layer which can be added to rendering layer
 	 * @return
 	 */
-	public BodyLayer<Box> getBoxes() {
-		BodyLayer<Box> boxLayer = new AbstractBodyLayer.IterativeUpdate<Box>();
-		for(Box b : boxList.values())
+	public BodyLayer<GameObject> getBoxes() {
+		BodyLayer<GameObject> boxLayer = new AbstractBodyLayer.IterativeUpdate<GameObject>();
+		for(GameObject b : boxList.values())
 			boxLayer.add(b);
 		return boxLayer;
 	}

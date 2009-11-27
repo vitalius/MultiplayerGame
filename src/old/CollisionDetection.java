@@ -1,4 +1,4 @@
-package server;
+package old;
 
 import jig.engine.util.Vector2D;
 import net.NetObject;

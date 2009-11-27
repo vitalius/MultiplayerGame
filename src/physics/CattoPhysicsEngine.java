@@ -227,7 +227,7 @@ public class CattoPhysicsEngine implements PhysicsEngine<Box> {
 		}
 		for (BodyLayer<? extends Box> layer : managedLayers) {
 			for (Box b : layer) {
-
+				
 				b.setPosition(b.getPosition().translate(
 						b.getVelocity().scale(dt)));
 

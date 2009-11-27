@@ -3,26 +3,15 @@ package server;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.Random;
-
-import physics.Box;
 import physics.CattoPhysicsEngine;
-import worldmap.LevelMap;
-import worldmap.LevelSet;
-import worldmap.ObjectData;
-import worldmap.TempObj;
+import world.LevelMap;
+import world.LevelSet;
 import jig.engine.GameClock;
-import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
-import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.StaticScreenGame;
-import jig.engine.physics.AbstractBodyLayer;
-import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
-import net.NetState;
 import net.NetStateManager;
-import net.NetObject;
 
 /**
  * Server
@@ -43,7 +32,6 @@ public class Server extends StaticScreenGame{
 	private NetworkEngine ne;
 	private CattoPhysicsEngine pe;
 	private ServerGameState gameState;
-	
 	private LevelSet levels;
 	private LevelMap level;
 	
@@ -92,15 +80,13 @@ public class Server extends StaticScreenGame{
 		g.dispose();
 		factory.putFrames("smallbox", b);
 		
-		/* Build few objects with random velocities for test */
-		//Random r = new Random(System.currentTimeMillis());
-		
-		/*for (int i = 0; i < 3; i++) {
-			c.add(new NetObject("player", i, 
-					new Vector2D(300,300), 
-					NetObject.PLAYER, 
-					new Vector2D((r.nextDouble()-0.5)*50,(r.nextDouble()-0.5)*50)));
-		}*/
+		b = new BufferedImage[1];
+		b[0] = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+		g = b[0].getGraphics();
+		g.setColor(Color.red);
+		g.fillOval(0, 0, 10, 10);
+		g.dispose();
+		factory.putFrames("playerSpawn", b);
 		
 		// Load entire level.
 		levels = new LevelSet("/res/Levelset.txt");
@@ -120,78 +106,9 @@ public class Server extends StaticScreenGame{
 		}
 
 		// Build world from level data
-		BuildLevel(gameState);
-
-		// Add layer to window.
-		//gameObjectLayers.add(c.boxes);
-		//pe.manageViewableSet(c.boxes);
+		level.buildLevel(gameState);
 		
 		netState.update(gameState.getNetState());
-		/* end of network test building */
-	}
-	
-	private void addGround(ServerGameState gs, int X, int Y, double R) {
-		Box b;
-		b = new Box("ground");
-		b.set(Double.MAX_VALUE, .2, 1.0, R);
-		b.setPosition(new Vector2D(X, Y));
-		gs.add(b, NetObject.GROUND);
-		return;
-	}
-
-	private void addPlatform(ServerGameState gs, int X, int Y, double R) {
-		Box b;
-		b = new Box("platform");
-		b.set(Double.MAX_VALUE, .2, 1.0, R);
-		b.setPosition(new Vector2D(X, Y));
-		gs.add(b, NetObject.PLATFORM);
-		return;
-	}
-
-	private void addSmallBox(ServerGameState gs, int X, int Y, double R) {
-		Box b;
-		b = new Box("smallbox");
-		b.set(100, .2, 1.0, R);
-		b.setPosition(new Vector2D(X, Y));
-		gs.add(b, NetObject.SMALLBOX);
-		return;
-	}
-
-	private void addPlayer(ServerGameState gs, int Team) {
-		Box b;
-		b = new Box("player");
-		b.set(100, .2, 1.0, 0.0);
-		Vector2D a = level.playerInitSpots.get(Team);
-		b.setPosition(new Vector2D(a.getX(), a.getY()));
-		gs.add(b, NetObject.PLAYER);
-		return;
-	}
-
-	// Build world from level data.
-	public void BuildLevel(final ServerGameState gs) {
-
-		// Used for showing location of spawn spots. (Temp, change to debug only when finished)
-		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
-				JIGSHAPE.CIRCLE, Color.red);
-		for (int x = 0; x < level.playerInitSpots.size(); x++) {
-			Box a = new Box("playerSpawn");
-			a.setPosition(level.playerInitSpots.get(x));
-			System.out.println(a.getPosition());
-			gs.add(a, NetObject.PLAYER);
-		}
-
-		// Create objects based on object type.
-		for (int x = 0; x < level.Objects.size(); x++) {
-			ObjectData s = level.Objects.get(x);
-			//System.out.println(s);
-			if (s.type.compareTo("ground") == 0) {
-				addGround(gs, s.x, s.y, s.rotation);
-			} else if (s.type.compareTo("platform") == 0) {
-				addPlatform(gs, s.x, s.y, s.rotation);
-			} else if (s.type.compareTo("smallbox") == 0) {
-				addSmallBox(gs, s.x, s.y, s.rotation);
-			}
-		}
 	}
 	
 	public void update(final long deltaMs) {

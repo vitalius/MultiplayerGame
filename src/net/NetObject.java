@@ -6,11 +6,6 @@ import jig.engine.util.Vector2D;
 
 public class NetObject {
 	
-	public static final int PLAYER   = 0;
-	public static final int GROUND   = 1;
-	public static final int PLATFORM = 2;
-	public static final int SMALLBOX = 3;
-	
 	private int id;
 	private Vector2D position;
 	private Vector2D velocity;
@@ -42,7 +37,6 @@ public class NetObject {
 	}
 	
 	public void init (int objectId, Vector2D p) {
-		type = PLAYER;
 		id = objectId;
 		rotation = 0;
 		setPosition(p);
@@ -60,8 +54,8 @@ public class NetObject {
 		Vector2D p = getPosition();
 		Vector2D v = getVelocity();
 		
-		setPosition(new Vector2D(p.getX()+v.getX()*deltaMs,
-				                 p.getY()+v.getY()*deltaMs));
+		setPosition(new Vector2D(p.getX()+v.getX()*deltaMs/1000,
+				                 p.getY()+v.getY()*deltaMs/1000));
 	}
 	
 	

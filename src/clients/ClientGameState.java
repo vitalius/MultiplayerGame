@@ -3,6 +3,8 @@ package clients;
 import java.util.Collection;
 import java.util.Hashtable;
 
+import world.GameObject;
+
 import jig.engine.physics.vpe.VanillaSphere;
 import jig.engine.util.Vector2D;
 
@@ -25,17 +27,20 @@ public class ClientGameState {
 			return;
 		
 		switch(no.getType()) {
-		case NetObject.PLAYER:
+		case GameObject.PLAYER:
 			spriteList.put(no.getId(), new SpriteObject("player"));
 			break;
-		case NetObject.PLATFORM:
+		case GameObject.PLATFORM:
 			spriteList.put(no.getId(), new SpriteObject("platform"));
 			break;
-		case NetObject.SMALLBOX:
+		case GameObject.SMALLBOX:
 			spriteList.put(no.getId(), new SpriteObject("smallbox"));
 			break;
-		case NetObject.GROUND:
+		case GameObject.GROUND:
 			spriteList.put(no.getId(), new SpriteObject("ground"));
+			break;
+		case GameObject.PLAYERSPAWN:
+			spriteList.put(no.getId(), new SpriteObject("playerSpawn"));
 			break;
 		}
 		
@@ -51,7 +56,7 @@ public class ClientGameState {
 				Vector2D newPos = new Vector2D(p.getX()-(s.getRadius()-s.getImgWidth()/2), 
 											   p.getY()-(s.getRadius()-s.getImgHeight()/2));
 				spriteList.get(no.getId()).setPosition(newPos);
-				
+				//System.out.println(no.getVelocity());
 				spriteList.get(no.getId()).setVelocity(no.getVelocity());
 				spriteList.get(no.getId()).setRotation(no.getRotation());
 			} else
