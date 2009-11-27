@@ -13,6 +13,12 @@ public class NetObject {
 	private String ipAddress;
 	private int type;
 
+	
+	/**
+	 * Various level of initialization 
+	 * 
+	 * @param id
+	 */
 	public NetObject(int id) {
 		init(id, new Vector2D(0,0));
 	}
@@ -36,6 +42,12 @@ public class NetObject {
 		type = t;	
 	}
 	
+	/**
+	 * Base initialization method, all default information is set here
+	 * 
+	 * @param objectId
+	 * @param p
+	 */
 	public void init (int objectId, Vector2D p) {
 		id = objectId;
 		rotation = 0;

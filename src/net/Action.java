@@ -7,7 +7,14 @@ public class Action {
 	public static final int CHANGE_POSITION = 1;
 	public static final int JOIN            = 2;
 	public static final int DO_NOTHING      = 4;
+	public static final int INPUT           = 5;
 
+	public boolean up    = false;
+	public boolean left  = false;
+	public boolean right = false;
+	public boolean down  = false;
+	public boolean jump  = false;
+	
 	private int id;
 	private int type;
 	private Vector2D arg0;
@@ -24,12 +31,44 @@ public class Action {
 		type = t;
 		msg = ip;
 	}
-	
+
 	public Action(int requesterId, int t) {
 		id = 0;
-		t = DO_NOTHING;
+		type = t;
 		arg0 = null;
 		msg = null;
+	}
+	
+	public Action(int requesterId) {
+		id = 0;
+		type = DO_NOTHING;
+		arg0 = null;
+		msg = null;
+	}
+	
+	/**
+	 * Used to compare key strokes in Actions
+	 * 
+	 * @param a
+	 * @return
+	 */
+	public boolean equals(Action a) {
+		if (a.up == up && a.left == left && a.right == right && a.down == down)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Copy the key strokes information
+	 * 
+	 * @param a
+	 */
+	public void copy(Action a) {
+		up = a.up;
+		down = a.down;
+		left = a.left;
+		right = a.right;
+		jump = a.jump;
 	}
 	
 	public int getType () { return type; }

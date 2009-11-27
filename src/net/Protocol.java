@@ -2,6 +2,13 @@ package net;
 
 import jig.engine.util.Vector2D;
 
+/**
+ * A collections of methods that encode class information into a String
+ * and also decode classes from information String
+ * 
+ * @author vitaliy
+ *
+ */
 public class Protocol {
 	
 	public Protocol() {
@@ -19,7 +26,14 @@ public class Protocol {
 				output += a.getArg().getY() + "#";
 				break;
 			case Action.JOIN:
-				output = a.getMsg() + "#";
+				output += a.getMsg() + "#";
+				break;
+			case Action.INPUT:
+				output += (a.up    ? "1" : "0") + "#";
+				output += (a.down  ? "1" : "0") + "#";
+				output += (a.left  ? "1" : "0") + "#";
+				output += (a.right ? "1" : "0") + "#";
+				output += (a.jump  ? "1" : "0") + "#";	
 				break;
 			default:
 				break;
@@ -42,7 +56,15 @@ public class Protocol {
 			returnAction = new Action(id, type, new Vector2D(x,y));
 			break;
 		case Action.JOIN:
-			returnAction = new Action(id, type,token[2]);
+			returnAction = new Action(id, type, token[2]);
+			break;
+		case Action.INPUT:
+			returnAction = new Action(id,type);
+			returnAction.up    = Integer.valueOf(token[2]).intValue() == 1 ? true : false;
+			returnAction.down  = Integer.valueOf(token[3]).intValue() == 1 ? true : false;
+			returnAction.left  = Integer.valueOf(token[4]).intValue() == 1 ? true : false;
+			returnAction.right = Integer.valueOf(token[5]).intValue() == 1 ? true : false;
+			returnAction.jump  = Integer.valueOf(token[6]).intValue() == 1 ? true : false;
 			break;
 		default:
 			returnAction = new Action(0, Action.DO_NOTHING);

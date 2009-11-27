@@ -1,6 +1,5 @@
 package server;
 
-import net.NetStateManager;
 import net.Protocol;
 
 public class NetworkEngine {
@@ -11,23 +10,27 @@ public class NetworkEngine {
 	public static final int TCP_PORT   = 5001;
 	
 	private Broadcaster bcaster;
-	private NetStateManager gm;
+	private Server gameserver;
 	private Protocol prot;
 	private TcpServer tcpControl;
 	
-	public NetworkEngine(NetStateManager g) {
-		gm = g;
+	public NetworkEngine(Server gs) {
+		gameserver = gs;
 		prot = new Protocol();
 		bcaster = new Broadcaster(BCAST_PORT);
 		
-		bcaster.addIP(1, "127.0.0.1");
+		//bcaster.addIP(1, "127.0.0.1");
 		//bcaster.addIP(2, "10.97.53.61");
 		
-		tcpControl = new TcpServer(TCP_PORT, gm);
+		tcpControl = new TcpServer(TCP_PORT, gameserver);
 		tcpControl.start();
 	}
 	
+	public void addPlayer(int id, String ip) {
+		bcaster.addIP(id, ip);
+	}
+	
 	public void update() {
-		bcaster.spam(prot.encode(gm.getState()));
+		bcaster.spam(prot.encode(gameserver.gameState.getNetState()));
 	}
 }
