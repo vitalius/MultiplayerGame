@@ -37,4 +37,8 @@ public class Player {
 		Action join = new Action(playerId, Action.JOIN, ip);
 		tcp.sendSocket(prot.encodeAction(join));
 	}
+	
+	public int getID() {
+		return playerId;
+	}
 }
