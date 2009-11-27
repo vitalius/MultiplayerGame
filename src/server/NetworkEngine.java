@@ -11,23 +11,25 @@ public class NetworkEngine {
 	public static final int TCP_PORT   = 5001;
 	
 	private Broadcaster bcaster;
-	private NetStateManager gm;
+	private NetStateManager nsm;
+	private ServerGameState sgm;
 	private Protocol prot;
 	private TcpServer tcpControl;
 	
-	public NetworkEngine(NetStateManager g) {
-		gm = g;
+	public NetworkEngine(NetStateManager n, ServerGameState gm) {
+		nsm = n;
+		sgm = gm;
 		prot = new Protocol();
 		bcaster = new Broadcaster(BCAST_PORT);
 		
-		bcaster.addIP(1, "127.0.0.1");
+		//bcaster.addIP(1, "127.0.0.1");
 		//bcaster.addIP(2, "10.97.53.61");
 		
-		tcpControl = new TcpServer(TCP_PORT, gm);
+		tcpControl = new TcpServer(TCP_PORT, nsm);
 		tcpControl.start();
 	}
 	
 	public void update() {
-		bcaster.spam(prot.encode(gm.getState()));
+		bcaster.spam(prot.encode(nsm.getState()));
 	}
 }
