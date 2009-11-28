@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 
+import physics.Arbiter;
 import physics.CattoPhysicsEngine;
 import world.GameObject;
 import world.LevelMap;
@@ -13,6 +14,7 @@ import world.LevelSet;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
 import jig.engine.hli.StaticScreenGame;
+import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import net.Action;
 import net.NetStateManager;
@@ -44,7 +46,7 @@ public class Server extends StaticScreenGame{
 		netState = new NetStateManager();
 		gameState = new ServerGameState();
 		ne = new NetworkEngine(this);
-		pe = new CattoPhysicsEngine(new Vector2D(0, 40));
+		pe = new CattoPhysicsEngine(new Vector2D(0, 100));
 		pe.setDrawArbiters(true);
 		fre.setActivation(true);
 		
@@ -122,7 +124,7 @@ public class Server extends StaticScreenGame{
 		// Add a player to test movement, remove when not needed
 		GameObject p;
  		p = new GameObject("player");
- 		p.set(100, .2, 1.0, 0.0);
+ 		p.set(100, 1.0, 1.0, 0.0);
  		Vector2D a = level.playerInitSpots.get(0);
  		p.setPosition(new Vector2D(a.getX(), a.getY()));
  		gameState.add(p, GameObject.PLAYER);
@@ -177,7 +179,7 @@ public class Server extends StaticScreenGame{
 			//System.out.println("Player id: "+a.getId());
 			//System.out.println("up:"+a.up+" down:"+a.down+" left:"+a.left+" right:"+a.right+" jump:"+a.jump);
 			
-			GameObject playerOjbect = objectList.get(a.getId());
+			GameObject playerObject = objectList.get(a.getId());
 			
 			// Cool idea from Rolf for handling input
 			int x = 0, y = 0;
@@ -187,8 +189,29 @@ public class Server extends StaticScreenGame{
 			if (a.left)  --x;
 			if (a.right) ++x;
 			
+			// detect if jumping while on an object
+			Arbiter arb;
+			BodyLayer<GameObject> layer = gameState.getBoxes();
+			GameObject otherObject;
+			if (y < 0) { // if jump was pressed
+				y = 0;
+				for (int i = 0; i < layer.size(); i++) {
+					otherObject = layer.get(i);
+					if (playerObject.hashCode() == otherObject.hashCode()) break;
+					arb = new Arbiter(playerObject, otherObject);
+					//System.out.println("playerObject: "+playerObject.getType());
+					//System.out.println("otherObject: "+otherObject.getType());
+					//System.out.println("num contacts: "+arb.getNumContacts());
+					if ( arb.getNumContacts() > 0 ) {
+						y = -1;
+						break;
+					}
+	
+				}
+			}
+			
 			Vector2D newVelocity = new Vector2D(100*x, 100*y);
-			if(x != 0 || y != 0) playerOjbect.setVelocity(newVelocity);
+			if(x != 0 || y != 0) playerObject.setVelocity(newVelocity);
 			
 			break;
 			

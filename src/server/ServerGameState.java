@@ -59,6 +59,7 @@ public class ServerGameState {
 	}
 
 	public void update() {
+		this.setVertical(GameObject.PLAYER); 
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goList.keySet()) {
 			GameObject b = goList.get(i);
@@ -96,6 +97,16 @@ public class ServerGameState {
 		return boxLayer;
 	}
 
+	/**
+	 * sets any object type vertical. useful to keep players vertical.
+	 * @return
+	 */
+	public void setVertical(int type) {
+		for(GameObject go : goList.values())
+			if (go.type == type) go.setRotation(0);
+		return;
+	}
+	
 	public NetState getNetState() {
 		return netState;
 	}

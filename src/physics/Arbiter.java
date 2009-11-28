@@ -2,7 +2,6 @@ package physics;
 
 import java.awt.geom.AffineTransform;
 import java.util.List;
-
 import jig.engine.ImageResource;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
@@ -54,7 +53,7 @@ public class Arbiter {
 	 * @param b2
 	 *            another box touching <code>b1</code>
 	 */
-	protected Arbiter(final Box b1, final Box b2) {
+	public Arbiter(final Box b1, final Box b2) {
 		if (b1.compareTo(b2) < 0) {
 			body1 = b1;
 			body2 = b2;
@@ -70,6 +69,10 @@ public class Arbiter {
 
 		friction = Math.sqrt(body1.friction * body2.friction);
 
+	}
+	
+	public int getNumContacts() {
+		return numContacts;
 	}
 
 	/**
@@ -489,6 +492,12 @@ public class Arbiter {
 		c[1].vx = rc1.getX() + pos.getX();
 		c[1].vy = rc1.getY() + pos.getY();
 
+	}
+	
+	// determine if they objects are touching
+	public boolean touching(final Box bodyA, final Box bodyB) {
+		if (collide( this.contacts, bodyA, bodyB) > 0) return true;
+		return false;
 	}
 
 	/**
