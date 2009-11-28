@@ -161,7 +161,7 @@ public class Server extends StaticScreenGame{
 	 * 
 	 * @param action = encoded action string
 	 */
-	public  synchronized void processAction(String action) {
+	public synchronized void processAction(String action) {
 	
 		Action a = netState.prot.decodeAction(action);
 		
@@ -244,6 +244,7 @@ public class Server extends StaticScreenGame{
 			break;
 
 		case Action.SHOOT:
+			
 			System.out.println(a.getId() + " " + a.getArg());
 			// add new bullet here.
 			Vector2D shootloc = a.getArg();
@@ -266,26 +267,35 @@ public class Server extends StaticScreenGame{
 	 		// hope this works!!
 	 		
 			// Reseting physics/render layers
-			gameObjectLayers.clear();
-			gameObjectLayers.add(gameState.getBoxes());
-			pe.clear();
-			pe.manageViewableSet(gameState.getBoxes());
+	 		
+	 		synchronized (pe) {
+	 		synchronized(gameObjectLayers) {
+	 			gameObjectLayers.clear();
+	 			gameObjectLayers.add(gameState.getBoxes());
+	 			pe.clear();
+	 			pe.manageViewableSet(gameState.getBoxes()); 
+	 		}}
+			
 			break;
 		}
 	}
 	
 	public void update(final long deltaMs) {
-		super.update(deltaMs);
-		pe.applyLawsOfPhysics(deltaMs);
-		ne.update();
-		gameState.update();
-		keyboardMovementHandler();
+		synchronized (gameState) {
+			super.update(deltaMs);
+			pe.applyLawsOfPhysics(deltaMs);
+			ne.update();
+		    gameState.update();
+		    keyboardMovementHandler();
+		}
 	}
 	
 	@Override
 	public void render(final RenderingContext gc) {
-		super.render(gc);
-		pe.renderPhysicsMarkup(gc);
+		synchronized(gameObjectLayers) {
+            super.render(gc);
+		    pe.renderPhysicsMarkup(gc);
+		}
 	}
 	
 	public static void main (String[] vars) {
