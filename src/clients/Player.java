@@ -39,8 +39,8 @@ public class Player {
 		tcp.sendSocket(prot.encodeAction(join));
 	}
 	
+	
 	public void shoot(Vector2D Spot) {
-		// Shoot network call here.
 		Action shooty = new Action(playerId, Action.SHOOT, Spot);
 		tcp.sendSocket(prot.encodeAction(shooty));
 	}

@@ -161,8 +161,8 @@ public class Server extends StaticScreenGame{
 	 * 
 	 * @param action = encoded action string
 	 */
-	public void processAction(String action) {
-		
+	public  synchronized void processAction(String action) {
+	
 		Action a = netState.prot.decodeAction(action);
 		
 		// Get hashtable of all physics objects currently in the game

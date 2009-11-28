@@ -2,6 +2,8 @@ package server;
 
 import java.util.Hashtable;
 import java.util.Random;
+import java.util.Set;
+
 import world.GameObject;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
@@ -13,11 +15,21 @@ public class ServerGameState {
 	private NetState netState;
 
 	private Hashtable<Integer, GameObject> goList = new Hashtable<Integer, GameObject>();
-
+	
 	private Random generator = new Random();
 
 	public ServerGameState() {
 		netState = new NetState();
+	}
+	
+	public int getUniqueId() {
+		Set <Integer> usedIds = goList.keySet();
+		
+		int id = 100;
+		while (usedIds.contains(id))
+			id = generator.nextInt(65000);
+		
+		return id;
 	}
 
 	/**
@@ -32,17 +44,12 @@ public class ServerGameState {
 	 *            - type of object, this can be a player, a bullet, etc
 	 */
 	public void add(GameObject go, int type) {
-		int id = generator.nextInt(65000); // this is a hack, IDs are random
-											// number
+		int id = getUniqueId();
 
 		if (goList.containsKey(id))
 			return;
 
 		goList.put(id, go);
-
-		// Need to figure out which type of box it is. PLAYER, BULLET, PANEL,
-		// etc
-		// all objects are PLAYERs right now
 		netState.add(new NetObject(id, go.getPosition(), type));
 	}
 

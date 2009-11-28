@@ -31,14 +31,14 @@ public class Client extends StaticScreenGame {
 
 	Action input;
 
-	NetStateManager gm;
+	NetStateManager netStateMan;
 	Player player;
 
 	BodyLayer<Body> WorldLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 	BodyLayer<Body> MovableLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 	BodyLayer<Body> InterfaceLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 
-	ClientGameState clientGm;
+	GameSprites gameSprites;
 
 	public Client() {
 
@@ -57,11 +57,11 @@ public class Client extends StaticScreenGame {
 		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
 				JIGSHAPE.RECTANGLE, Color.black);
 
-		gm = new NetStateManager();
-		clientGm = new ClientGameState();
+		netStateMan = new NetStateManager();
+		gameSprites = new GameSprites();
 
 		/* Start thread to sync gameState with server */
-		BroadcastListener bListen = new BroadcastListener(gm);
+		BroadcastListener bListen = new BroadcastListener(netStateMan);
 		bListen.start();
 
 		TcpClient control = new TcpClient(SERVER_IP, 5001);
@@ -95,13 +95,13 @@ public class Client extends StaticScreenGame {
 	public void update(long deltaMs) {
 		super.update(deltaMs);
 
-		Vector2D playerPos = gm.getState().getHashtable().get(player.getID()).getPosition();
+		Vector2D playerPos = netStateMan.getState().getHashtable().get(player.getID()).getPosition();
 			
 		// Adjust offset so player is at center of screen
 		Vector2D ajustView = new Vector2D(playerPos.getX() - WORLD_WIDTH / 2,
 					playerPos.getY() - WORLD_HEIGHT / 2);
 
-		clientGm.sync(gm, ajustView);
+		gameSprites.sync(netStateMan, ajustView);
 	
 		keyboardMovementHandler();
 
@@ -118,7 +118,7 @@ public class Client extends StaticScreenGame {
 		super.render(rc);
 
 		try {
-			for (Body sprite : clientGm.getSprites())
+			for (Body sprite : gameSprites.getSprites())
 				sprite.render(rc);
 		} catch (NullPointerException e) {
 
