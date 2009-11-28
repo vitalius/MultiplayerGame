@@ -42,6 +42,9 @@ public class ClientGameState {
 		case GameObject.PLAYERSPAWN:
 			spriteList.put(no.getId(), new SpriteObject("playerSpawn"));
 			break;
+		case GameObject.BULLET:
+			spriteList.put(no.getId(), new SpriteObject("bullet"));
+			break;
 		}
 		
 	}

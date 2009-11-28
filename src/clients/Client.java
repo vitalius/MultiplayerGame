@@ -55,6 +55,8 @@ public class Client extends StaticScreenGame {
 				JIGSHAPE.RECTANGLE, Color.green);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
+		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
+				JIGSHAPE.RECTANGLE, Color.black);
 
 		gm = new NetStateManager();
 		clientGm = new ClientGameState();
@@ -90,8 +92,9 @@ public class Client extends StaticScreenGame {
 		player.move(input);
 	}
 
+	int shootlimit = 0;
 	public void update(long deltaMs) {
-		super.update(deltaMs);
+		super.update(deltaMs);		
 		Vector2D a = new Vector2D(0, 0);
 		try {
 			for (NetObject no : gm.getState().getNetObjects()) {
@@ -113,8 +116,12 @@ public class Client extends StaticScreenGame {
 
 		keyboardMovementHandler();
 
-		if (mouse.isLeftButtonPressed()) {
-			System.out.println("Weapon fire keypress" + mouse.getLocation());
+		shootlimit += deltaMs;
+		if (mouse.isLeftButtonPressed() && shootlimit > 250) {
+			shootlimit = 0;
+			Vector2D shot = new Vector2D(mouse.getLocation().x, mouse.getLocation().y);
+			player.shoot(shot);
+			//System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
 	}
 
