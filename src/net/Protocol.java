@@ -33,7 +33,12 @@ public class Protocol {
 				output += (a.down  ? "1" : "0") + "#";
 				output += (a.left  ? "1" : "0") + "#";
 				output += (a.right ? "1" : "0") + "#";
-				output += (a.jump  ? "1" : "0") + "#";	
+				output += (a.jump  ? "1" : "0") + "#";
+				output += (a.shoot ? "1" : "0") + "#";
+				break;
+			case Action.SHOOT:
+				output += a.getArg().getX() + "#";
+				output += a.getArg().getY() + "#";
 				break;
 			default:
 				break;
@@ -48,11 +53,13 @@ public class Protocol {
 		int id = Integer.valueOf(token[0]).intValue();	
 		int type = Integer.valueOf(token[1]).intValue();
 		
+		double x, y;
+		
 		switch (type) {
 		case Action.CHANGE_VELOCITY:
 		case Action.CHANGE_POSITION:
-			double x = Double.valueOf(token[2]).doubleValue();
-			double y = Double.valueOf(token[3]).doubleValue();
+			x = Double.valueOf(token[2]).doubleValue();
+			y = Double.valueOf(token[3]).doubleValue();
 			returnAction = new Action(id, type, new Vector2D(x,y));
 			break;
 		case Action.JOIN:
@@ -65,6 +72,12 @@ public class Protocol {
 			returnAction.left  = Integer.valueOf(token[4]).intValue() == 1 ? true : false;
 			returnAction.right = Integer.valueOf(token[5]).intValue() == 1 ? true : false;
 			returnAction.jump  = Integer.valueOf(token[6]).intValue() == 1 ? true : false;
+			returnAction.shoot = Integer.valueOf(token[7]).intValue() == 1 ? true : false;
+			break;
+		case Action.SHOOT:
+			x = Double.valueOf(token[2]).doubleValue();
+			y = Double.valueOf(token[3]).doubleValue();
+			returnAction = new Action(id, type, new Vector2D(x,y));
 			break;
 		default:
 			returnAction = new Action(0, Action.DO_NOTHING);

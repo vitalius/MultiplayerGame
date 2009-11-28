@@ -39,7 +39,7 @@ public class Server extends StaticScreenGame{
 	public LevelSet levels;
 	public LevelMap level;
 	public GameObject player;
-	
+
 	public Server(int width, int height, boolean preferFullscreen) {
 		super(width, height, preferFullscreen);
 		
@@ -93,6 +93,14 @@ public class Server extends StaticScreenGame{
 		g.dispose();
 		factory.putFrames("playerSpawn", b);
 		
+		b = new BufferedImage[1];
+		b[0] = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+		g = b[0].getGraphics();
+		g.setColor(Color.black);
+		g.fillRect(0, 0, 10, 10);
+		g.dispose();
+		factory.putFrames("bullet", b);
+
 		// Load entire level.
 		levels = new LevelSet("/res/Levelset.txt");
 		
@@ -130,16 +138,16 @@ public class Server extends StaticScreenGame{
 	 	public void keyboardMovementHandler() {
 	 		keyboard.poll();
 	 		
-	         boolean down = keyboard.isPressed(KeyEvent.VK_DOWN) || keyboard.isPressed(KeyEvent.VK_S);
-	         boolean up = keyboard.isPressed(KeyEvent.VK_UP) || keyboard.isPressed(KeyEvent.VK_W);
-	 		boolean left = keyboard.isPressed(KeyEvent.VK_LEFT) || keyboard.isPressed(KeyEvent.VK_A);
+	 		boolean down =  keyboard.isPressed(KeyEvent.VK_DOWN)  || keyboard.isPressed(KeyEvent.VK_S);
+	 		boolean up =    keyboard.isPressed(KeyEvent.VK_UP)    || keyboard.isPressed(KeyEvent.VK_W);
+	 		boolean left =  keyboard.isPressed(KeyEvent.VK_LEFT)  || keyboard.isPressed(KeyEvent.VK_A);
 	 		boolean right = keyboard.isPressed(KeyEvent.VK_RIGHT) || keyboard.isPressed(KeyEvent.VK_D);
 	 		
 	 		int x = 0, y = 0;
-	 		if(left) x--;
-	 		if(right) x++;
-	 		if(up) y--;
-	 		if(down) y++;
+	 		if(left)   --x;
+	 		if(right)  ++x;
+	 		if(up)     --y;
+	 		if(down)   ++y;
 	 		//System.out.println(x + " " +  y);
 	 		if(x!=0 || y!=0) player.move(x, y);
 	 	}
@@ -233,6 +241,35 @@ public class Server extends StaticScreenGame{
 			break;
 		case Action.CHANGE_POSITION:
 			objectList.get(a.getId()).setPosition(a.getArg());
+			break;
+
+		case Action.SHOOT:
+			System.out.println(a.getId() + " " + a.getArg());
+			// add new bullet here.
+			Vector2D shootloc = a.getArg();
+			GameObject p;
+	 		p = new GameObject("bullet");
+	 		p.set(100, .2, 1.0, 0.0);// leaving in player stats becuause what should bullets have?.
+	 		// set place at player.
+	 		Vector2D place = objectList.get(a.getId()).getCenterPosition();
+	 		// set velocity.. get mag of vector
+	 		double xx = place.getX() - shootloc.getX();
+	 		double yy = place.getY() - shootloc.getY();
+	 		double mag = Math.sqrt(xx * xx + yy * yy);
+	 		shootloc.scale(mag);
+	 		// set V
+	 		p.setVelocity(shootloc);
+	 		// set poosition - away from player a little.
+	 		p.setPosition(new Vector2D(place.getX() + 10, place.getY() + 10));
+
+	 		gameState.add(p, GameObject.BULLET);
+	 		// hope this works!!
+	 		
+			// Reseting physics/render layers
+			gameObjectLayers.clear();
+			gameObjectLayers.add(gameState.getBoxes());
+			pe.clear();
+			pe.manageViewableSet(gameState.getBoxes());
 			break;
 		}
 	}

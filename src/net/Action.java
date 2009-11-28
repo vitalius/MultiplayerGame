@@ -8,6 +8,7 @@ public class Action {
 	public static final int JOIN            = 2;
 	public static final int DO_NOTHING      = 4;
 	public static final int INPUT           = 5;
+	public static final int SHOOT           = 6;
 
 	public boolean up    = false;
 	public boolean left  = false;
@@ -15,6 +16,8 @@ public class Action {
 	public boolean down  = false;
 	public boolean jump  = false;
 	
+	public boolean shoot = false;
+
 	private int id;
 	private int type;
 	private Vector2D arg0;
@@ -53,7 +56,7 @@ public class Action {
 	 * @return
 	 */
 	public boolean equals(Action a) {
-		if (a.up == up && a.left == left && a.right == right && a.down == down)
+		if (a.up == up && a.left == left && a.right == right && a.down == down && a.shoot == shoot)
 			return true;
 		return false;
 	}
@@ -69,6 +72,7 @@ public class Action {
 		left = a.left;
 		right = a.right;
 		jump = a.jump;
+		shoot = a.shoot;
 	}
 	
 	public int getType () { return type; }
