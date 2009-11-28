@@ -6,7 +6,6 @@ import java.util.ConcurrentModificationException;
 
 import net.Action;
 import net.NetStateManager;
-import net.NetObject;
 
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
@@ -92,25 +91,15 @@ public class Client extends StaticScreenGame {
 
 	public void update(long deltaMs) {
 		super.update(deltaMs);
-		Vector2D a = new Vector2D(0, 0);
-		try {
-			for (NetObject no : gm.getState().getNetObjects()) {
-				no.update(deltaMs);
 
-				// need to be fixed: ability to get X and Y from Player object
-				// directly so no need for decision branch here in loop.
-				if (no.getId() == player.getID())
-					a = no.getPosition();
-			}
+		Vector2D playerPos = gm.getState().getHashtable().get(player.getID()).getPosition();
+			
+		// Adjust offset so player is at center of screen
+		Vector2D ajustView = new Vector2D(playerPos.getX() - WORLD_WIDTH / 2,
+					playerPos.getY() - WORLD_HEIGHT / 2);
 
-			// Adjust offset so player is at center of screen
-			a = new Vector2D(a.getX() - WORLD_WIDTH / 2,
-					a.getY() - WORLD_HEIGHT / 2);
-			clientGm.sync(gm, a);
-		} catch (ConcurrentModificationException e2) {
-
-		}
-
+		clientGm.sync(gm, ajustView);
+	
 		keyboardMovementHandler();
 
 		if (mouse.isLeftButtonPressed()) {
