@@ -8,6 +8,7 @@ public class Action {
 	public static final int JOIN            = 2;
 	public static final int DO_NOTHING      = 4;
 	public static final int INPUT           = 5;
+	public static final int SHOOT           = 6;
 
 	public boolean up    = false;
 	public boolean left  = false;
@@ -15,23 +16,46 @@ public class Action {
 	public boolean down  = false;
 	public boolean jump  = false;
 	
+	public boolean shoot = false;
+
 	private int id;
 	private int type;
 	private Vector2D arg0;
 	private String msg;
 	
+	/**
+	 * Used by displacing position, updating velocity and shooting
+	 * 
+	 * @param requesterId
+	 * @param t - CHANGE_VELOCITY, CHANGE_POSITION, SHOOT
+	 * @param v - vector2D
+	 */
 	public Action (int requesterId, int t, Vector2D v) {
 		id = requesterId;
 		type = t;
 		arg0 = v;
 	}
 	
-	public Action(int requesterId, int t, String ip) {
+	/**
+	 * Used by join action, Attempt to add a player to the game
+	 * And the input where String is a coded input like this: "1#0#0#1" - UP and RIGHT are pressed
+	 * 
+	 * @param requesterId
+	 * @param t - JOIN, INPUT
+	 * @param ip - IP address of a client
+	 */
+	public Action(int requesterId, int t, String s) {
 		id = requesterId;
 		type = t;
-		msg = ip;
+		msg = s;
 	}
 
+	/**
+	 * Custom blank Action 
+	 * 
+	 * @param requesterId
+	 * @param t
+	 */
 	public Action(int requesterId, int t) {
 		id = 0;
 		type = t;
@@ -39,6 +63,11 @@ public class Action {
 		msg = null;
 	}
 	
+	/**
+	 * Default blank Action
+	 * 
+	 * @param requesterId
+	 */
 	public Action(int requesterId) {
 		id = 0;
 		type = DO_NOTHING;
@@ -53,7 +82,7 @@ public class Action {
 	 * @return
 	 */
 	public boolean equals(Action a) {
-		if (a.up == up && a.left == left && a.right == right && a.down == down)
+		if (a.up == up && a.left == left && a.right == right && a.down == down && a.shoot == shoot)
 			return true;
 		return false;
 	}
@@ -69,6 +98,7 @@ public class Action {
 		left = a.left;
 		right = a.right;
 		jump = a.jump;
+		shoot = a.shoot;
 	}
 	
 	public int getType () { return type; }

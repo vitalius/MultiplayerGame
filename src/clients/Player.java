@@ -1,5 +1,6 @@
 package clients;
 
+import jig.engine.util.Vector2D;
 import net.Action;
 import net.Protocol;
 
@@ -36,6 +37,12 @@ public class Player {
 	public void join(String ip) {
 		Action join = new Action(playerId, Action.JOIN, ip);
 		tcp.sendSocket(prot.encodeAction(join));
+	}
+	
+	
+	public void shoot(Vector2D Spot) {
+		Action shooty = new Action(playerId, Action.SHOOT, Spot);
+		tcp.sendSocket(prot.encodeAction(shooty));
 	}
 	
 	public int getID() {

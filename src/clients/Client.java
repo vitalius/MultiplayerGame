@@ -6,7 +6,6 @@ import java.util.ConcurrentModificationException;
 
 import net.Action;
 import net.NetStateManager;
-import net.NetObject;
 
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
@@ -32,14 +31,14 @@ public class Client extends StaticScreenGame {
 
 	Action input;
 
-	NetStateManager gm;
+	NetStateManager netStateMan;
 	Player player;
 
 	BodyLayer<Body> WorldLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 	BodyLayer<Body> MovableLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 	BodyLayer<Body> InterfaceLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 
-	ClientGameState clientGm;
+	GameSprites gameSprites;
 
 	public Client() {
 
@@ -55,12 +54,14 @@ public class Client extends StaticScreenGame {
 				JIGSHAPE.RECTANGLE, Color.green);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
+		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
+				JIGSHAPE.RECTANGLE, Color.black);
 
-		gm = new NetStateManager();
-		clientGm = new ClientGameState();
+		netStateMan = new NetStateManager();
+		gameSprites = new GameSprites();
 
 		/* Start thread to sync gameState with server */
-		BroadcastListener bListen = new BroadcastListener(gm);
+		BroadcastListener bListen = new BroadcastListener(netStateMan);
 		bListen.start();
 
 		TcpClient control = new TcpClient(SERVER_IP, 5001);
@@ -90,31 +91,26 @@ public class Client extends StaticScreenGame {
 		player.move(input);
 	}
 
+	int shootlimit = 0;
 	public void update(long deltaMs) {
 		super.update(deltaMs);
-		Vector2D a = new Vector2D(0, 0);
-		try {
-			for (NetObject no : gm.getState().getNetObjects()) {
-				no.update(deltaMs);
 
-				// need to be fixed: ability to get X and Y from Player object
-				// directly so no need for decision branch here in loop.
-				if (no.getId() == player.getID())
-					a = no.getPosition();
-			}
+		Vector2D playerPos = netStateMan.getState().getHashtable().get(player.getID()).getPosition();
+			
+		// Adjust offset so player is at center of screen
+		Vector2D ajustView = new Vector2D(playerPos.getX() - WORLD_WIDTH / 2,
+					playerPos.getY() - WORLD_HEIGHT / 2);
 
-			// Adjust offset so player is at center of screen
-			a = new Vector2D(a.getX() - WORLD_WIDTH / 2,
-					a.getY() - WORLD_HEIGHT / 2);
-			clientGm.sync(gm, a);
-		} catch (ConcurrentModificationException e2) {
-
-		}
-
+		gameSprites.sync(netStateMan, ajustView);
+	
 		keyboardMovementHandler();
 
-		if (mouse.isLeftButtonPressed()) {
-			System.out.println("Weapon fire keypress" + mouse.getLocation());
+		shootlimit += deltaMs;
+		if (mouse.isLeftButtonPressed() && shootlimit > 250) {
+			shootlimit = 0;
+			Vector2D shot = new Vector2D(mouse.getLocation().x, mouse.getLocation().y);
+			player.shoot(shot);
+			//System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
 	}
 
@@ -122,7 +118,7 @@ public class Client extends StaticScreenGame {
 		super.render(rc);
 
 		try {
-			for (Body sprite : clientGm.getSprites())
+			for (Body sprite : gameSprites.getSprites())
 				sprite.render(rc);
 		} catch (NullPointerException e) {
 

@@ -7,17 +7,19 @@ import physics.CattoPhysicsEngine;
 
 public class GameObject extends Box {
 	
+	public static final int PLAYER      = 0;
+	public static final int GROUND      = 1;
+	public static final int PLATFORM    = 2;
+	public static final int SMALLBOX    = 3;
+	public static final int PLAYERSPAWN = 4;
+	public static final int BULLET      = 5;
+
 	public static final double JUMPVEL = 100;
 	public static final double JETVEL = 100;
 	public static final double RUNVEL = 150;
 	public static final double WALKVEL = 100;
 	public static final double FLOATVEL = 25;
 	
-	public static final int PLAYER   = 0;
-	public static final int GROUND   = 1;
-	public static final int PLATFORM = 2;
-	public static final int SMALLBOX = 3;
-	public static final int PLAYERSPAWN   = 4;
 	
 	public int type;
 	
