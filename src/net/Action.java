@@ -57,7 +57,7 @@ public class Action {
 	 * @param t
 	 */
 	public Action(int requesterId, int t) {
-		id = 0;
+		id = requesterId;
 		type = t;
 		arg0 = null;
 		msg = null;
@@ -69,7 +69,7 @@ public class Action {
 	 * @param requesterId
 	 */
 	public Action(int requesterId) {
-		id = 0;
+		id = requesterId;
 		type = DO_NOTHING;
 		arg0 = null;
 		msg = null;
