@@ -43,14 +43,15 @@ public class ServerGameState {
 	 * @param type
 	 *            - type of object, this can be a player, a bullet, etc
 	 */
-	public void add(GameObject go, int type) {
+	public int add(GameObject go, int type) {
 		int id = getUniqueId();
 
 		if (goList.containsKey(id))
-			return;
+			return id;
 
 		goList.put(id, go);
 		netState.add(new NetObject(id, go.getPosition(), type));
+		return id;
 	}
 
 	/**

@@ -5,8 +5,6 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
-
-import physics.Arbiter;
 import physics.CattoPhysicsEngine;
 import world.GameObject;
 import world.LevelMap;
@@ -18,6 +16,7 @@ import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import net.Action;
 import net.NetStateManager;
+import net.Protocol;
 
 /**
  * Server
@@ -38,7 +37,9 @@ public class Server extends StaticScreenGame{
 	public ServerGameState gameState;
 	public LevelSet levels;
 	public LevelMap level;
-	public GameObject player;
+	public int playerID;
+	
+	public Action oldInput;
 
 	public Server(int width, int height, boolean preferFullscreen) {
 		super(width, height, preferFullscreen);
@@ -127,8 +128,8 @@ public class Server extends StaticScreenGame{
  		p.set(100, 1.0, 1.0, 0.0);
  		Vector2D a = level.playerInitSpots.get(0);
  		p.setPosition(new Vector2D(a.getX(), a.getY()));
- 		gameState.add(p, GameObject.PLAYER);
- 		player = p;
+ 		playerID = gameState.add(p, GameObject.PLAYER);
+ 		oldInput = new Action(playerID);
 		
 		netState.update(gameState.getNetState());
 	}
@@ -138,18 +139,17 @@ public class Server extends StaticScreenGame{
 	 	public void keyboardMovementHandler() {
 	 		keyboard.poll();
 	 		
-	 		boolean down =  keyboard.isPressed(KeyEvent.VK_DOWN)  || keyboard.isPressed(KeyEvent.VK_S);
-	 		boolean up =    keyboard.isPressed(KeyEvent.VK_UP)    || keyboard.isPressed(KeyEvent.VK_W);
-	 		boolean left =  keyboard.isPressed(KeyEvent.VK_LEFT)  || keyboard.isPressed(KeyEvent.VK_A);
-	 		boolean right = keyboard.isPressed(KeyEvent.VK_RIGHT) || keyboard.isPressed(KeyEvent.VK_D);
-	 		
-	 		int x = 0, y = 0;
-	 		if(left)   --x;
-	 		if(right)  ++x;
-	 		if(up)     --y;
-	 		if(down)   ++y;
-	 		//System.out.println(x + " " +  y);
-	 		if(x!=0 || y!=0) player.move(x, y);
+	 		Action input = new Action(playerID, Action.INPUT);
+	 		input.down = keyboard.isPressed(KeyEvent.VK_DOWN) || keyboard.isPressed(KeyEvent.VK_S);
+	 		input.up = keyboard.isPressed(KeyEvent.VK_UP) || keyboard.isPressed(KeyEvent.VK_W);
+	 		input.left = keyboard.isPressed(KeyEvent.VK_LEFT) || keyboard.isPressed(KeyEvent.VK_A);
+	 		input.right = keyboard.isPressed(KeyEvent.VK_RIGHT) || keyboard.isPressed(KeyEvent.VK_D);
+
+	 		if (oldInput.equals(input))
+				return;
+	 		String action = new Protocol().encodeAction(input);
+	 		processAction(action);
+	 		oldInput.copy(input);
 	 	}
 	
 	/**
@@ -169,6 +169,7 @@ public class Server extends StaticScreenGame{
 		Hashtable<Integer, GameObject> objectList = gameState.getHashtable();
 		
 		// If there is no such object ID on the server, simply return and do nothing
+		
 		if (!objectList.containsKey(a.getId()) && a.getType() != Action.JOIN)
 			return;
 		
@@ -189,29 +190,8 @@ public class Server extends StaticScreenGame{
 			if (a.left)  --x;
 			if (a.right) ++x;
 			
-			// detect if jumping while on an object
-			Arbiter arb;
 			BodyLayer<GameObject> layer = gameState.getBoxes();
-			GameObject otherObject;
-			if (y < 0) { // if jump was pressed
-				y = 0;
-				for (int i = 0; i < layer.size(); i++) {
-					otherObject = layer.get(i);
-					if (playerObject.hashCode() == otherObject.hashCode()) break;
-					arb = new Arbiter(playerObject, otherObject);
-					//System.out.println("playerObject: "+playerObject.getType());
-					//System.out.println("otherObject: "+otherObject.getType());
-					//System.out.println("num contacts: "+arb.getNumContacts());
-					if ( arb.getNumContacts() > 0 ) {
-						y = -1;
-						break;
-					}
-	
-				}
-			}
-			
-			Vector2D newVelocity = new Vector2D(100*x, 100*y);
-			if(x != 0 || y != 0) playerObject.setVelocity(newVelocity);
+			playerObject.movePlayer(x, y, 0, layer);
 			
 			break;
 			
