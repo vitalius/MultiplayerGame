@@ -244,7 +244,7 @@ public class Server extends StaticScreenGame{
 			break;
 
 		case Action.SHOOT:
-			
+			/*
 			System.out.println(a.getId() + " " + a.getArg());
 			// add new bullet here.
 			Vector2D shootloc = a.getArg();
@@ -275,7 +275,7 @@ public class Server extends StaticScreenGame{
 	 			pe.clear();
 	 			pe.manageViewableSet(gameState.getBoxes()); 
 	 		}}
-			
+			*/
 			break;
 		}
 	}
