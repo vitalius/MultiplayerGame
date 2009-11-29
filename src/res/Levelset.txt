@@ -6,16 +6,16 @@ Josh's Test Map!
 250 0
 550 0
 750 0
-platform 100 500 0 -1 0.8 1.0
-platform 350 500 0 -1 0.8 1.0
-platform 600 500 0 -1 0.8 1.0
-platform 350 300 0 -1 0.8 1.0
-smallbox 150 450 0 100 0.8 1.0
-smallbox 150 450 0 100 0.8 1.0
-smallbox 150 450 0 100 0.8 1.0
-smallbox 150 450 0 100 0.8 1.0
-smallbox 400 450 0 100 0.8 1.0
-smallbox 650 450 0 100 0.8 1.0
-smallbox 400 250 0 100 0.8 1.0
-ground 0 590 0 -1 0.8 1.0
+platform 100 500 0 -1 0.5 1.0
+platform 350 500 0 -1 0.5 1.0
+platform 600 500 0 -1 0.5 1.0
+platform 350 300 0 -1 0.5 1.0
+smallbox 150 450 0 100 0.5 1.0
+smallbox 150 450 0 100 0.5 1.0
+smallbox 150 450 0 100 0.5 1.0
+smallbox 150 450 0 100 0.5 1.0
+smallbox 400 450 0 100 0.5 1.0
+smallbox 650 450 0 100 0.5 1.0
+smallbox 400 250 0 100 0.5 1.0
+ground 0 590 0 -1 0.5 1.0
 EndLevel
