@@ -226,30 +226,24 @@ public class Server extends StaticScreenGame{
 			break;
 
 		case Action.SHOOT:
-			/*
 			System.out.println(a.getId() + " " + a.getArg());
-			// add new bullet here.
+			/*
 			Vector2D shootloc = a.getArg();
 			GameObject p;
 	 		p = new GameObject("bullet");
-	 		p.set(100, .2, 1.0, 0.0);// leaving in player stats becuause what should bullets have?.
+	 		p.set(10, .2, 1.0, 0.0);// 1/10 player mass
 	 		// set place at player.
 	 		Vector2D place = objectList.get(a.getId()).getCenterPosition();
-	 		// set velocity.. get mag of vector
-	 		double xx = place.getX() - shootloc.getX();
-	 		double yy = place.getY() - shootloc.getY();
-	 		double mag = Math.sqrt(xx * xx + yy * yy);
-	 		shootloc.scale(mag);
-	 		// set V
-	 		p.setVelocity(shootloc);
+	 		// Put bullet a little bit away from player
+	 		double xx = place.getX() + shootloc.getX() * 40;
+	 		double yy = place.getY() + shootloc.getY() * 40;
+	 		// set V in direction of travel * 400
+	 		p.setVelocity(shootloc.scale(400));
 	 		// set poosition - away from player a little.
-	 		p.setPosition(new Vector2D(place.getX() + 10, place.getY() + 10));
-
+	 		p.setPosition(new Vector2D(xx , yy));
 	 		gameState.add(p, GameObject.BULLET);
-	 		// hope this works!!
-	 		
-			// Reseting physics/render layers
-	 		
+
+	 		// Reseting physics/render layers
 	 		synchronized (pe) {
 	 		synchronized(gameObjectLayers) {
 	 			gameObjectLayers.clear();
@@ -257,7 +251,8 @@ public class Server extends StaticScreenGame{
 	 			pe.clear();
 	 			pe.manageViewableSet(gameState.getBoxes()); 
 	 		}}
-			*/
+	 		*/
+			
 			break;
 		}
 	}
