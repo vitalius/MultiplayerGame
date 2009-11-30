@@ -3,8 +3,11 @@ package clients;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ConcurrentModificationException;
+import java.util.Hashtable;
 
 import net.Action;
+import net.NetObject;
+import net.NetState;
 import net.NetStateManager;
 
 import jig.engine.PaintableCanvas;
@@ -92,25 +95,38 @@ public class Client extends StaticScreenGame {
 	}
 
 	int shootlimit = 0;
+
 	public void update(long deltaMs) {
 		super.update(deltaMs);
 
-		Vector2D playerPos = netStateMan.getState().getHashtable().get(player.getID()).getPosition();
-			
-		// Adjust offset so player is at center of screen
-		Vector2D ajustView = new Vector2D(playerPos.getX() - WORLD_WIDTH / 2,
-					playerPos.getY() - WORLD_HEIGHT / 2);
+		NetState a = netStateMan.getState();
+		Hashtable<Integer, NetObject> b = a.getHashtable();
+		NetObject c = b.get(player.getID());
 
-		gameSprites.sync(netStateMan, ajustView);
-	
+		if (c != null) {
+
+			Vector2D playerPos = c.getPosition();// netStateMan.getState().getHashtable().get(player.getID()).getPosition();
+
+			// Adjust offset so player is at center of screen
+			Vector2D ajustView = new Vector2D(playerPos.getX() - WORLD_WIDTH
+					/ 2, playerPos.getY() - WORLD_HEIGHT / 2);
+
+			gameSprites.sync(netStateMan, ajustView);
+		}
+
 		keyboardMovementHandler();
 
 		shootlimit += deltaMs;
 		if (mouse.isLeftButtonPressed() && shootlimit > 250) {
 			shootlimit = 0;
-			Vector2D shot = new Vector2D(mouse.getLocation().x, mouse.getLocation().y);
+			// Since we know player is always generally in center of screen...
+			// Adjust click location into world location.
+			Vector2D shot = new Vector2D(mouse.getLocation().x
+					- (WORLD_WIDTH / 2), mouse.getLocation().y
+					- (WORLD_HEIGHT / 2));
+			shot = shot.unitVector();
 			player.shoot(shot);
-			//System.out.println("Weapon fire keypress" + mouse.getLocation());
+			// System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
 	}
 
