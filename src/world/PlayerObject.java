@@ -11,7 +11,7 @@ public class PlayerObject extends GameObject {
 	private static final double RUNVEL = 150;
 	private static final double WALKVEL = 100;
 	private static final double CROUCHVEL = 50;
-	private static final double JETFORCE = -150;
+	private static final double JETFORCE = -400;
 	private static final double FLOATFORCE = 100;
 	private static final double NOFORCE = 0;
 	private static final double FRICTION = 1.0;

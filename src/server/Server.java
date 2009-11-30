@@ -204,7 +204,7 @@ public class Server extends StaticScreenGame{
 			System.out.println("Adding player id:"+a.getId());
 			
 			ne.addPlayer(a.getId(), a.getMsg());
-			GameObject player = new GameObject("player");
+			PlayerObject player = new PlayerObject("player");
 			player.set(100, .2, 1.0, 0.0);
 			Vector2D spawn = level.playerInitSpots.get(0);
 	 		player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
@@ -227,8 +227,8 @@ public class Server extends StaticScreenGame{
 
 		case Action.SHOOT:
 			System.out.println(a.getId() + " " + a.getArg());
-			/*
-			Vector2D shootloc = a.getArg();
+			
+			/*Vector2D shootloc = a.getArg();
 			GameObject p;
 	 		p = new GameObject("bullet");
 	 		p.set(10, .2, 1.0, 0.0);// 1/10 player mass
@@ -250,8 +250,8 @@ public class Server extends StaticScreenGame{
 	 			gameObjectLayers.add(gameState.getBoxes());
 	 			pe.clear();
 	 			pe.manageViewableSet(gameState.getBoxes()); 
-	 		}}
-	 		*/
+	 		}}*/
+	 		
 			
 			break;
 		}
