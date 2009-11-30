@@ -29,8 +29,8 @@ public class Protocol {
 				output += a.getMsg() + "#";
 				break;
 			case Action.INPUT:
-				output += (a.up    ? "1" : "0") + "#";
-				output += (a.down  ? "1" : "0") + "#";
+				output += (a.jet    ? "1" : "0") + "#";
+				output += (a.crouch  ? "1" : "0") + "#";
 				output += (a.left  ? "1" : "0") + "#";
 				output += (a.right ? "1" : "0") + "#";
 				output += (a.jump  ? "1" : "0") + "#";
@@ -67,8 +67,8 @@ public class Protocol {
 			break;
 		case Action.INPUT:
 			returnAction = new Action(id,type);
-			returnAction.up    = Integer.valueOf(token[2]).intValue() == 1 ? true : false;
-			returnAction.down  = Integer.valueOf(token[3]).intValue() == 1 ? true : false;
+			returnAction.jet    = Integer.valueOf(token[2]).intValue() == 1 ? true : false;
+			returnAction.crouch  = Integer.valueOf(token[3]).intValue() == 1 ? true : false;
 			returnAction.left  = Integer.valueOf(token[4]).intValue() == 1 ? true : false;
 			returnAction.right = Integer.valueOf(token[5]).intValue() == 1 ? true : false;
 			returnAction.jump  = Integer.valueOf(token[6]).intValue() == 1 ? true : false;

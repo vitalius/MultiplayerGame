@@ -10,10 +10,10 @@ public class Action {
 	public static final int INPUT           = 5;
 	public static final int SHOOT           = 6;
 
-	public boolean up    = false;
+	public boolean jet    = false;
 	public boolean left  = false;
 	public boolean right = false;
-	public boolean down  = false;
+	public boolean crouch  = false;
 	public boolean jump  = false;
 	
 	public boolean shoot = false;
@@ -82,7 +82,7 @@ public class Action {
 	 * @return
 	 */
 	public boolean equals(Action a) {
-		if (a.up == up && a.left == left && a.right == right && a.down == down && a.shoot == shoot)
+		if (a.jet == jet && a.left == left && a.right == right && a.crouch == crouch && a.shoot == shoot && a.jump == jump)
 			return true;
 		return false;
 	}
@@ -93,8 +93,8 @@ public class Action {
 	 * @param a
 	 */
 	public void copy(Action a) {
-		up = a.up;
-		down = a.down;
+		jet = a.jet;
+		crouch = a.crouch;
 		left = a.left;
 		right = a.right;
 		jump = a.jump;

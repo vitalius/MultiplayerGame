@@ -9,6 +9,7 @@ import physics.CattoPhysicsEngine;
 import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
+import world.PlayerObject;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
 import jig.engine.hli.StaticScreenGame;
@@ -47,7 +48,7 @@ public class Server extends StaticScreenGame{
 		netState = new NetStateManager();
 		gameState = new ServerGameState();
 		ne = new NetworkEngine(this);
-		pe = new CattoPhysicsEngine(new Vector2D(0, 100));
+		pe = new CattoPhysicsEngine(new Vector2D(0, 300));
 		pe.setDrawArbiters(true);
 		fre.setActivation(true);
 		
@@ -124,7 +125,7 @@ public class Server extends StaticScreenGame{
 		
 		// Add a player to test movement, remove when not needed
 		GameObject p;
- 		p = new GameObject("player");
+ 		p = new PlayerObject("player");
  		p.set(100, 1.0, 1.0, 0.0);
  		Vector2D a = level.playerInitSpots.get(0);
  		p.setPosition(new Vector2D(a.getX(), a.getY()));
@@ -140,11 +141,12 @@ public class Server extends StaticScreenGame{
 	 		keyboard.poll();
 	 		
 	 		Action input = new Action(playerID, Action.INPUT);
-	 		input.down = keyboard.isPressed(KeyEvent.VK_DOWN) || keyboard.isPressed(KeyEvent.VK_S);
-	 		input.up = keyboard.isPressed(KeyEvent.VK_UP) || keyboard.isPressed(KeyEvent.VK_W);
+	 		input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN) || keyboard.isPressed(KeyEvent.VK_S);
+	 		input.jet = keyboard.isPressed(KeyEvent.VK_UP) || keyboard.isPressed(KeyEvent.VK_W);
 	 		input.left = keyboard.isPressed(KeyEvent.VK_LEFT) || keyboard.isPressed(KeyEvent.VK_A);
 	 		input.right = keyboard.isPressed(KeyEvent.VK_RIGHT) || keyboard.isPressed(KeyEvent.VK_D);
-
+	 		input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
+	 		
 	 		if (oldInput.equals(input))
 				return;
 	 		String action = new Protocol().encodeAction(input);
@@ -180,18 +182,18 @@ public class Server extends StaticScreenGame{
 			//System.out.println("Player id: "+a.getId());
 			//System.out.println("up:"+a.up+" down:"+a.down+" left:"+a.left+" right:"+a.right+" jump:"+a.jump);
 			
-			GameObject playerObject = objectList.get(a.getId());
+			PlayerObject playerObject = (PlayerObject) objectList.get(a.getId());
 			
 			// Cool idea from Rolf for handling input
 			int x = 0, y = 0;
 			
-			if (a.up)    --y;
-			if (a.down)  ++y;
+			if (a.jump)    --y;
+			if (a.crouch)  ++y;
 			if (a.left)  --x;
 			if (a.right) ++x;
 			
 			BodyLayer<GameObject> layer = gameState.getBoxes();
-			playerObject.movePlayer(x, y, 0, layer);
+			playerObject.updatePlayer(x, y, a.jet, false, false, layer);
 			
 			break;
 			

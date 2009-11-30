@@ -199,6 +199,7 @@ public class CattoPhysicsEngine implements PhysicsEngine<Box> {
 				if (b.inverseMass == 0.0) {
 					continue;
 				}
+				//if (!b.force.equals(new Vector2D(0,0))) System.out.println("Force: " + b.force);
 				n = b.force.scale(b.inverseMass);
 				n = n.translate(gravity);
 				n = n.scale(dt);
@@ -232,7 +233,7 @@ public class CattoPhysicsEngine implements PhysicsEngine<Box> {
 						b.getVelocity().scale(dt)));
 
 				b.rotation += dt * b.angularVelocity;
-				b.force = new Vector2D(0.0, 0.0);
+				//b.force = new Vector2D(0.0, 0.0); // allow force to continue
 				b.torque = 0.0;
 
 			}

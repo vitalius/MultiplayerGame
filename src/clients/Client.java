@@ -79,14 +79,15 @@ public class Client extends StaticScreenGame {
 	public void keyboardMovementHandler() {
 		keyboard.poll();
 
-		input.down = keyboard.isPressed(KeyEvent.VK_DOWN)
+		input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN)
 				|| keyboard.isPressed(KeyEvent.VK_S);
-		input.up = keyboard.isPressed(KeyEvent.VK_UP)
+		input.jet = keyboard.isPressed(KeyEvent.VK_UP)
 				|| keyboard.isPressed(KeyEvent.VK_W);
 		input.left = keyboard.isPressed(KeyEvent.VK_LEFT)
 				|| keyboard.isPressed(KeyEvent.VK_A);
 		input.right = keyboard.isPressed(KeyEvent.VK_RIGHT)
 				|| keyboard.isPressed(KeyEvent.VK_D);
+		input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
 
 		player.move(input);
 	}
