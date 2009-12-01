@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import java.util.ConcurrentModificationException;
 import java.util.Hashtable;
 
+import world.PlayerObject;
+
 import net.Action;
 import net.NetObject;
 import net.NetState;
@@ -13,17 +15,19 @@ import net.NetStateManager;
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.PaintableCanvas.JIGSHAPE;
+import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.hli.StaticScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
 import jig.engine.physics.BodyLayer;
+import jig.engine.physics.vpe.VanillaSphere;
 import jig.engine.util.Vector2D;
 
 /**
  * Client
  */
 
-public class Client extends StaticScreenGame {
+public class Client extends ScrollingScreenGame {
 
 	public static final String SERVER_IP = "127.0.0.1";
 
@@ -104,7 +108,7 @@ public class Client extends StaticScreenGame {
 		Hashtable<Integer, NetObject> b = a.getHashtable();
 		NetObject c = b.get(player.getID());
 
-		if (c != null) {
+		/*if (c != null) {
 
 			Vector2D playerPos = c.getPosition();// netStateMan.getState().getHashtable().get(player.getID()).getPosition();
 
@@ -113,7 +117,14 @@ public class Client extends StaticScreenGame {
 					/ 2, playerPos.getY() - WORLD_HEIGHT / 2);
 
 			gameSprites.sync(netStateMan, ajustView);
+		}*/
+		//VanillaSphere p = gameSprites.getSprite(player.getID());
+		//SpriteObject s = (SpriteObject)spriteList.get(no.getId());
+		VanillaSphere s = gameSprites.spriteList.get(player.getID());
+		if (s != null) {
+	//		centerOn(s); // centers on player
 		}
+		gameSprites.sync(netStateMan);
 
 		keyboardMovementHandler();
 

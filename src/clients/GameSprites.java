@@ -13,7 +13,7 @@ import net.NetObject;
 
 public class GameSprites {
 	
-	private Hashtable<Integer, VanillaSphere> spriteList = new Hashtable<Integer, VanillaSphere>();
+	public Hashtable<Integer, VanillaSphere> spriteList = new Hashtable<Integer, VanillaSphere>();
 	
 	public GameSprites () { }
 	
@@ -88,5 +88,9 @@ public class GameSprites {
 	
 	public Collection<VanillaSphere> getSprites() { 
 		return spriteList.values(); 
+	} 
+	
+	public SpriteObject getSprite(int id) { 
+		return (SpriteObject) spriteList.get(id);
 	} 
 }

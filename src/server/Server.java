@@ -12,7 +12,9 @@ import world.LevelSet;
 import world.PlayerObject;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
+import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.hli.StaticScreenGame;
+import jig.engine.physics.Body;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import net.Action;
@@ -24,23 +26,23 @@ import net.Protocol;
  *
  */
 
-public class Server extends StaticScreenGame{
+public class Server extends ScrollingScreenGame{
 	
 	private static final int WORLD_WIDTH = 800;
 	private static final int WORLD_HEIGHT = 600;
 	
 	/* This is a static, constant time between frames, all clients run as fast as the server runs */
-	public static int DELTA_MS = 30;
+	private static int DELTA_MS = 30;
 	
-	public NetStateManager netState;
-	public NetworkEngine ne;
-	public CattoPhysicsEngine pe;
+	private NetStateManager netState;
+	private NetworkEngine ne;
+	private CattoPhysicsEngine pe;
 	public ServerGameState gameState;
-	public LevelSet levels;
-	public LevelMap level;
-	public int playerID;
-	
-	public Action oldInput;
+	private LevelSet levels;
+	private LevelMap level;
+	private int playerID;
+	private PlayerObject p;
+	private Action oldInput;
 
 	public Server(int width, int height, boolean preferFullscreen) {
 		super(width, height, preferFullscreen);
@@ -49,7 +51,7 @@ public class Server extends StaticScreenGame{
 		gameState = new ServerGameState();
 		ne = new NetworkEngine(this);
 		pe = new CattoPhysicsEngine(new Vector2D(0, 300));
-		pe.setDrawArbiters(true);
+		//pe.setDrawArbiters(true);
 		fre.setActivation(true);
 		
 		// Some Test Resources
@@ -124,7 +126,6 @@ public class Server extends StaticScreenGame{
 		level.buildLevel(gameState);
 		
 		// Add a player to test movement, remove when not needed
-		GameObject p;
  		p = new PlayerObject("player");
  		p.set(100, 1.0, 1.0, 0.0);
  		Vector2D a = level.playerInitSpots.get(0);
@@ -250,8 +251,7 @@ public class Server extends StaticScreenGame{
 	 			gameObjectLayers.add(gameState.getBoxes());
 	 			pe.clear();
 	 			pe.manageViewableSet(gameState.getBoxes()); 
-	 		}}*/
-	 		
+	 		}}*/	 		
 			
 			break;
 		}
@@ -265,6 +265,7 @@ public class Server extends StaticScreenGame{
 		    gameState.update();
 		    keyboardMovementHandler();
 		}
+		centerOn(p); // centers on player
 	}
 	
 	@Override
