@@ -6,9 +6,11 @@ Player Movement - Done but could be better - Josh
 Combat 
 	Shooting
 	Hit Detection
-	Health Rules
-	Crosshair Aiming
-	Death
+	Health Rules     - Rolf
+	Crosshair Aiming - Rolf
+	GUI - healthbar  - Rolf
+	GUI - jetpackbar - Rolf
+	Death            - Rolf - inital setup, dont work well now.
 Deathmatch
 	Rules
 	Start
@@ -18,3 +20,4 @@ Weapons
 	Three types
 Animations and Graphics
 Networking - Working, but has a couple issues - Vitaliy
+GUI for pre-join for client - Rolf
