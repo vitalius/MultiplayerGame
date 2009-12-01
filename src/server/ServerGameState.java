@@ -99,7 +99,7 @@ public class ServerGameState {
 	 * @return
 	 */
 	public BodyLayer<GameObject> getBoxes() {
-		BodyLayer<GameObject> boxLayer = new AbstractBodyLayer.IterativeUpdate<GameObject>();
+		BodyLayer<GameObject> boxLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
 		for (GameObject b : goList.values())
 			boxLayer.add(b);
 		return boxLayer;

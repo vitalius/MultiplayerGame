@@ -5,6 +5,8 @@ import java.util.Hashtable;
 
 import world.GameObject;
 
+import jig.engine.physics.AbstractBodyLayer;
+import jig.engine.physics.BodyLayer;
 import jig.engine.physics.vpe.VanillaSphere;
 import jig.engine.util.Vector2D;
 
@@ -88,9 +90,12 @@ public class GameSprites {
 	
 	public Collection<VanillaSphere> getSprites() { 
 		return spriteList.values(); 
-	} 
+	}
 	
-	public SpriteObject getSprite(int id) { 
-		return (SpriteObject) spriteList.get(id);
-	} 
+	public BodyLayer<VanillaSphere> getLayer() { 
+		BodyLayer<VanillaSphere> layer = new AbstractBodyLayer.IterativeUpdate<VanillaSphere>();
+		for (VanillaSphere o : spriteList.values())
+			layer.add(o);
+		return layer;
+	}
 }

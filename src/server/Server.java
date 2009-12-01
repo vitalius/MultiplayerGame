@@ -258,12 +258,12 @@ public class Server extends ScrollingScreenGame{
 	}
 	
 	public void update(final long deltaMs) {
+		super.update(deltaMs);
+		pe.applyLawsOfPhysics(deltaMs);
+		ne.update();
+		keyboardMovementHandler();
 		synchronized (gameState) {
-			super.update(deltaMs);
-			pe.applyLawsOfPhysics(deltaMs);
-			ne.update();
 		    gameState.update();
-		    keyboardMovementHandler();
 		}
 		centerOn(p); // centers on player
 	}

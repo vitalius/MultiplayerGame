@@ -2,6 +2,8 @@ package clients;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ConcurrentModificationException;
 import java.util.Hashtable;
 
@@ -41,9 +43,9 @@ public class Client extends ScrollingScreenGame {
 	NetStateManager netStateMan;
 	Player player;
 
-	BodyLayer<Body> WorldLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
-	BodyLayer<Body> MovableLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
-	BodyLayer<Body> InterfaceLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
+	//private BodyLayer<Body> layer = new AbstractBodyLayer.NoUpdate<Body>();
+	//BodyLayer<Body> MovableLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
+	//BodyLayer<Body> InterfaceLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 
 	GameSprites gameSprites;
 
@@ -102,30 +104,14 @@ public class Client extends ScrollingScreenGame {
 	int shootlimit = 0;
 
 	public void update(long deltaMs) {
-		super.update(deltaMs);
-
-		NetState a = netStateMan.getState();
-		Hashtable<Integer, NetObject> b = a.getHashtable();
-		NetObject c = b.get(player.getID());
-
-		/*if (c != null) {
-
-			Vector2D playerPos = c.getPosition();// netStateMan.getState().getHashtable().get(player.getID()).getPosition();
-
-			// Adjust offset so player is at center of screen
-			Vector2D ajustView = new Vector2D(playerPos.getX() - WORLD_WIDTH
-					/ 2, playerPos.getY() - WORLD_HEIGHT / 2);
-
-			gameSprites.sync(netStateMan, ajustView);
-		}*/
-		//VanillaSphere p = gameSprites.getSprite(player.getID());
-		//SpriteObject s = (SpriteObject)spriteList.get(no.getId());
-		VanillaSphere s = gameSprites.spriteList.get(player.getID());
-		if (s != null) {
-	//		centerOn(s); // centers on player
-		}
+		
 		gameSprites.sync(netStateMan);
-
+		
+		VanillaSphere p = gameSprites.spriteList.get(player.getID());
+		if (p != null && p.getPosition() != null) {
+		//	System.out.println("p: " + p.getPosition().toString());
+			centerOn(p);
+		}
 		keyboardMovementHandler();
 
 		shootlimit += deltaMs;
@@ -140,11 +126,22 @@ public class Client extends ScrollingScreenGame {
 			player.shoot(shot);
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
+		super.update(deltaMs);
+		
+		
 	}
 
 	public void render(RenderingContext rc) {
 		super.render(rc);
 
+		AffineTransform at = this.getScreenToWorldTransform();
+		try {
+			at.invert();
+		} catch (NoninvertibleTransformException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		rc.setTransform(at); // I would prefer to use a AbstractBodyLayer to hold the objects to make this easy
 		try {
 			for (Body sprite : gameSprites.getSprites())
 				sprite.render(rc);
@@ -158,6 +155,8 @@ public class Client extends ScrollingScreenGame {
 
 	public static void main(String[] vars) {
 		Client c = new Client();
+		c.gameObjectLayers.clear();
+		c.gameObjectLayers.add(c.gameSprites.getLayer());
 		c.run();
 	}
 }
