@@ -7,6 +7,7 @@ import java.util.Set;
 import world.GameObject;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
+import jig.engine.util.Vector2D;
 import net.NetObject;
 import net.NetState;
 
@@ -15,20 +16,20 @@ public class ServerGameState {
 	private NetState netState;
 
 	private Hashtable<Integer, GameObject> goList = new Hashtable<Integer, GameObject>();
-	
+
 	private Random generator = new Random();
 
 	public ServerGameState() {
 		netState = new NetState();
 	}
-	
+
 	public int getUniqueId() {
-		Set <Integer> usedIds = goList.keySet();
-		
+		Set<Integer> usedIds = goList.keySet();
+
 		int id = 100;
 		while (usedIds.contains(id))
 			id = generator.nextInt(65000);
-		
+
 		return id;
 	}
 
@@ -67,11 +68,11 @@ public class ServerGameState {
 	}
 
 	public void update() {
-		this.setVertical(GameObject.PLAYER); 
+		this.setVertical(GameObject.PLAYER);
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goList.keySet()) {
 			GameObject b = goList.get(i);
-		if (b != null) {
+			if (b != null) {
 				NetObject no = netList.get(i);
 				if (no != null) {
 
@@ -107,15 +108,24 @@ public class ServerGameState {
 
 	/**
 	 * sets any object type vertical. useful to keep players vertical.
+	 * 
 	 * @return
 	 */
 	public void setVertical(int type) {
-		for(GameObject go : goList.values())
-			if (go.type == type) go.setRotation(0);
+		for (GameObject go : goList.values())
+			if (go.type == type)
+				go.setRotation(0);
 		return;
 	}
-	
+
 	public NetState getNetState() {
 		return netState;
+	}
+
+	public void removeByID(int ID) {
+		// GameObject ret = goList.get(ID);
+		//goList.get(ID).setActivation(false);
+		goList.remove(ID);
+		// return ret;
 	}
 }
