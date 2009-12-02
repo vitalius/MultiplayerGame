@@ -7,7 +7,10 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.util.ConcurrentModificationException;
 import java.util.Hashtable;
 
+import physics.Box;
+
 import world.PlayerObject;
+import worldmap.TempObj;
 
 import net.Action;
 import net.NetObject;
@@ -22,6 +25,7 @@ import jig.engine.hli.StaticScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
 import jig.engine.physics.BodyLayer;
+import jig.engine.physics.vpe.VanillaAARectangle;
 import jig.engine.physics.vpe.VanillaSphere;
 import jig.engine.util.Vector2D;
 
@@ -43,7 +47,7 @@ public class Client extends ScrollingScreenGame {
 	NetStateManager netStateMan;
 	Player player;
 
-	// private BodyLayer<Body> layer = new AbstractBodyLayer.NoUpdate<Body>();
+	private BodyLayer<Body> background = new AbstractBodyLayer.IterativeUpdate<Body>();
 	// BodyLayer<Body> MovableLayer = new
 	// AbstractBodyLayer.IterativeUpdate<Body>();
 	// BodyLayer<Body> InterfaceLayer = new
@@ -68,6 +72,10 @@ public class Client extends ScrollingScreenGame {
 		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
 				JIGSHAPE.RECTANGLE, Color.black);
 
+		// background. made small so we can debug its motions.
+		PaintableCanvas.loadDefaultFrames("background", 100, 100, 1,
+				JIGSHAPE.RECTANGLE, Color.gray);
+
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
 
@@ -80,6 +88,11 @@ public class Client extends ScrollingScreenGame {
 		/* Client id is 0 for now, we should make it some random digit */
 		player = new Player(0, control);
 		input = new Action(0, Action.INPUT);
+
+		// Create background object and add to layer, to window.
+		Box back = new Box("background");
+		background.add(back);
+		gameObjectLayers.add(background);
 
 		player.join(SERVER_IP);
 	}
@@ -106,11 +119,18 @@ public class Client extends ScrollingScreenGame {
 	int shootlimit = 0;
 
 	public void update(long deltaMs) {
+		Vector2D a = null;
 
 		gameSprites.sync(netStateMan);
 
+		// Move background to 10% of player position.
+		// actually -10% because we want motions to be realistic.
 		VanillaSphere p = gameSprites.spriteList.get(player.getID());
 		if (p != null && p.getPosition() != null) {
+			a = p.getPosition();
+			background.get(0).setCenterPosition(
+					new Vector2D(a.getX() * -.1 + WORLD_WIDTH / 2, a.getY()
+							* -.1 + WORLD_HEIGHT / 2));
 			// System.out.println("p: " + p.getPosition().toString());
 			centerOn(p);
 		}
@@ -118,7 +138,7 @@ public class Client extends ScrollingScreenGame {
 
 		if (shootlimit < 250) {
 			shootlimit += deltaMs;
-		} else if (mouse.isLeftButtonPressed() && shootlimit > 250) {
+		} else if (mouse.isLeftButtonPressed()) {
 			shootlimit = 0;
 			// Since we know player is always generally in center of screen...
 			// Adjust click location into world location.
@@ -135,6 +155,7 @@ public class Client extends ScrollingScreenGame {
 
 	public void render(RenderingContext rc) {
 		super.render(rc);
+		background.render(rc);
 
 		AffineTransform at = this.getScreenToWorldTransform();
 		try {
@@ -144,7 +165,7 @@ public class Client extends ScrollingScreenGame {
 			e1.printStackTrace();
 		}
 		rc.setTransform(at); // I would prefer to use a AbstractBodyLayer to
-								// hold the objects to make this easy
+		// hold the objects to make this easy
 		try {
 			for (Body sprite : gameSprites.getSprites())
 				sprite.render(rc);
