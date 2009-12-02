@@ -43,9 +43,11 @@ public class Client extends ScrollingScreenGame {
 	NetStateManager netStateMan;
 	Player player;
 
-	//private BodyLayer<Body> layer = new AbstractBodyLayer.NoUpdate<Body>();
-	//BodyLayer<Body> MovableLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
-	//BodyLayer<Body> InterfaceLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
+	// private BodyLayer<Body> layer = new AbstractBodyLayer.NoUpdate<Body>();
+	// BodyLayer<Body> MovableLayer = new
+	// AbstractBodyLayer.IterativeUpdate<Body>();
+	// BodyLayer<Body> InterfaceLayer = new
+	// AbstractBodyLayer.IterativeUpdate<Body>();
 
 	GameSprites gameSprites;
 
@@ -104,18 +106,19 @@ public class Client extends ScrollingScreenGame {
 	int shootlimit = 0;
 
 	public void update(long deltaMs) {
-		
+
 		gameSprites.sync(netStateMan);
-		
+
 		VanillaSphere p = gameSprites.spriteList.get(player.getID());
 		if (p != null && p.getPosition() != null) {
-		//	System.out.println("p: " + p.getPosition().toString());
+			// System.out.println("p: " + p.getPosition().toString());
 			centerOn(p);
 		}
 		keyboardMovementHandler();
 
-		shootlimit += deltaMs;
-		if (mouse.isLeftButtonPressed() && shootlimit > 250) {
+		if (shootlimit < 250) {
+			shootlimit += deltaMs;
+		} else if (mouse.isLeftButtonPressed() && shootlimit > 250) {
 			shootlimit = 0;
 			// Since we know player is always generally in center of screen...
 			// Adjust click location into world location.
@@ -127,8 +130,7 @@ public class Client extends ScrollingScreenGame {
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
 		super.update(deltaMs);
-		
-		
+
 	}
 
 	public void render(RenderingContext rc) {
@@ -141,7 +143,8 @@ public class Client extends ScrollingScreenGame {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		rc.setTransform(at); // I would prefer to use a AbstractBodyLayer to hold the objects to make this easy
+		rc.setTransform(at); // I would prefer to use a AbstractBodyLayer to
+								// hold the objects to make this easy
 		try {
 			for (Body sprite : gameSprites.getSprites())
 				sprite.render(rc);
