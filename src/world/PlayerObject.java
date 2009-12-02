@@ -27,6 +27,7 @@ public class PlayerObject extends GameObject {
 
 	public PlayerObject(String rsc) {
 		super(rsc);
+		setType(GameObject.PLAYER);
 		keyLeftRight = 0; // left right key
 		keyJumpCrouch = 0; // jump key
 		keyCrouch = false; // crouch key

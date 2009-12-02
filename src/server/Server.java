@@ -58,28 +58,12 @@ public class Server extends ScrollingScreenGame{
 		ResourceFactory factory = ResourceFactory.getFactory();
 
 		BufferedImage[] b = new BufferedImage[1];
-		b[0] = new BufferedImage(1600, 10, BufferedImage.TYPE_INT_RGB);
-		Graphics g = b[0].getGraphics();
-		g.setColor(Color.green);
-		g.fillRect(0, 0, 1600, 10);
-		g.dispose();
-		factory.putFrames("ground", b);
-
-		b = new BufferedImage[1];
 		b[0] = new BufferedImage(16, 32, BufferedImage.TYPE_INT_RGB);
-		g = b[0].getGraphics();
+		Graphics g = b[0].getGraphics();
 		g.setColor(Color.red);
 		g.fillRect(0, 0, 16, 32);
 		g.dispose();
 		factory.putFrames("player", b);
-
-		b = new BufferedImage[1];
-		b[0] = new BufferedImage(100, 10, BufferedImage.TYPE_INT_RGB);
-		g = b[0].getGraphics();
-		g.setColor(Color.green);
-		g.fillRect(0, 0, 100, 10);
-		g.dispose();
-		factory.putFrames("platform", b);
 
 		b = new BufferedImage[1];
 		b[0] = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);

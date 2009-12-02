@@ -17,10 +17,11 @@ Next up is list of the four X, Y positions for four spawn spots.
 10 40
 10 80
 
-Next is basic Type of object, X, Y, Rotation, Mass, Friction and Restitution
-of boxes acting as floor, walls, etc. Rotation is in degrees. If mass is negative 
+Next is basic Type of object, left, top, right, bottom, Rotation, Mass, Friction and Restitution
+of boxes acting as floor, walls, etc. Right and bottom need only be specified for static objects
+that are created dynamically (i.e. floors, platforms). Rotation is in degrees. If mass is negative 
 it will be a static object.
-somebox 10 10 45
+smallbox 400 450 0 0 0 100 0.8 1.0
 
 Each level map data must end with EndLevel line by itself.
 EndLevel

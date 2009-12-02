@@ -1,10 +1,14 @@
 package world;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
+import jig.engine.ResourceFactory;
 import jig.engine.util.Vector2D;
 
 /* Rolf Redford
@@ -114,9 +118,11 @@ public class LevelSet {
 				// Load objects, if any.
 				thisLine = s.readLine();
 				//System.out.println(thisLine);
+				BufferedImage[] b;
+				int rscNum = 0;
 				while (thisLine != null && thisLine.compareTo("EndLevel") != 0) {
 					String[] a = thisLine.split(" ");
-					if (a.length < 7) {
+					if (a.length < 9) {
 						s.close();
 						res = null;
 						System.out
@@ -124,23 +130,33 @@ public class LevelSet {
 						return null;
 					}
 					String rsc = a[0];
-					int x = java.lang.Integer.parseInt(a[1]);
-					int y = java.lang.Integer.parseInt(a[2]);
-					int rot = java.lang.Integer.parseInt(a[3]);
-					Double mass = java.lang.Double.parseDouble(a[4]);
+					int left = java.lang.Integer.parseInt(a[1]);
+					int top = java.lang.Integer.parseInt(a[2]);
+					int right = java.lang.Integer.parseInt(a[3]);
+					int bottom = java.lang.Integer.parseInt(a[4]);
+					double rot = Math.toRadians(java.lang.Double.parseDouble(a[5]));
+					double mass = java.lang.Double.parseDouble(a[6]);
 					if(mass < 0) {
 						mass = Double.MAX_VALUE;
 					}
-					Double fric = java.lang.Double.parseDouble(a[5]);
-					Double rest = java.lang.Double.parseDouble(a[6]);
+					double fric = java.lang.Double.parseDouble(a[7]);
+					double rest = java.lang.Double.parseDouble(a[8]);
+					
+					if (rsc.compareTo("static") == 0) {
+						// create custom resource
+						b = new BufferedImage[1];
+						b[0] = new BufferedImage(right-left, bottom-top, BufferedImage.TYPE_INT_RGB);
+						Graphics g = b[0].getGraphics();
+						g.setColor(Color.green);
+						g.fillRect(0, 0, right-left, bottom-top);
+						g.dispose();
+						rsc = rsc.concat(String.valueOf(rscNum++));
+						ResourceFactory.getFactory().putFrames(rsc, b);
+					}
+					
 					GameObject go = new GameObject(rsc);
-					if (rsc == "player") { go.setType(GameObject.PLAYER); }
-					else if (rsc.compareTo("ground") == 0) { go.setType(GameObject.GROUND); }
-					else if (rsc.compareTo("platform") == 0) { go.setType(GameObject.PLATFORM); }
-					else if (rsc.compareTo("smallbox") == 0) { go.setType(GameObject.SMALLBOX); }
-					else if (rsc.compareTo("playerspawn") == 0) { go.setType(GameObject.PLAYERSPAWN); }
 					go.set(mass, fric, rest, rot);
-					go.setPosition(new Vector2D(x,y));
+					go.setPosition(new Vector2D(left,top)); 
 					thisMap.Objects.add(go);
 					//System.out.println(go);
 					thisLine = s.readLine();
