@@ -5,24 +5,16 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ConcurrentModificationException;
-import java.util.Hashtable;
-
-import world.PlayerObject;
-
+import world.GameObject;
+import world.LevelMap;
+import world.LevelSet;
 import net.Action;
-import net.NetObject;
-import net.NetState;
 import net.NetStateManager;
-
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.ScrollingScreenGame;
-import jig.engine.hli.StaticScreenGame;
-import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
-import jig.engine.physics.BodyLayer;
-import jig.engine.physics.vpe.VanillaSphere;
 import jig.engine.util.Vector2D;
 
 /**
@@ -33,15 +25,17 @@ public class Client extends ScrollingScreenGame {
 
 	public static final String SERVER_IP = "127.0.0.1";
 
-	public static final int WORLD_WIDTH = 800, WORLD_HEIGHT = 600;
+	public static final int SCREEN_WIDTH = 1600, SCREEN_HEIGHT = 1000;
 
 	boolean keyPressed = false;
 	boolean keyReleased = true;
 
 	Action input;
 
-	NetStateManager netStateMan;
-	Player player;
+	private NetStateManager netStateMan;
+	private Player player;
+	private LevelSet levels;
+	private LevelMap level;
 
 	// private BodyLayer<Body> layer = new AbstractBodyLayer.NoUpdate<Body>();
 	// BodyLayer<Body> MovableLayer = new
@@ -53,16 +47,12 @@ public class Client extends ScrollingScreenGame {
 
 	public Client() {
 
-		super(WORLD_WIDTH, WORLD_HEIGHT, false);
+		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
-		PaintableCanvas.loadDefaultFrames("player", 16, 32, 1,
+		PaintableCanvas.loadDefaultFrames("player", 64, 96, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
-		PaintableCanvas.loadDefaultFrames("ground", 1600, 10, 1,
-				JIGSHAPE.RECTANGLE, Color.green);
 		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1,
 				JIGSHAPE.RECTANGLE, Color.blue);
-		PaintableCanvas.loadDefaultFrames("platform", 100, 10, 1,
-				JIGSHAPE.RECTANGLE, Color.green);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
@@ -70,6 +60,23 @@ public class Client extends ScrollingScreenGame {
 
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
+		
+		// Load entire level.
+		levels = new LevelSet("/res/Levelset.txt");
+		// Is there actual level?
+		if (levels.getNumLevels() == 0) {
+			System.err.println("Error: Levels loading failed.\n");
+			System.exit(1);
+		}
+		// Get specified level.
+		level = levels.getThisLevel(0);
+		// Is there actual level?
+		if (level == null) {
+			System.err.println("Error: Level wasn't correctly loaded.\n");
+			System.exit(1);
+		}
+		// Build world from level data
+		level.buildLevelClient(gameSprites);
 
 		/* Start thread to sync gameState with server */
 		BroadcastListener bListen = new BroadcastListener(netStateMan);
@@ -109,7 +116,7 @@ public class Client extends ScrollingScreenGame {
 
 		gameSprites.sync(netStateMan);
 
-		VanillaSphere p = gameSprites.spriteList.get(player.getID());
+		GameObject p = gameSprites.spriteList.get(player.getID());
 		if (p != null && p.getPosition() != null) {
 			// System.out.println("p: " + p.getPosition().toString());
 			centerOn(p);
@@ -123,8 +130,8 @@ public class Client extends ScrollingScreenGame {
 			// Since we know player is always generally in center of screen...
 			// Adjust click location into world location.
 			Vector2D shot = new Vector2D(mouse.getLocation().x
-					- (WORLD_WIDTH / 2), mouse.getLocation().y
-					- (WORLD_HEIGHT / 2));
+					- (SCREEN_WIDTH / 2), mouse.getLocation().y
+					- (SCREEN_HEIGHT / 2));
 			shot = shot.unitVector();
 			player.shoot(shot);
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());

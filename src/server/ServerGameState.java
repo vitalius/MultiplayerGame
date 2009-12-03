@@ -7,7 +7,6 @@ import java.util.Set;
 import world.GameObject;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
-import jig.engine.util.Vector2D;
 import net.NetObject;
 import net.NetState;
 

@@ -13,8 +13,6 @@ import world.PlayerObject;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
 import jig.engine.hli.ScrollingScreenGame;
-import jig.engine.hli.StaticScreenGame;
-import jig.engine.physics.Body;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import net.Action;
@@ -28,14 +26,14 @@ import net.Protocol;
 
 public class Server extends ScrollingScreenGame {
 
-	private static final int WORLD_WIDTH = 800;
-	private static final int WORLD_HEIGHT = 600;
+	private static final int SCREEN_WIDTH = 1600;
+	private static final int SCREEN_HEIGHT = 1000;
 
 	/*
 	 * This is a static, constant time between frames, all clients run as fast
 	 * as the server runs
 	 */
-	private static int DELTA_MS = 30;
+	//private static int DELTA_MS = 30;
 
 	private NetStateManager netState;
 	private NetworkEngine ne;
@@ -61,10 +59,10 @@ public class Server extends ScrollingScreenGame {
 		ResourceFactory factory = ResourceFactory.getFactory();
 
 		BufferedImage[] b = new BufferedImage[1];
-		b[0] = new BufferedImage(16, 32, BufferedImage.TYPE_INT_RGB);
+		b[0] = new BufferedImage(64, 96, BufferedImage.TYPE_INT_RGB);
 		Graphics g = b[0].getGraphics();
 		g.setColor(Color.red);
-		g.fillRect(0, 0, 16, 32);
+		g.fillRect(0, 0, 64, 96);
 		g.dispose();
 		factory.putFrames("player", b);
 
@@ -94,13 +92,11 @@ public class Server extends ScrollingScreenGame {
 
 		// Load entire level.
 		levels = new LevelSet("/res/Levelset.txt");
-
 		// Is there actual level?
 		if (levels.getNumLevels() == 0) {
 			System.err.println("Error: Levels loading failed.\n");
 			System.exit(1);
 		}
-
 		// Get specified level.
 		level = levels.getThisLevel(0);
 		// Is there actual level?
@@ -108,10 +104,8 @@ public class Server extends ScrollingScreenGame {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
 			System.exit(1);
 		}
-
 		// Build world from level data
 		level.buildLevel(gameState);
-
 		// Add a player to test movement, remove when not needed
 		p = new PlayerObject("player");
 		p.set(100, 1.0, 1.0, 0.0);
@@ -305,7 +299,7 @@ public class Server extends ScrollingScreenGame {
 	}
 
 	public static void main(String[] vars) {
-		Server s = new Server(WORLD_WIDTH, WORLD_HEIGHT, false);
+		Server s = new Server(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
 		s.gameObjectLayers.clear();
 		s.pe.clear();
