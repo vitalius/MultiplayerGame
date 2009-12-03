@@ -14,6 +14,7 @@ import world.LevelMap;
 import world.LevelSet;
 import net.Action;
 import net.NetStateManager;
+import net.SyncState;
 
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
@@ -53,6 +54,7 @@ public class Client extends ScrollingScreenGame {
 	GameSprites gameSprites;
 	
 	private LinkedBlockingQueue<String> stateQueue;
+	private SyncState state;
 
 	public Client() {
 
@@ -91,10 +93,11 @@ public class Client extends ScrollingScreenGame {
 		// Build world from level data
 		level.buildLevelClient(gameSprites);
 
-		stateQueue = new LinkedBlockingQueue<String>();
+		//stateQueue = new LinkedBlockingQueue<String>(1);
+		state = new SyncState();
 		
 		/* Start thread to sync gameState with server */
-		BroadcastListener bListen = new BroadcastListener(stateQueue);
+		BroadcastListener bListen = new BroadcastListener(state);
 		bListen.start();
 
 		TcpClient control = new TcpClient(SERVER_IP, 5001);
@@ -135,8 +138,14 @@ public class Client extends ScrollingScreenGame {
 	public void update(long deltaMs) {
 		Vector2D a = null;
 
-		while(stateQueue.size() > 0) {
-			netStateMan.sync(stateQueue.poll());
+		
+		//while(stateQueue.size() > 0) {
+		//	System.out.println("size: " + stateQueue.size());
+		//	netStateMan.sync(stateQueue.poll());
+		//}
+		String s = state.get();
+		if (s != null) {
+			netStateMan.sync(s);
 		}
 		
 		gameSprites.sync(netStateMan);

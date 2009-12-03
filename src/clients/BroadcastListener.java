@@ -5,15 +5,18 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.SyncState;
+
 import server.NetworkEngine;
 
 public class BroadcastListener extends Thread {
 	
 	private DatagramSocket socket;
-	private LinkedBlockingQueue<String> queue;
+	//private LinkedBlockingQueue<String> queue;
+	SyncState state;
 	
-	public BroadcastListener (LinkedBlockingQueue<String> q) {
-		queue = q;
+	public BroadcastListener (SyncState s) {
+		state = s;
 		try {
 			socket = new DatagramSocket(NetworkEngine.BCAST_PORT);
 		} catch (IOException e) {
@@ -48,7 +51,7 @@ public class BroadcastListener extends Thread {
 	public void run() {
 		while(true) {
 			String s = readBPacket();
-			queue.add(s);
+			state.set(s);
 			//gm.sync(s);
 			//System.out.println(s);
 		}
