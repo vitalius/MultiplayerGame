@@ -5,16 +5,29 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ConcurrentModificationException;
-import world.GameObject;
-import world.LevelMap;
-import world.LevelSet;
+import java.util.Hashtable;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import physics.Box;
+
+import world.PlayerObject;
+//import worldmap.TempObj;
+
 import net.Action;
+import net.NetObject;
+import net.NetState;
 import net.NetStateManager;
+
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.ScrollingScreenGame;
+import jig.engine.hli.StaticScreenGame;
+import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
+import jig.engine.physics.BodyLayer;
+import jig.engine.physics.vpe.VanillaAARectangle;
+import jig.engine.physics.vpe.VanillaSphere;
 import jig.engine.util.Vector2D;
 
 /**
@@ -25,61 +38,54 @@ public class Client extends ScrollingScreenGame {
 
 	public static final String SERVER_IP = "127.0.0.1";
 
-	public static final int SCREEN_WIDTH = 1600, SCREEN_HEIGHT = 1000;
+	public static final int WORLD_WIDTH = 800, WORLD_HEIGHT = 600;
 
 	boolean keyPressed = false;
 	boolean keyReleased = true;
 
 	Action input;
 
-	private NetStateManager netStateMan;
-	private Player player;
-	private LevelSet levels;
-	private LevelMap level;
+	NetStateManager netStateMan;
+	Player player;
 
-	// private BodyLayer<Body> layer = new AbstractBodyLayer.NoUpdate<Body>();
+	private BodyLayer<Body> background = new AbstractBodyLayer.IterativeUpdate<Body>();
 	// BodyLayer<Body> MovableLayer = new
 	// AbstractBodyLayer.IterativeUpdate<Body>();
 	// BodyLayer<Body> InterfaceLayer = new
 	// AbstractBodyLayer.IterativeUpdate<Body>();
 
 	GameSprites gameSprites;
+	
+	private LinkedBlockingQueue<String> stateQueue;
 
 	public Client() {
 
-		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
+		super(WORLD_WIDTH, WORLD_HEIGHT, false);
 
-		PaintableCanvas.loadDefaultFrames("player", 64, 96, 1,
+		PaintableCanvas.loadDefaultFrames("player", 16, 32, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
+		PaintableCanvas.loadDefaultFrames("ground", 1600, 10, 1,
+				JIGSHAPE.RECTANGLE, Color.green);
 		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1,
 				JIGSHAPE.RECTANGLE, Color.blue);
+		PaintableCanvas.loadDefaultFrames("platform", 100, 10, 1,
+				JIGSHAPE.RECTANGLE, Color.green);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
 				JIGSHAPE.RECTANGLE, Color.black);
 
+		// background. made small so we can debug its motions.
+		PaintableCanvas.loadDefaultFrames("background", 100, 100, 1,
+				JIGSHAPE.RECTANGLE, Color.gray);
+
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
-		
-		// Load entire level.
-		levels = new LevelSet("/res/Levelset.txt");
-		// Is there actual level?
-		if (levels.getNumLevels() == 0) {
-			System.err.println("Error: Levels loading failed.\n");
-			System.exit(1);
-		}
-		// Get specified level.
-		level = levels.getThisLevel(0);
-		// Is there actual level?
-		if (level == null) {
-			System.err.println("Error: Level wasn't correctly loaded.\n");
-			System.exit(1);
-		}
-		// Build world from level data
-		level.buildLevelClient(gameSprites);
 
+		stateQueue = new LinkedBlockingQueue<String>();
+		
 		/* Start thread to sync gameState with server */
-		BroadcastListener bListen = new BroadcastListener(netStateMan);
+		BroadcastListener bListen = new BroadcastListener(stateQueue);
 		bListen.start();
 
 		TcpClient control = new TcpClient(SERVER_IP, 5001);
@@ -87,6 +93,11 @@ public class Client extends ScrollingScreenGame {
 		/* Client id is 0 for now, we should make it some random digit */
 		player = new Player(0, control);
 		input = new Action(0, Action.INPUT);
+
+		// Create background object and add to layer, to window.
+		Box back = new Box("background");
+		background.add(back);
+		gameObjectLayers.add(background);
 
 		player.join(SERVER_IP);
 	}
@@ -113,11 +124,22 @@ public class Client extends ScrollingScreenGame {
 	int shootlimit = 0;
 
 	public void update(long deltaMs) {
+		Vector2D a = null;
 
+		while(stateQueue.size() > 0) {
+			netStateMan.sync(stateQueue.poll());
+		}
+		
 		gameSprites.sync(netStateMan);
-
-		GameObject p = gameSprites.spriteList.get(player.getID());
+		
+		// Move background to 10% of player position.
+		// actually -10% because we want motions to be realistic.
+		VanillaSphere p = gameSprites.spriteList.get(player.getID());
 		if (p != null && p.getPosition() != null) {
+			a = p.getPosition();
+			background.get(0).setCenterPosition(
+					new Vector2D(a.getX() * -.1 + WORLD_WIDTH / 2, a.getY()
+							* -.1 + WORLD_HEIGHT / 2));
 			// System.out.println("p: " + p.getPosition().toString());
 			centerOn(p);
 		}
@@ -125,13 +147,13 @@ public class Client extends ScrollingScreenGame {
 
 		if (shootlimit < 250) {
 			shootlimit += deltaMs;
-		} else if (mouse.isLeftButtonPressed() && shootlimit > 250) {
+		} else if (mouse.isLeftButtonPressed()) {
 			shootlimit = 0;
 			// Since we know player is always generally in center of screen...
 			// Adjust click location into world location.
 			Vector2D shot = new Vector2D(mouse.getLocation().x
-					- (SCREEN_WIDTH / 2), mouse.getLocation().y
-					- (SCREEN_HEIGHT / 2));
+					- (WORLD_WIDTH / 2), mouse.getLocation().y
+					- (WORLD_HEIGHT / 2));
 			shot = shot.unitVector();
 			player.shoot(shot);
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
@@ -142,6 +164,7 @@ public class Client extends ScrollingScreenGame {
 
 	public void render(RenderingContext rc) {
 		super.render(rc);
+		background.render(rc);
 
 		AffineTransform at = this.getScreenToWorldTransform();
 		try {
@@ -151,7 +174,7 @@ public class Client extends ScrollingScreenGame {
 			e1.printStackTrace();
 		}
 		rc.setTransform(at); // I would prefer to use a AbstractBodyLayer to
-								// hold the objects to make this easy
+		// hold the objects to make this easy
 		try {
 			for (Body sprite : gameSprites.getSprites())
 				sprite.render(rc);

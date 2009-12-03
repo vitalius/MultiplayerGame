@@ -3,6 +3,7 @@ package clients;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import net.NetStateManager;
 import server.NetworkEngine;
@@ -10,10 +11,10 @@ import server.NetworkEngine;
 public class BroadcastListener extends Thread {
 	
 	private DatagramSocket socket;
-	private NetStateManager gm;
+	private LinkedBlockingQueue<String> queue;
 	
-	public BroadcastListener (NetStateManager g) {
-		gm = g;
+	public BroadcastListener (LinkedBlockingQueue<String> q) {
+		queue = q;
 		try {
 			socket = new DatagramSocket(NetworkEngine.BCAST_PORT);
 		} catch (IOException e) {
@@ -48,7 +49,8 @@ public class BroadcastListener extends Thread {
 	public void run() {
 		while(true) {
 			String s = readBPacket();
-			gm.sync(s);
+			queue.add(s);
+			//gm.sync(s);
 			//System.out.println(s);
 		}
 	}

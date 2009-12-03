@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import physics.CattoPhysicsEngine;
 import world.GameObject;
 import world.LevelMap;
@@ -45,6 +47,8 @@ public class Server extends ScrollingScreenGame {
 	private PlayerObject p;
 	private Action oldInput;
 	
+	public LinkedBlockingQueue<String> msgQueue;
+	
 	public Server(int width, int height, boolean preferFullscreen) {
 		super(width, height, preferFullscreen);
 
@@ -55,6 +59,8 @@ public class Server extends ScrollingScreenGame {
 		// pe.setDrawArbiters(true);
 		fre.setActivation(true);
 
+		msgQueue = new LinkedBlockingQueue<String>();
+		
 		// Some Test Resources
 		ResourceFactory factory = ResourceFactory.getFactory();
 
@@ -251,7 +257,7 @@ public class Server extends ScrollingScreenGame {
 
 		case Action.SHOOT:
 			System.out.println(a.getId() + " " + a.getArg());
-			/*
+			
 			Vector2D shootloc = a.getArg();
 			GameObject p;
 			p = new GameObject("bullet");
@@ -273,7 +279,7 @@ public class Server extends ScrollingScreenGame {
 			gameObjectLayers.add(gameState.getBoxes());
 			pe.clear();
 			pe.manageViewableSet(gameState.getBoxes());
-			*/
+			
 
 			break;
 		}
@@ -284,6 +290,11 @@ public class Server extends ScrollingScreenGame {
 		pe.applyLawsOfPhysics(deltaMs);
 		ne.update();
 		keyboardMovementHandler();
+		
+		while(msgQueue.size() > 0) {
+			this.processAction(msgQueue.poll());
+		}
+		
 		synchronized (gameState) {
 			gameState.update();
 		}
