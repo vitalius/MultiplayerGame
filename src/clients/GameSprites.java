@@ -7,7 +7,6 @@ import world.GameObject;
 
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
-import jig.engine.physics.vpe.VanillaSphere;
 import jig.engine.util.Vector2D;
 
 import net.NetStateManager;
@@ -15,7 +14,7 @@ import net.NetObject;
 
 public class GameSprites {
 	
-	public Hashtable<Integer, VanillaSphere> spriteList = new Hashtable<Integer, VanillaSphere>();
+	public Hashtable<Integer, GameObject> spriteList = new Hashtable<Integer, GameObject>();
 	
 	public GameSprites () { }
 	
@@ -32,14 +31,8 @@ public class GameSprites {
 		case GameObject.PLAYER:
 			spriteList.put(no.getId(), new SpriteObject("player"));
 			break;
-		case GameObject.PLATFORM:
-			spriteList.put(no.getId(), new SpriteObject("platform"));
-			break;
 		case GameObject.SMALLBOX:
 			spriteList.put(no.getId(), new SpriteObject("smallbox"));
-			break;
-		case GameObject.GROUND:
-			spriteList.put(no.getId(), new SpriteObject("ground"));
 			break;
 		case GameObject.PLAYERSPAWN:
 			spriteList.put(no.getId(), new SpriteObject("playerSpawn"));
@@ -56,11 +49,11 @@ public class GameSprites {
 			if (spriteList.containsKey(no.getId())) {
 					
 				// fixing the offset, because in jig, rectangle extending VanillaShere is just a giant sphere
-				SpriteObject s = (SpriteObject)spriteList.get(no.getId());
+				//SpriteObject s = (SpriteObject)spriteList.get(no.getId());
 				Vector2D p = no.getPosition();
-				Vector2D newPos = new Vector2D(p.getX()-(s.getRadius()-s.getImgWidth()/2), 
-											   p.getY()-(s.getRadius()-s.getImgHeight()/2));
-				spriteList.get(no.getId()).setPosition(newPos);
+				//Vector2D newPos = new Vector2D(p.getX()-(s.getRadius()-s.getImgWidth()/2), 
+				//							   p.getY()-(s.getRadius()-s.getImgHeight()/2));
+				spriteList.get(no.getId()).setPosition(p);
 				//System.out.println(no.getVelocity());
 				spriteList.get(no.getId()).setVelocity(no.getVelocity());
 				spriteList.get(no.getId()).setRotation(no.getRotation());
@@ -90,13 +83,13 @@ public class GameSprites {
 	}
 	*/
 	
-	public Collection<VanillaSphere> getSprites() { 
+	public Collection<GameObject> getSprites() { 
 		return spriteList.values(); 
 	}
 	
-	public BodyLayer<VanillaSphere> getLayer() { 
-		BodyLayer<VanillaSphere> layer = new AbstractBodyLayer.IterativeUpdate<VanillaSphere>();
-		for (VanillaSphere o : spriteList.values())
+	public BodyLayer<GameObject> getLayer() { 
+		BodyLayer<GameObject> layer = new AbstractBodyLayer.IterativeUpdate<GameObject>();
+		for (GameObject o : spriteList.values())
 			layer.add(o);
 		return layer;
 	}
