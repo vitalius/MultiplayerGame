@@ -35,7 +35,8 @@ public class TcpServer extends Thread {
 				msg = new String(buf);
 				//System.out.println(msg + " len:"+msg.length());
 				synchronized(gm) {
-					gm.processAction(msg);
+					gm.msgQueue.add(msg);
+					//gm.processAction(msg);
 				}
 				
 				clientSock.close(); 

@@ -6,11 +6,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.ConcurrentModificationException;
 import java.util.Hashtable;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import physics.Box;
 
 import world.PlayerObject;
-import worldmap.TempObj;
+//import worldmap.TempObj;
 
 import net.Action;
 import net.NetObject;
@@ -54,6 +55,8 @@ public class Client extends ScrollingScreenGame {
 	// AbstractBodyLayer.IterativeUpdate<Body>();
 
 	GameSprites gameSprites;
+	
+	private LinkedBlockingQueue<String> stateQueue;
 
 	public Client() {
 
@@ -79,8 +82,10 @@ public class Client extends ScrollingScreenGame {
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
 
+		stateQueue = new LinkedBlockingQueue<String>();
+		
 		/* Start thread to sync gameState with server */
-		BroadcastListener bListen = new BroadcastListener(netStateMan);
+		BroadcastListener bListen = new BroadcastListener(stateQueue);
 		bListen.start();
 
 		TcpClient control = new TcpClient(SERVER_IP, 5001);
@@ -121,8 +126,12 @@ public class Client extends ScrollingScreenGame {
 	public void update(long deltaMs) {
 		Vector2D a = null;
 
+		while(stateQueue.size() > 0) {
+			netStateMan.sync(stateQueue.poll());
+		}
+		
 		gameSprites.sync(netStateMan);
-
+		
 		// Move background to 10% of player position.
 		// actually -10% because we want motions to be realistic.
 		VanillaSphere p = gameSprites.spriteList.get(player.getID());
