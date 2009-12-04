@@ -1,5 +1,7 @@
 package world;
 
+import java.util.Vector;
+
 import physics.Box;
 
 public class GameObject extends Box {
@@ -9,6 +11,10 @@ public class GameObject extends Box {
 	public static final int SMALLBOX    = 3;
 	public static final int PLAYERSPAWN = 4;
 	public static final int BULLET      = 5;
+	
+	public Vector<GameObject> listBullets = new Vector<GameObject>();
+	public int bulletCount = 0;
+
 
 	public int type;
 	

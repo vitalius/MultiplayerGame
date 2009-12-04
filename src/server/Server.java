@@ -5,7 +5,11 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import clients.Player;
 
 import physics.CattoPhysicsEngine;
 import world.GameObject;
@@ -35,7 +39,7 @@ public class Server extends ScrollingScreenGame {
 	 * This is a static, constant time between frames, all clients run as fast
 	 * as the server runs
 	 */
-	//private static int DELTA_MS = 30;
+	// private static int DELTA_MS = 30;
 
 	private NetStateManager netState;
 	private NetworkEngine ne;
@@ -46,9 +50,11 @@ public class Server extends ScrollingScreenGame {
 	private int playerID;
 	private PlayerObject p;
 	private Action oldInput;
-	
+
+	private static final int maxBullets = 10;
+
 	public LinkedBlockingQueue<String> msgQueue;
-	
+
 	public Server(int width, int height, boolean preferFullscreen) {
 		super(width, height, preferFullscreen);
 
@@ -60,7 +66,7 @@ public class Server extends ScrollingScreenGame {
 		fre.setActivation(true);
 
 		msgQueue = new LinkedBlockingQueue<String>();
-		
+
 		// Some Test Resources
 		ResourceFactory factory = ResourceFactory.getFactory();
 
@@ -257,29 +263,46 @@ public class Server extends ScrollingScreenGame {
 
 		case Action.SHOOT:
 			System.out.println(a.getId() + " " + a.getArg());
-			
-			Vector2D shootloc = a.getArg();
-			GameObject p;
-			p = new GameObject("bullet");
-			p.set(10, .2, 1.0, 0.0);
-			// 1/10 player mass
-			// set place at player.
-			Vector2D place = objectList.get(a.getId()).getCenterPosition();
-			// Put bullet a
-			// little bit away from player
-			double xx = place.getX() + shootloc.getX() * 40;
-			double yy = place.getY() + shootloc.getY() * 40;
-			// set V in direction of travel 400
-			p.setVelocity(shootloc.scale(400)); // set poosition - away from
-			// player a little.
-			p.setPosition(new Vector2D(xx, yy));
-			gameState.add(p, GameObject.BULLET);
 
-			// Reseting physics/render layers gameObjectLayers.clear();
-			gameObjectLayers.add(gameState.getBoxes());
-			pe.clear();
-			pe.manageViewableSet(gameState.getBoxes());
-			
+			Vector2D shootloc = a.getArg();
+			GameObject b, obj;
+			obj = objectList.get(a.getId());
+
+			if (obj.bulletCount >= maxBullets) {// Full. reuse oldest bullet.
+				b = obj.listBullets.remove(0);// get from oldest one.
+				Vector2D place = objectList.get(a.getId()).getCenterPosition();
+				// Put bullet a
+				// little bit away from player
+				double xx = place.getX() + shootloc.getX() * 40;
+				double yy = place.getY() + shootloc.getY() * 40;
+				// set V in direction of travel 400
+				b.setVelocity(shootloc.scale(400)); // set position - away from
+				// player a little.
+				b.setPosition(new Vector2D(xx, yy));
+				obj.listBullets.add(b); //add as newest object.
+			} else {// not full yet. add new bullet.
+				// 1/10 player mass
+				// set place at player.
+				b = new GameObject("bullet");
+				b.set(10, .2, 1.0, 0.0);
+				Vector2D place = objectList.get(a.getId()).getCenterPosition();
+				// Put bullet a
+				// little bit away from player
+				double xx = place.getX() + shootloc.getX() * 40;
+				double yy = place.getY() + shootloc.getY() * 40;
+				// set V in direction of travel 400
+				b.setVelocity(shootloc.scale(400)); // set position - away from
+				// player a little.
+				b.setPosition(new Vector2D(xx, yy));
+				gameState.add(p, GameObject.BULLET);
+
+				// Reseting physics/render layers gameObjectLayers.clear();
+				gameObjectLayers.add(gameState.getBoxes());
+				pe.clear();
+				pe.manageViewableSet(gameState.getBoxes());
+				obj.listBullets.add(b); //add as newest object.
+				obj.bulletCount++;
+			}
 
 			break;
 		}
@@ -290,12 +313,13 @@ public class Server extends ScrollingScreenGame {
 		pe.applyLawsOfPhysics(deltaMs);
 		ne.update();
 		keyboardMovementHandler();
-		
-		while(msgQueue.size() > 0) {
+
+		while (msgQueue.size() > 0) {
 			this.processAction(msgQueue.poll());
 		}
 		gameState.update();
 		centerOn(p); // centers on player
+		p.updatePlayerState();
 	}
 
 	public static void main(String[] vars) {

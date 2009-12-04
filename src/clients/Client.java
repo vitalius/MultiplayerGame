@@ -46,10 +46,7 @@ public class Client extends ScrollingScreenGame {
 	private LevelMap level;
 
 	private BodyLayer<Body> background = new AbstractBodyLayer.IterativeUpdate<Body>();
-	// BodyLayer<Body> MovableLayer = new
-	// AbstractBodyLayer.IterativeUpdate<Body>();
-	// BodyLayer<Body> InterfaceLayer = new
-	// AbstractBodyLayer.IterativeUpdate<Body>();
+	private BodyLayer<Body> targetLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 
 	GameSprites gameSprites;
 	
@@ -71,6 +68,8 @@ public class Client extends ScrollingScreenGame {
 		// background. made small so we can debug its motions.
 		PaintableCanvas.loadDefaultFrames("background", 100, 100, 1,
 				JIGSHAPE.RECTANGLE, Color.gray);
+		PaintableCanvas.loadDefaultFrames("target", 20, 20, 1,
+				JIGSHAPE.CIRCLE, Color.red);
 		
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
@@ -105,12 +104,20 @@ public class Client extends ScrollingScreenGame {
 		player = new Player(0, control);
 		input = new Action(0, Action.INPUT);
 
+		player.join(SERVER_IP);
+		gameObjectLayers.clear();
+		gameObjectLayers.add(gameSprites.getLayer());
+
 		// Create background object and add to layer, to window.
 		Box back = new Box("background");
 		background.add(back);
 		gameObjectLayers.add(background);
 
-		player.join(SERVER_IP);
+
+		back = new Box("target");
+		targetLayer.add(back);
+		gameObjectLayers.add(targetLayer);
+
 	}
 
 	/**
@@ -133,7 +140,6 @@ public class Client extends ScrollingScreenGame {
 	}
 
 	int shootlimit = 0;
-
 	public void update(long deltaMs) {
 		Vector2D a = null;
 
@@ -161,6 +167,8 @@ public class Client extends ScrollingScreenGame {
 			centerOn(p);
 		}
 		keyboardMovementHandler();
+		
+		targetLayer.get(0).setCenterPosition(new Vector2D(mouse.getLocation().getX(),mouse.getLocation().getY()));
 
 		if (shootlimit < 250) {
 			shootlimit += deltaMs;
@@ -182,6 +190,7 @@ public class Client extends ScrollingScreenGame {
 	public void render(RenderingContext rc) {
 		super.render(rc);
 		background.render(rc);
+		targetLayer.render(rc);
 
 		AffineTransform at = this.getScreenToWorldTransform();
 		try {
@@ -205,8 +214,6 @@ public class Client extends ScrollingScreenGame {
 
 	public static void main(String[] vars) {
 		Client c = new Client();
-		c.gameObjectLayers.clear();
-		c.gameObjectLayers.add(c.gameSprites.getLayer());
 		c.run();
 	}
 }

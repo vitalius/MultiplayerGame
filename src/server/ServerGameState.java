@@ -68,7 +68,8 @@ public class ServerGameState {
 	}
 
 	public void update() {
-		clampPlayers();
+		clampAndUpdatePlayers();
+		
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goList.keySet()) {
 			GameObject b = goList.get(i);
@@ -111,12 +112,13 @@ public class ServerGameState {
 	 * 
 	 * @return
 	 */
-	public void clampPlayers() {
+	public void clampAndUpdatePlayers() {
 		PlayerObject p = null;
 		for (GameObject go : goList.values())
 			if (go.type == GameObject.PLAYER)
 				p = (PlayerObject) go;
-				p.clamp();
+				//p.clamp(); called by updatePlayerState() now.
+				p.updatePlayerState();
 		return;
 	}
 
