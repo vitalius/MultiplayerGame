@@ -76,7 +76,7 @@ public class LevelSet {
 				if (thisLine == null) {
 					s.close();
 					res = null;
-					System.out.println("Error: Level is misformatted!");
+					System.out.println("Error: Level is missing title");
 					return null;
 				}
 				thisMap.LevelTitle = thisLine;
@@ -87,10 +87,52 @@ public class LevelSet {
 				if (thisLine == null) {
 					s.close();
 					res = null;
-					System.out.println("Error: Level is misformatted!");
+					System.out.println("Error: Level is missing type");
 					return null;
 				}
 				thisMap.LevelType = java.lang.Integer.parseInt(thisLine);
+				
+				// get the mirror flag
+				thisLine = s.readLine();
+				//System.out.println(thisLine);
+				if (thisLine == null) {
+					s.close();
+					res = null;
+					System.out.println("Error: Level is missing mirror");
+					return null;
+				}
+				if (thisLine.compareTo("true") == 0) thisMap.mirror = true;
+				else thisMap.mirror = false;
+				
+				// get the scaling factor
+				thisLine = s.readLine();
+				if (thisLine == null) {
+					s.close();
+					res = null;
+					System.out.println("Error: Level is missing scale");
+					return null;
+				}
+				thisMap.scale = java.lang.Double.parseDouble(thisLine);
+				
+				// get the offset position
+				thisLine = s.readLine();
+				//System.out.println(thisLine);
+				if (thisLine == null) {
+					s.close();
+					res = null;
+					System.out.println("Error: Level is missing offset");
+					return null;
+				}
+				String[] os = thisLine.split(" ");
+				if (os.length < 2) {
+					s.close();
+					res = null;
+					System.out
+							.println("Error: Offset missing one number");
+					return null;
+				}
+				thisMap.offset = new Vector2D(java.lang.Integer
+						.parseInt(os[0]), java.lang.Integer.parseInt(os[1]));
 
 				// Load four spawn spots.
 				for (int y = 0; y < 4; y++) {
@@ -120,12 +162,45 @@ public class LevelSet {
 				thisLine = s.readLine();
 				//System.out.println(thisLine);
 				while (thisLine != null && thisLine.compareTo("EndLevel") != 0) {
-					String[] a = thisLine.split(" ");
-					GameObject go;
-					if (a.length == 7) {
-						go = getRsc(a);
-					} else if (a.length == 9) {
-						go = getCustomRsc(a);
+					String[] splitLine = thisLine.split(" ");
+					String rsc;
+					int x, y, width, height;
+					double rot, mass, fric, rest;
+					if (splitLine.length >= 9) {
+						rsc = splitLine[0];
+						x = java.lang.Integer.parseInt(splitLine[1]);
+						y = java.lang.Integer.parseInt(splitLine[2]);
+						width = java.lang.Integer.parseInt(splitLine[3]);
+						height = java.lang.Integer.parseInt(splitLine[4]);
+						y = -(y + height);
+						rot = Math.toRadians(java.lang.Integer.parseInt(splitLine[5]));
+						mass = java.lang.Double.parseDouble(splitLine[6]);
+						if(mass < 0) {
+							mass = Double.MAX_VALUE;
+						}
+						fric = java.lang.Double.parseDouble(splitLine[7]);
+						rest = java.lang.Double.parseDouble(splitLine[8]);
+						
+						// create custom resource
+						BufferedImage b[] = new BufferedImage[1];
+						b[0] = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+						Graphics g = b[0].getGraphics();
+						g.setColor(Color.BLACK);
+						g.fillRect(0, 0, width, height);
+						g.dispose();
+						rsc = rsc.concat(String.valueOf(rscNum++));
+						ResourceFactory.getFactory().putFrames(rsc, b);
+					} else if (splitLine.length == 7) {
+						rsc = splitLine[0];
+						x = java.lang.Integer.parseInt(splitLine[1]);
+						y = java.lang.Integer.parseInt(splitLine[2]);
+						rot = Math.toRadians(java.lang.Double.parseDouble(splitLine[3]));
+						mass = java.lang.Double.parseDouble(splitLine[4]);
+						if(mass < 0) {
+							mass = Double.MAX_VALUE;
+						}
+						fric = java.lang.Double.parseDouble(splitLine[5]);
+						rest = java.lang.Double.parseDouble(splitLine[6]);
 					} else {
 						s.close();
 						res = null;
@@ -133,7 +208,16 @@ public class LevelSet {
 						return null;
 					}
 					
+					GameObject go = new GameObject(rsc);
+					go.set(mass, fric, rest, rot);
+					go.setPosition(new Vector2D(x,y));
 					thisMap.Objects.add(go);
+					if (thisMap.mirror && splitLine.length >= 9) {
+						GameObject goM = new GameObject(rsc);
+						goM.set(mass, fric, rest, Math.PI-rot);
+						goM.setPosition(new Vector2D( -go.getPosition().getX()-go.getWidth(), go.getPosition().getY() ) );
+						thisMap.Objects.add(goM);
+					}
 					//System.out.println(go);
 					thisLine = s.readLine();
 					//System.out.println(thisLine);
@@ -149,57 +233,5 @@ public class LevelSet {
 		}
 
 		return res;
-	}
-	
-	private GameObject getCustomRsc(String[] a){
-		String rsc = a[0];
-		int x = java.lang.Integer.parseInt(a[1]);
-		int y = java.lang.Integer.parseInt(a[2]);
-		int width = java.lang.Integer.parseInt(a[3]);
-		int height = java.lang.Integer.parseInt(a[4]);
-		y = -(y + height);
-		double rot = Math.toRadians(java.lang.Integer.parseInt(a[5]));
-		//int width = (int) Math.sqrt(new Vector2D(x1,y1).distance2(new Vector2D(x2,y2)));
-		double mass = java.lang.Double.parseDouble(a[6]);
-		if(mass < 0) {
-			mass = Double.MAX_VALUE;
-		}
-		double fric = java.lang.Double.parseDouble(a[7]);
-		double rest = java.lang.Double.parseDouble(a[8]);
-		
-		// create custom resource
-		BufferedImage b[] = new BufferedImage[1];
-		b[0] = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		Graphics g = b[0].getGraphics();
-		g.setColor(Color.green);
-		g.fillRect(0, 0, width, height);
-		g.dispose();
-		rsc = rsc.concat(String.valueOf(rscNum++));
-		ResourceFactory.getFactory().putFrames(rsc, b);
-			
-		GameObject go = new GameObject(rsc);
-		go.set(mass, fric, rest, rot);
-		go.setPosition(new Vector2D(x,y));
-		
-		return go;
-	}
-	
-	private GameObject getRsc(String[] a){
-		String rsc = a[0];
-		int x1 = java.lang.Integer.parseInt(a[1]);
-		int y1 = java.lang.Integer.parseInt(a[2]);
-		double rot = Math.toRadians(java.lang.Double.parseDouble(a[3]));
-		double mass = java.lang.Double.parseDouble(a[4]);
-		if(mass < 0) {
-			mass = Double.MAX_VALUE;
-		}
-		double fric = java.lang.Double.parseDouble(a[5]);
-		double rest = java.lang.Double.parseDouble(a[6]);
-		
-		GameObject go = new GameObject(rsc);
-		go.set(mass, fric, rest, rot);
-		go.setPosition(new Vector2D(x1,y1));
-		
-		return go;
 	}
 }

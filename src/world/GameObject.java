@@ -36,4 +36,7 @@ public class GameObject extends Box {
 		type =  t;
 	}
 	
+	public void setRotation(double r) {
+		rotation =  r;
+	}
 }

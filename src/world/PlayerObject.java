@@ -1,20 +1,26 @@
 package world;
 
+import java.awt.Rectangle;
+
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import physics.Arbiter;
 
 public class PlayerObject extends GameObject {
 
-	private static final double JUMPVEL = -200;
+	private static final double JUMPVEL = -300;
 	//private static final double RUNVEL = 150;
 	private static final double WALKVEL = 100;
+	private static final double WALKFORCE = 400;
 	//private static final double CROUCHVEL = 50;
 	private static final double JETFORCE = -400;
 	private static final double FLOATFORCE = 100;
 	private static final double NOFORCE = 0;
+	private static final double NOVEL = 0;
 	private static final double FRICTION = 1.0;
+	private static final double MAXVEL = 300;
 	
+	private boolean alive;
 	private int keyLeftRight; // left right key
 	private int keyJumpCrouch; // jump key
 	private boolean keyJet; // jetpack key
@@ -34,6 +40,7 @@ public class PlayerObject extends GameObject {
 		keyRun = false; // run toggle
 		jetFuel = 100;
 		onObject = false;
+		alive = true;
 	}
 	
 	public void setKeys(int leftRight, int jumpCrouch, boolean jet, 
@@ -51,8 +58,8 @@ public class PlayerObject extends GameObject {
 		if (keyLeftRight != 0) { // pressed button
 			friction = 0;
 			if (onObject){ // on object
-				velocity = new Vector2D( WALKVEL*keyLeftRight, velocity.getY() ); // one speed for now
-				force = new Vector2D( NOFORCE, force.getY());
+				//velocity = new Vector2D( WALKVEL*keyLeftRight, velocity.getY() ); // one speed for now
+				force = new Vector2D( WALKFORCE*mass*leftRight, force.getY());
 			} else { // in air
 				force = new Vector2D( FLOATFORCE*mass*leftRight, force.getY());
 			}
@@ -76,8 +83,12 @@ public class PlayerObject extends GameObject {
 			if (onObject){ // on object
 				velocity = new Vector2D( velocity.getX(), JUMPVEL );
 			}
-		} else {
+		} else if (keyJumpCrouch > 0) { // pressed button {
 			// TODO: Crouch
+		} else { // released key
+			if (velocity.getY() < 0){ // going up still
+				velocity = new Vector2D( velocity.getX(), NOVEL );
+			}
 		}
 	}
 	
@@ -119,5 +130,11 @@ public class PlayerObject extends GameObject {
 		if (keyJumpCrouch != jumpCrouch) jumpCrouch(jumpCrouch);
 		if (keyJet != jet) jet(jet);
 	}
-
+	
+	public void clamp() {
+		// keep vertical if not dead
+		if (alive) setRotation(0);
+		velocity = velocity.clampX(-MAXVEL, MAXVEL);
+		velocity = velocity.clampY(-MAXVEL, MAXVEL);
+	}
 }

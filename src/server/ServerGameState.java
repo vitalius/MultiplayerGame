@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.Set;
 
 import world.GameObject;
+import world.PlayerObject;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
 import net.NetObject;
@@ -67,7 +68,7 @@ public class ServerGameState {
 	}
 
 	public void update() {
-		this.setVertical(GameObject.PLAYER);
+		clampPlayers();
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goList.keySet()) {
 			GameObject b = goList.get(i);
@@ -106,14 +107,16 @@ public class ServerGameState {
 	}
 
 	/**
-	 * sets any object type vertical. useful to keep players vertical.
+	 * clamp players angle and velocity
 	 * 
 	 * @return
 	 */
-	public void setVertical(int type) {
+	public void clampPlayers() {
+		PlayerObject p = null;
 		for (GameObject go : goList.values())
-			if (go.type == type)
-				go.setRotation(0);
+			if (go.type == GameObject.PLAYER)
+				p = (PlayerObject) go;
+				p.clamp();
 		return;
 	}
 

@@ -33,7 +33,7 @@ public class Client extends ScrollingScreenGame {
 
 	public static final String SERVER_IP = "127.0.0.1";
 
-	public static final int SCREEN_WIDTH = 1600, SCREEN_HEIGHT = 1000;
+	public static final int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 1024;
 
 	boolean keyPressed = false;
 	boolean keyReleased = true;
@@ -53,7 +53,6 @@ public class Client extends ScrollingScreenGame {
 
 	GameSprites gameSprites;
 	
-	private LinkedBlockingQueue<String> stateQueue;
 	private SyncState state;
 
 	public Client() {

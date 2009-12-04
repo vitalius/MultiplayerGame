@@ -7,9 +7,16 @@ This must appear first, and it tells game how many levels are in this levelset.
 
 All level section starts with Level, and next line is title of this level, 
 followed by type of game, like 0 for melee, 1 for flag, etc.
+Then the mirror flag 1 or 0
+then the scale double 
+then the offset position
+
 Level
 Not much in this level!
 0
+true
+5.5
+0 0
 
 Next up is list of the four X, Y positions for four spawn spots.
 10 10

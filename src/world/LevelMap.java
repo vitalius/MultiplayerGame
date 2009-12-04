@@ -13,6 +13,9 @@ public class LevelMap {
 	
 	public String LevelTitle;				// Title of game
 	public int LevelType;					// Type of game
+	public boolean mirror;
+	public double scale;
+	public Vector2D offset;
 	public LinkedList<Vector2D> playerInitSpots;	// Spawn spots - Team spawn spots if TeamPlay type.
 	public LinkedList<GameObject> Objects;			// Solid objects IE floor, wall, etc.
 	
