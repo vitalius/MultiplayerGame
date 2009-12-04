@@ -31,8 +31,6 @@ public class NetworkEngine {
 	}
 	
 	public void update() {
-		synchronized(gameserver) {
-			bcaster.spam(prot.encode(gameserver.gameState.getNetState()));
-		}
+		bcaster.spam(prot.encode(gameserver.gameState.getNetState()));
 	}
 }

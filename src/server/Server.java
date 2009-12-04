@@ -28,8 +28,8 @@ import net.Protocol;
 
 public class Server extends ScrollingScreenGame {
 
-	private static final int SCREEN_WIDTH = 1600;
-	private static final int SCREEN_HEIGHT = 1000;
+	private static final int SCREEN_WIDTH = 1280;
+	private static final int SCREEN_HEIGHT = 1024;
 
 	/*
 	 * This is a static, constant time between frames, all clients run as fast
@@ -65,10 +65,10 @@ public class Server extends ScrollingScreenGame {
 		ResourceFactory factory = ResourceFactory.getFactory();
 
 		BufferedImage[] b = new BufferedImage[1];
-		b[0] = new BufferedImage(64, 96, BufferedImage.TYPE_INT_RGB);
+		b[0] = new BufferedImage(32, 48, BufferedImage.TYPE_INT_RGB);
 		Graphics g = b[0].getGraphics();
 		g.setColor(Color.red);
-		g.fillRect(0, 0, 64, 96);
+		g.fillRect(0, 0, 32, 48);
 		g.dispose();
 		factory.putFrames("player", b);
 
@@ -104,7 +104,7 @@ public class Server extends ScrollingScreenGame {
 			System.exit(1);
 		}
 		// Get specified level.
-		level = levels.getThisLevel(0);
+		level = levels.getThisLevel(1);
 		// Is there actual level?
 		if (level == null) {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
@@ -186,7 +186,7 @@ public class Server extends ScrollingScreenGame {
 	 * @param action
 	 *            = encoded action string
 	 */
-	public synchronized void processAction(String action) {
+	public void processAction(String action) {
 
 		Action a = netState.prot.decodeAction(action);
 
@@ -294,19 +294,8 @@ public class Server extends ScrollingScreenGame {
 		while(msgQueue.size() > 0) {
 			this.processAction(msgQueue.poll());
 		}
-		
-		synchronized (gameState) {
-			gameState.update();
-		}
+		gameState.update();
 		centerOn(p); // centers on player
-	}
-
-	@Override
-	public void render(final RenderingContext gc) {
-		synchronized (gameObjectLayers) {
-			super.render(gc);
-			pe.renderPhysicsMarkup(gc);
-		}
 	}
 
 	public static void main(String[] vars) {
