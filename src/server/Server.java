@@ -5,18 +5,12 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import clients.Player;
-
 import physics.CattoPhysicsEngine;
 import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import world.PlayerObject;
-import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.physics.BodyLayer;
@@ -275,8 +269,8 @@ public class Server extends ScrollingScreenGame {
 				// little bit away from player
 				double xx = place.getX() + shootloc.getX() * 40;
 				double yy = place.getY() + shootloc.getY() * 40;
-				// set V in direction of travel 400
-				b.setVelocity(shootloc.scale(400)); // set position - away from
+				// set V in direction of travel 1000
+				b.setVelocity(shootloc.scale(1000)); // set position - away from
 				// player a little.
 				b.setPosition(new Vector2D(xx, yy));
 				obj.listBullets.add(b); //add as newest object.
@@ -284,17 +278,17 @@ public class Server extends ScrollingScreenGame {
 				// 1/10 player mass
 				// set place at player.
 				b = new GameObject("bullet");
-				b.set(10, .2, 1.0, 0.0);
+				b.set(1, .2, 1.0, 0.0);
 				Vector2D place = objectList.get(a.getId()).getCenterPosition();
 				// Put bullet a
 				// little bit away from player
 				double xx = place.getX() + shootloc.getX() * 40;
 				double yy = place.getY() + shootloc.getY() * 40;
-				// set V in direction of travel 400
-				b.setVelocity(shootloc.scale(400)); // set position - away from
+				// set V in direction of travel 1000
+				b.setVelocity(shootloc.scale(1000)); // set position - away from
 				// player a little.
 				b.setPosition(new Vector2D(xx, yy));
-				gameState.add(p, GameObject.BULLET);
+				gameState.add(b, GameObject.BULLET);
 
 				// Reseting physics/render layers gameObjectLayers.clear();
 				gameObjectLayers.add(gameState.getBoxes());
@@ -318,8 +312,16 @@ public class Server extends ScrollingScreenGame {
 			this.processAction(msgQueue.poll());
 		}
 		gameState.update();
-		centerOn(p); // centers on player
+		//centerOn(p); // centers on player
 		p.updatePlayerState();
+		
+		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
+		//System.out.println("mouse center: " + mouse.getLocation().toString());
+		//System.out.println("player center: " + pScreenPos.toString());
+		//System.out.println("average: " + new Vector2D((int)(pScreenPos.getX()+mouse.getLocation().getX())/2, 
+		//		(int)(pScreenPos.getY()+mouse.getLocation().getY())/2).toString());
+		//System.out.println("player center: " + p.getCenterPosition());
+		centerOnPoint((int)(p.getCenterPosition().getX()+mousePos.getX())/2, (int)(mousePos.getY())/2); // centers on player
 	}
 
 	public static void main(String[] vars) {

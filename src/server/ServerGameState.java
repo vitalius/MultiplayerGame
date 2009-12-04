@@ -72,21 +72,26 @@ public class ServerGameState {
 		
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goList.keySet()) {
-			GameObject b = goList.get(i);
-			if (b != null) {
+			GameObject go = goList.get(i);
+			if (go != null) {
 				NetObject no = netList.get(i);
 				if (no != null) {
 
 					// null point common here...
-					no.setPosition(b.getPosition());
+					no.setPosition(go.getPosition());
 
 					// System.out.println(b.getVelocity());
 					// Box's velocity vector is way too high for some reason,
 					// maybe it should be scaled by DELTA_MS, i dunno
-					no.setVelocity(b.getVelocity());
+					no.setVelocity(go.getVelocity());
 
-					no.setRotation(b.getRotation());
+					no.setRotation(go.getRotation());
 				}
+			}
+			PlayerObject p = null;
+			if (go.type == GameObject.PLAYER) {
+				p = (PlayerObject) go;
+				p.clamp();
 			}
 		}
 	}
