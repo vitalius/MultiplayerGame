@@ -11,7 +11,9 @@ import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import world.PlayerObject;
+import jig.engine.PaintableCanvas;
 import jig.engine.ResourceFactory;
+import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
@@ -58,60 +60,36 @@ public class Server extends ScrollingScreenGame {
 		pe = new CattoPhysicsEngine(new Vector2D(0, 300));
 		// pe.setDrawArbiters(true);
 		fre.setActivation(true);
-
 		msgQueue = new LinkedBlockingQueue<String>();
 
-		// Some Test Resources
-		ResourceFactory factory = ResourceFactory.getFactory();
+		// temp resources
+		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
+				JIGSHAPE.RECTANGLE, Color.red);
+		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1,
+				JIGSHAPE.RECTANGLE, Color.blue);
+		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
+				JIGSHAPE.CIRCLE, Color.red);
+		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
+				JIGSHAPE.RECTANGLE, Color.black);
+		PaintableCanvas.loadDefaultFrames("background", 100, 100, 1,
+				JIGSHAPE.RECTANGLE, Color.gray);
+		PaintableCanvas.loadDefaultFrames("target", 20, 20, 1,
+				JIGSHAPE.CIRCLE, Color.red);
 
-		BufferedImage[] b = new BufferedImage[1];
-		b[0] = new BufferedImage(32, 48, BufferedImage.TYPE_INT_RGB);
-		Graphics g = b[0].getGraphics();
-		g.setColor(Color.red);
-		g.fillRect(0, 0, 32, 48);
-		g.dispose();
-		factory.putFrames("player", b);
-
-		b = new BufferedImage[1];
-		b[0] = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
-		g = b[0].getGraphics();
-		g.setColor(Color.blue);
-		g.fillRect(0, 0, 32, 32);
-		g.dispose();
-		factory.putFrames("smallbox", b);
-
-		b = new BufferedImage[1];
-		b[0] = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
-		g = b[0].getGraphics();
-		g.setColor(Color.red);
-		g.fillOval(0, 0, 10, 10);
-		g.dispose();
-		factory.putFrames("playerSpawn", b);
-
-		b = new BufferedImage[1];
-		b[0] = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
-		g = b[0].getGraphics();
-		g.setColor(Color.black);
-		g.fillRect(0, 0, 10, 10);
-		g.dispose();
-		factory.putFrames("bullet", b);
-
-		// Load entire level.
+		// Load all levels
 		levels = new LevelSet("/res/Levelset.txt");
-		// Is there actual level?
 		if (levels.getNumLevels() == 0) {
 			System.err.println("Error: Levels loading failed.\n");
 			System.exit(1);
 		}
 		// Get specified level.
 		level = levels.getThisLevel(1);
-		// Is there actual level?
 		if (level == null) {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
 			System.exit(1);
 		}
-		// Build world from level data
 		level.buildLevel(gameState);
+		
 		// Add a player to test movement, remove when not needed
 		p = new PlayerObject("player");
 		p.set(100, 1.0, 1.0, 0.0);
@@ -124,9 +102,8 @@ public class Server extends ScrollingScreenGame {
 		
 		gameObjectLayers.clear();
 		pe.clear();
-		gameObjectLayers.add(gameState.getBoxes());
-		pe.manageViewableSet(gameState.getBoxes());
-
+		gameObjectLayers.add(gameState.getLayer());
+		pe.manageViewableSet(gameState.getLayer());
 	}
 
 	// this can be removed when the server no longer needs to test player
@@ -139,9 +116,9 @@ public class Server extends ScrollingScreenGame {
 			gameState.removeByID(playerID);
 			playerID = -1;
 			gameObjectLayers.clear();
-			gameObjectLayers.add(gameState.getBoxes());
+			gameObjectLayers.add(gameState.getLayer());
 			pe.clear();
-			pe.manageViewableSet(gameState.getBoxes());
+			pe.manageViewableSet(gameState.getLayer());
 
 		} else if (keyboard.isPressed(KeyEvent.VK_O) && playerID == -1) {
 			p = new PlayerObject("player");
@@ -151,9 +128,9 @@ public class Server extends ScrollingScreenGame {
 			playerID = gameState.add(p, GameObject.PLAYER);
 			oldInput = new Action(playerID);
 			gameObjectLayers.clear();
-			gameObjectLayers.add(gameState.getBoxes());
+			gameObjectLayers.add(gameState.getLayer());
 			pe.clear();
-			pe.manageViewableSet(gameState.getBoxes());
+			pe.manageViewableSet(gameState.getLayer());
 
 		}
 
@@ -229,7 +206,7 @@ public class Server extends ScrollingScreenGame {
 			if (a.right)
 				++x;
 
-			BodyLayer<GameObject> layer = gameState.getBoxes();
+			BodyLayer<GameObject> layer = gameState.getLayer();
 			playerObject.updatePlayer(x, y, a.jet, false, false, layer);
 
 			break;
@@ -248,9 +225,9 @@ public class Server extends ScrollingScreenGame {
 
 			// Reseting physics/render layers
 			gameObjectLayers.clear();
-			gameObjectLayers.add(gameState.getBoxes());
+			gameObjectLayers.add(gameState.getLayer());
 			pe.clear();
-			pe.manageViewableSet(gameState.getBoxes());
+			pe.manageViewableSet(gameState.getLayer());
 
 			break;
 
@@ -297,9 +274,9 @@ public class Server extends ScrollingScreenGame {
 				gameState.add(b, GameObject.BULLET);
 
 				// Reseting physics/render layers gameObjectLayers.clear();
-				gameObjectLayers.add(gameState.getBoxes());
+				gameObjectLayers.add(gameState.getLayer());
 				pe.clear();
-				pe.manageViewableSet(gameState.getBoxes());
+				pe.manageViewableSet(gameState.getLayer());
 				obj.listBullets.add(b); //add as newest object.
 				obj.bulletCount++;
 			}
@@ -333,6 +310,5 @@ public class Server extends ScrollingScreenGame {
 	public static void main(String[] vars) {
 		Server s = new Server();
 		s.run();
-
 	}
 }

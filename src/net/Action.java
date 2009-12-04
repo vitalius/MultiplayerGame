@@ -9,6 +9,7 @@ public class Action {
 	public static final int DO_NOTHING      = 4;
 	public static final int INPUT           = 5;
 	public static final int SHOOT           = 6;
+	public static final int CHANGE_HEALTH 	= 7;
 
 	public boolean jet    = false;
 	public boolean left  = false;

@@ -12,8 +12,9 @@ public class NetObject {
 	private double rotation;
 	private String ipAddress;
 	private int type;
+	private int health;
+	private int jetfuel;
 
-	
 	/**
 	 * Various level of initialization 
 	 * 

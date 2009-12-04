@@ -3,8 +3,6 @@ package clients;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import net.SyncState;
 
 import server.NetworkEngine;

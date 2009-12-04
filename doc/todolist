@@ -33,5 +33,5 @@ Weapons
 	Three types
 
 Animations and Graphics - Rolf - Need graphics...
-Networking - Working, but has a couple issues - Vitaliy
+Networking - dies if there are too many objects - Vitaliy
 GUI for pre-join for client - Rolf - unstarted yet.

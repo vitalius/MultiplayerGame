@@ -2,7 +2,7 @@ package clients;
 
 import java.util.Collection;
 import java.util.Hashtable;
-
+import world.PlayerObject;
 import world.GameObject;
 
 import jig.engine.physics.AbstractBodyLayer;
@@ -30,25 +30,25 @@ public class GameSprites {
 	public void init(NetObject no) {
 		if (spriteList.containsKey(no.getId()))
 			return;
-		SpriteObject so = null;
+		GameObject so = null;
 		switch(no.getType()) {
 		case GameObject.PLAYER:
-			so = new SpriteObject("player");
+			so = new PlayerObject("player");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
 		case GameObject.SMALLBOX:
-			so = new SpriteObject("smallbox");
+			so = new GameObject("smallbox");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
 		case GameObject.PLAYERSPAWN:
-			so = new SpriteObject("playerspawn");
+			so = new GameObject("playerspawn");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
 		case GameObject.BULLET:
-			so = new SpriteObject("bullet");
+			so = new GameObject("bullet");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;

@@ -112,7 +112,7 @@ public class ServerGameState {
 	 * 
 	 * @return
 	 */
-	public BodyLayer<GameObject> getBoxes() {
+	public BodyLayer<GameObject> getLayer() {
 		return layer;
 	}
 

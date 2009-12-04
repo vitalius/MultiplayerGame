@@ -2,20 +2,13 @@ package clients;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.util.ConcurrentModificationException;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import physics.Box;
-
 import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import net.Action;
 import net.NetStateManager;
 import net.SyncState;
-
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.PaintableCanvas.JIGSHAPE;
@@ -64,8 +57,6 @@ public class Client extends ScrollingScreenGame {
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
 				JIGSHAPE.RECTANGLE, Color.black);
-
-		// background. made small so we can debug its motions.
 		PaintableCanvas.loadDefaultFrames("background", 100, 100, 1,
 				JIGSHAPE.RECTANGLE, Color.gray);
 		PaintableCanvas.loadDefaultFrames("target", 20, 20, 1,
@@ -137,19 +128,15 @@ public class Client extends ScrollingScreenGame {
 				|| keyboard.isPressed(KeyEvent.VK_D);
 		input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
 
-		mouse.getLocation();
 		player.move(input);
 	}
 
 	int shootlimit = 0;
 	public void update(long deltaMs) {
-		Vector2D a = null;
-
+		super.update(deltaMs);
 		
-		//while(stateQueue.size() > 0) {
-		//	System.out.println("size: " + stateQueue.size());
-		//	netStateMan.sync(stateQueue.poll());
-		//}
+		Vector2D a = null;
+		
 		String s = state.get();
 		if (s != null) {
 			netStateMan.sync(s);
@@ -189,34 +176,12 @@ public class Client extends ScrollingScreenGame {
 			player.shoot(shot);
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
-		super.update(deltaMs);
-
 	}
 
 	public void render(RenderingContext rc) {
 		super.render(rc);
 		background.render(rc);
 		targetLayer.render(rc);
-
-		/*AffineTransform at = this.getScreenToWorldTransform();
-		try {
-			at.invert();
-		} catch (NoninvertibleTransformException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		rc.setTransform(at); // I would prefer to use a AbstractBodyLayer to
-		// hold the objects to make this easy
-		try {
-			for (Body sprite : gameSprites.getSprites())
-				sprite.render(rc);
-		} catch (NullPointerException e) {
-
-		} catch (ConcurrentModificationException e2) {
-
-		}*/
-
 	}
 
 	public static void main(String[] vars) {

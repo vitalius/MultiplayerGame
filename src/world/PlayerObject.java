@@ -8,7 +8,7 @@ public class PlayerObject extends GameObject {
 
 	private static final double JUMPVEL = -300;
 	//private static final double RUNVEL = 150;
-	private static final double WALKVEL = 100;
+	//private static final double WALKVEL = 100;
 	private static final double WALKFORCE = 400;
 	//private static final double CROUCHVEL = 50;
 	private static final double JETFORCE = -400;
