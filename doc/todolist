@@ -12,14 +12,17 @@ Combat
 	Crosshair Aiming - Rolf
 	GUI - healthbar  - Rolf
 	GUI - jetpackbar - Rolf
-	Death            - Rolf - inital setup, dont work well now.
+	Death            - Rolf - server working, client not so much.
+
 Deathmatch - Josh
 	Rules - Josh
 	Start - Josh
 	End - Josh
 	Spawn Rules - Josh
+
 Weapons 
 	Three types
+
 Animations and Graphics - Rolf
 Networking - Working, but has a couple issues - Vitaliy
 GUI for pre-join for client - Rolf
