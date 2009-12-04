@@ -75,6 +75,8 @@ public class ServerGameState {
 	}
 
 	public void update() {
+		clampAndUpdatePlayers();
+		
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goList.keySet()) {
 			GameObject go = goList.get(i);
@@ -112,6 +114,21 @@ public class ServerGameState {
 	 */
 	public BodyLayer<GameObject> getBoxes() {
 		return layer;
+	}
+
+	/**
+	 * clamp players angle and velocity
+	 * 
+	 * @return
+	 */
+	public void clampAndUpdatePlayers() {
+		PlayerObject p = null;
+		for (GameObject go : goList.values())
+			if (go.type == GameObject.PLAYER)
+				p = (PlayerObject) go;
+				//p.clamp(); called by updatePlayerState() now.
+				p.updatePlayerState();
+		return;
 	}
 
 	public NetState getNetState() {

@@ -6,13 +6,22 @@ Scrollable Map - Done - Josh
 Create Interesting Map - Done - Josh
 Player Movement - Done - Josh 
 Combat 
-	Shooting
+	Shooting         - added shooting, but no hurt.
 	Hit Detection
-	Health Rules     - Rolf
-	Crosshair Aiming - Rolf
+	Health Rules     - Rolf - needs ability to be hurt first...
+	Crosshair Aiming - Rolf - err works, but wrong layering? I couldnt make it topmost.
 	GUI - healthbar  - Rolf
-	GUI - jetpackbar - Rolf
+	GUI - jetpackbar - Rolf - Both of those needs data from server on player health state and jetpack state.
 	Death            - Rolf - server working, client not so much.
+	
+Networking
+	New server to client notifications:
+		Player join
+		Player jetpack fuel left
+		Player health left
+		Player kills
+	client to server notifications:
+		Player rejoin (using same id, and respawn)
 
 Deathmatch - Josh
 	Rules - Josh
@@ -23,6 +32,6 @@ Deathmatch - Josh
 Weapons 
 	Three types
 
-Animations and Graphics - Rolf
+Animations and Graphics - Rolf - Need graphics...
 Networking - Working, but has a couple issues - Vitaliy
-GUI for pre-join for client - Rolf
+GUI for pre-join for client - Rolf - unstarted yet.

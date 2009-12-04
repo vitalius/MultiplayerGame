@@ -1,7 +1,5 @@
 package world;
 
-import java.awt.Rectangle;
-
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import physics.Arbiter;
@@ -19,6 +17,7 @@ public class PlayerObject extends GameObject {
 	private static final double NOVEL = 0;
 	private static final double FRICTION = 1.0;
 	private static final double MAXVEL = 300;
+	private static final int MAXJETFUEL = 2000;
 	
 	private boolean alive;
 	private int keyLeftRight; // left right key
@@ -27,7 +26,7 @@ public class PlayerObject extends GameObject {
 	//private boolean keyCrouch; // crouch key
 	private boolean keyRun; // run toggle
 	
-	private int jetFuel; 
+	private int jetFuel;
 	private boolean onObject; // are we standing on an object
 
 	public PlayerObject(String rsc) {
@@ -38,7 +37,7 @@ public class PlayerObject extends GameObject {
 		//keyCrouch = false; // crouch key
 		keyJet = false; // jetpack key
 		keyRun = false; // run toggle
-		jetFuel = 100;
+		jetFuel = MAXJETFUEL;
 		onObject = false;
 		alive = true;
 	}
@@ -79,13 +78,18 @@ public class PlayerObject extends GameObject {
 	// jump
 	public void jumpCrouch(int jumpCrouch) {
 		keyJumpCrouch = jumpCrouch;
-		if (keyJumpCrouch < 0) { // pressed button
+		System.out.println(jetFuel);
+
+		if (keyJumpCrouch < 0 && jetFuel > 0) { // pressed button
+			jetFuel--;
 			if (onObject){ // on object
 				velocity = new Vector2D( velocity.getX(), JUMPVEL );
 			}
 		} else if (keyJumpCrouch > 0) { // pressed button {
 			// TODO: Crouch
 		} else { // released key
+			if(jetFuel < MAXJETFUEL )
+				jetFuel++;
 			if (velocity.getY() < 0){ // going up still
 				velocity = new Vector2D( velocity.getX(), NOVEL );
 			}
@@ -97,6 +101,7 @@ public class PlayerObject extends GameObject {
 		keyJet = jet;
 		if (keyJet) { // pressed button
 			if (jetFuel > 0) {
+				System.out.println(jetFuel);
 				force = new Vector2D( force.getX(), JETFORCE*mass );
 			}
 		} else { // released button
@@ -107,7 +112,7 @@ public class PlayerObject extends GameObject {
 	// walking, running and floating
 	public void updatePlayer(int leftRight, int jumpCrouch, boolean jet, 
 			   boolean crouch, boolean run, BodyLayer<GameObject> layer) {
-		
+
 		// detect if on an object TODO: static only?
 		Arbiter arb;
 		GameObject otherObject;
@@ -124,11 +129,24 @@ public class PlayerObject extends GameObject {
 				break;
 			}
 		}
-		
+				
 		//setKeys(leftRight, jump, jet, crouch, run);
 		if (keyLeftRight != leftRight) leftright(leftRight);
 		if (keyJumpCrouch != jumpCrouch) jumpCrouch(jumpCrouch);
 		if (keyJet != jet) jet(jet);
+	}
+	
+	public void updatePlayerState() {
+		//System.out.println(jetFuel);
+		if(keyJet && jetFuel > 0) {
+			jetFuel = jetFuel - 2;
+		} else if(!keyJet && jetFuel < MAXJETFUEL) {
+			jetFuel++;
+		}
+		if(jetFuel <= 0)
+			force = new Vector2D( force.getX(), NOFORCE);
+
+		clamp();
 	}
 	
 	public void clamp() {
