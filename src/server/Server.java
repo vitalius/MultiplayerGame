@@ -49,8 +49,8 @@ public class Server extends ScrollingScreenGame {
 
 	public LinkedBlockingQueue<String> msgQueue;
 
-	public Server(int width, int height, boolean preferFullscreen) {
-		super(width, height, preferFullscreen);
+	public Server() {
+		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
 		netState = new NetStateManager();
 		gameState = new ServerGameState();
@@ -121,6 +121,12 @@ public class Server extends ScrollingScreenGame {
 		oldInput = new Action(playerID);
 
 		netState.update(gameState.getNetState());
+		
+		gameObjectLayers.clear();
+		pe.clear();
+		gameObjectLayers.add(gameState.getBoxes());
+		pe.manageViewableSet(gameState.getBoxes());
+
 	}
 
 	// this can be removed when the server no longer needs to test player
@@ -325,12 +331,7 @@ public class Server extends ScrollingScreenGame {
 	}
 
 	public static void main(String[] vars) {
-		Server s = new Server(SCREEN_WIDTH, SCREEN_HEIGHT, false);
-
-		s.gameObjectLayers.clear();
-		s.pe.clear();
-		s.gameObjectLayers.add(s.gameState.getBoxes());
-		s.pe.manageViewableSet(s.gameState.getBoxes());
+		Server s = new Server();
 		s.run();
 
 	}

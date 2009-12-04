@@ -13,6 +13,15 @@ Combat
 	GUI - healthbar  - Rolf
 	GUI - jetpackbar - Rolf - Both of those needs data from server on player health state and jetpack state.
 	Death            - Rolf - server working, client not so much.
+	
+Networking
+	New server to client notifications:
+		Player join
+		Player jetpack fuel left
+		Player health left
+		Player kills
+	client to server notifications:
+		Player rejoin (using same id, and respawn)
 
 Deathmatch - Josh
 	Rules - Josh
