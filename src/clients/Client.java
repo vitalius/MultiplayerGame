@@ -129,6 +129,7 @@ public class Client extends ScrollingScreenGame {
 				|| keyboard.isPressed(KeyEvent.VK_D);
 		input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
 
+		mouse.getLocation();
 		player.move(input);
 	}
 

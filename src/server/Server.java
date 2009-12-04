@@ -295,7 +295,14 @@ public class Server extends ScrollingScreenGame {
 			this.processAction(msgQueue.poll());
 		}
 		gameState.update();
-		centerOn(p); // centers on player
+		
+		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
+		//System.out.println("mouse center: " + mouse.getLocation().toString());
+		//System.out.println("player center: " + pScreenPos.toString());
+		//System.out.println("average: " + new Vector2D((int)(pScreenPos.getX()+mouse.getLocation().getX())/2, 
+		//		(int)(pScreenPos.getY()+mouse.getLocation().getY())/2).toString());
+		//System.out.println("player center: " + p.getCenterPosition());
+		centerOnPoint((int)(p.getCenterPosition().getX()+mousePos.getX())/2, (int)(mousePos.getY())/2); // centers on player
 	}
 
 	public static void main(String[] vars) {
