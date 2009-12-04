@@ -55,6 +55,7 @@ public class LevelMap {
 			GameObject s = Objects.get(i);
 			//System.out.println(s);
 			gs.spriteList.put(s.hashCode(), s);
+			gs.getLayer().add(s);
 		}
 	}
 }

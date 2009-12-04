@@ -14,9 +14,13 @@ import net.NetObject;
 
 public class GameSprites {
 	
+	BodyLayer<GameObject> layer;
+	
 	public Hashtable<Integer, GameObject> spriteList = new Hashtable<Integer, GameObject>();
 	
-	public GameSprites () { }
+	public GameSprites () {
+		layer = new AbstractBodyLayer.IterativeUpdate<GameObject>();
+	}
 	
 	public void init(NetStateManager gameState) {
 		for(NetObject no : gameState.getState().getNetObjects())
@@ -26,33 +30,36 @@ public class GameSprites {
 	public void init(NetObject no) {
 		if (spriteList.containsKey(no.getId()))
 			return;
-		
+		SpriteObject so = null;
 		switch(no.getType()) {
 		case GameObject.PLAYER:
-			spriteList.put(no.getId(), new SpriteObject("player"));
+			so = new SpriteObject("player");
+			spriteList.put(no.getId(), so);
+			layer.add(so);
 			break;
 		case GameObject.SMALLBOX:
-			spriteList.put(no.getId(), new SpriteObject("smallbox"));
+			so = new SpriteObject("smallbox");
+			spriteList.put(no.getId(), so);
+			layer.add(so);
 			break;
 		case GameObject.PLAYERSPAWN:
-			spriteList.put(no.getId(), new SpriteObject("playerSpawn"));
+			so = new SpriteObject("playerspawn");
+			spriteList.put(no.getId(), so);
+			layer.add(so);
 			break;
 		case GameObject.BULLET:
-			spriteList.put(no.getId(), new SpriteObject("bullet"));
+			so = new SpriteObject("bullet");
+			spriteList.put(no.getId(), so);
+			layer.add(so);
 			break;
 		}
-		
 	}
 	
 	public void sync(NetStateManager gameState) {
 		for (NetObject no : gameState.getState().getNetObjects()) {
 			if (spriteList.containsKey(no.getId())) {
 					
-				// fixing the offset, because in jig, rectangle extending VanillaShere is just a giant sphere
-				//SpriteObject s = (SpriteObject)spriteList.get(no.getId());
 				Vector2D p = no.getPosition();
-				//Vector2D newPos = new Vector2D(p.getX()-(s.getRadius()-s.getImgWidth()/2), 
-				//							   p.getY()-(s.getRadius()-s.getImgHeight()/2));
 				spriteList.get(no.getId()).setPosition(p);
 				//System.out.println(no.getVelocity());
 				spriteList.get(no.getId()).setVelocity(no.getVelocity());
@@ -88,9 +95,6 @@ public class GameSprites {
 	}
 	
 	public BodyLayer<GameObject> getLayer() { 
-		BodyLayer<GameObject> layer = new AbstractBodyLayer.IterativeUpdate<GameObject>();
-		for (GameObject o : spriteList.values())
-			layer.add(o);
 		return layer;
 	}
 }

@@ -297,8 +297,8 @@ public class Server extends ScrollingScreenGame {
 		gameState.update();
 		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
-		//System.out.println("mouse center: " + mouse.getLocation().toString());
-		//System.out.println("player center: " + pScreenPos.toString());
+		//System.out.println("mouse center: " + mousePos.toString());
+		//System.out.println("player center: " + p.getCenterPosition().toString());
 		//System.out.println("average: " + new Vector2D((int)(pScreenPos.getX()+mouse.getLocation().getX())/2, 
 		//		(int)(pScreenPos.getY()+mouse.getLocation().getY())/2).toString());
 		//System.out.println("player center: " + p.getCenterPosition());

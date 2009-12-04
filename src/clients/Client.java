@@ -74,6 +74,7 @@ public class Client extends ScrollingScreenGame {
 		
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
+		fre.setActivation(true);
 		
 		// Load entire level.
 		levels = new LevelSet("/res/Levelset.txt");
@@ -153,13 +154,17 @@ public class Client extends ScrollingScreenGame {
 		// Move background to 10% of player position.
 		// actually -10% because we want motions to be realistic.
 		GameObject p = gameSprites.spriteList.get(player.getID());
-		if (p != null && p.getPosition() != null) {
-			a = p.getPosition();
+		if (p != null && p.getCenterPosition() != null) {
+			a = p.getCenterPosition();
 			background.get(0).setCenterPosition(
 					new Vector2D(a.getX() * -.1 + SCREEN_WIDTH / 2, a.getY()
 							* -.1 + SCREEN_HEIGHT / 2));
 			// System.out.println("p: " + p.getPosition().toString());
-			centerOn(p);
+			Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
+			 //System.out.println("mousePos: " + mousePos.toString());
+			 //System.out.println("playerPos: " + p.getPosition().toString());
+			 centerOnPoint((int)(p.getCenterPosition().getX()+mousePos.getX())/2, (int)(mousePos.getY())/2); // centers on player
+			 
 		}
 		keyboardMovementHandler();
 
@@ -184,13 +189,14 @@ public class Client extends ScrollingScreenGame {
 		super.render(rc);
 		background.render(rc);
 
-		AffineTransform at = this.getScreenToWorldTransform();
+		/*AffineTransform at = this.getScreenToWorldTransform();
 		try {
 			at.invert();
 		} catch (NoninvertibleTransformException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
 		rc.setTransform(at); // I would prefer to use a AbstractBodyLayer to
 		// hold the objects to make this easy
 		try {
@@ -200,7 +206,7 @@ public class Client extends ScrollingScreenGame {
 
 		} catch (ConcurrentModificationException e2) {
 
-		}
+		}*/
 
 	}
 

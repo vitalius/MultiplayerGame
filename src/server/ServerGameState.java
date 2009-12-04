@@ -16,11 +16,12 @@ public class ServerGameState {
 	private NetState netState;
 
 	private Hashtable<Integer, GameObject> goList = new Hashtable<Integer, GameObject>();
-
+	private BodyLayer<GameObject> layer;
 	private Random generator = new Random();
 
 	public ServerGameState() {
 		netState = new NetState();
+		layer = new AbstractBodyLayer.NoUpdate<GameObject>();
 	}
 
 	public int getUniqueId() {
@@ -51,7 +52,10 @@ public class ServerGameState {
 			return id;
 
 		goList.put(id, go);
-		netState.add(new NetObject(id, go.getPosition(), type));
+		layer.add(go);
+		if (go.type != GameObject.CUSTOM) {
+			netState.add(new NetObject(id, go.getPosition(), type));
+		}	
 		return id;
 	}
 
@@ -64,7 +68,10 @@ public class ServerGameState {
 			return;
 
 		goList.put(id, box);
-		netState.add(new NetObject(id, box.getPosition(), type));
+		layer.add(box);
+		if (box.type != GameObject.CUSTOM) {
+			netState.add(new NetObject(id, box.getPosition(), type));
+		}
 	}
 
 	public void update() {
@@ -104,10 +111,7 @@ public class ServerGameState {
 	 * @return
 	 */
 	public BodyLayer<GameObject> getBoxes() {
-		BodyLayer<GameObject> boxLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
-		for (GameObject b : goList.values())
-			boxLayer.add(b);
-		return boxLayer;
+		return layer;
 	}
 
 	public NetState getNetState() {
