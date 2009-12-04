@@ -59,7 +59,7 @@ public class Client extends ScrollingScreenGame {
 
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
-		PaintableCanvas.loadDefaultFrames("player", 64, 96, 1,
+		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1,
 				JIGSHAPE.RECTANGLE, Color.blue);
@@ -83,7 +83,7 @@ public class Client extends ScrollingScreenGame {
 			System.exit(1);
 		}
 		// Get specified level.
-		level = levels.getThisLevel(0);
+		level = levels.getThisLevel(1);
 		// Is there actual level?
 		if (level == null) {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
