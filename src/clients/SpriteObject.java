@@ -1,9 +1,9 @@
 package clients;
 
-import jig.engine.physics.vpe.VanillaSphere;
+import world.GameObject;
 
 
-public class SpriteObject extends VanillaSphere{
+public class SpriteObject extends GameObject{
 	
 	private int imgHeight = 0;
 	private int imgWidth = 0;

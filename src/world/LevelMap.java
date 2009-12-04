@@ -1,6 +1,7 @@
 package world;
 
 import java.util.LinkedList;
+import clients.GameSprites;
 
 import server.ServerGameState;
 import jig.engine.util.Vector2D;
@@ -41,6 +42,16 @@ public class LevelMap {
 			GameObject s = Objects.get(i);
 			//System.out.println(s);
 			gs.add(s, s.getType());
+		}
+	}
+	
+	// Build world from level data.
+	public void buildLevelClient(final GameSprites gs) {
+		// Create objects based on object type.
+		for (int i = 0; i < Objects.size(); i++) {
+			GameObject s = Objects.get(i);
+			//System.out.println(s);
+			gs.spriteList.put(s.hashCode(), s);
 		}
 	}
 }

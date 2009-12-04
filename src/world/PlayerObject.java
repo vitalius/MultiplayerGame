@@ -3,14 +3,13 @@ package world;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import physics.Arbiter;
-import physics.CattoPhysicsEngine;
 
 public class PlayerObject extends GameObject {
 
 	private static final double JUMPVEL = -200;
-	private static final double RUNVEL = 150;
+	//private static final double RUNVEL = 150;
 	private static final double WALKVEL = 100;
-	private static final double CROUCHVEL = 50;
+	//private static final double CROUCHVEL = 50;
 	private static final double JETFORCE = -400;
 	private static final double FLOATFORCE = 100;
 	private static final double NOFORCE = 0;
@@ -19,7 +18,7 @@ public class PlayerObject extends GameObject {
 	private int keyLeftRight; // left right key
 	private int keyJumpCrouch; // jump key
 	private boolean keyJet; // jetpack key
-	private boolean keyCrouch; // crouch key
+	//private boolean keyCrouch; // crouch key
 	private boolean keyRun; // run toggle
 	
 	private int jetFuel; 
@@ -27,9 +26,10 @@ public class PlayerObject extends GameObject {
 
 	public PlayerObject(String rsc) {
 		super(rsc);
+		setType(GameObject.PLAYER);
 		keyLeftRight = 0; // left right key
 		keyJumpCrouch = 0; // jump key
-		keyCrouch = false; // crouch key
+		//keyCrouch = false; // crouch key
 		keyJet = false; // jetpack key
 		keyRun = false; // run toggle
 		jetFuel = 100;
@@ -40,7 +40,7 @@ public class PlayerObject extends GameObject {
 					   boolean crouch, boolean run) {
 		keyLeftRight = leftRight;
 		keyJumpCrouch = jumpCrouch;
-		keyCrouch = crouch;
+		//keyCrouch = crouch;
 		keyJet = jet;
 		if (run) keyRun = !keyRun; // toggle run
 	}
