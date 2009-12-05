@@ -96,15 +96,14 @@ public class Client extends ScrollingScreenGame {
 		player = new Player(0, control);
 		input = new Action(0, Action.INPUT);
 
-		player.join(SERVER_IP);
-		gameObjectLayers.clear();
-		gameObjectLayers.add(gameSprites.getLayer());
-
 		// Create background object and add to layer, to window.
 		Box back = new Box("background");
 		background.add(back);
 		gameObjectLayers.add(background);
 
+		player.join(SERVER_IP);
+		gameObjectLayers.clear();
+		gameObjectLayers.add(gameSprites.getLayer());
 
 		back = new Box("target");
 		targetLayer.add(back);
