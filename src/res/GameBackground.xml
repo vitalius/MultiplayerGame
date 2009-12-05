@@ -1,0 +1,16 @@
+<spriteset>
+    <author>Rolf Redford</author>
+    <name>BACK</name>
+    <type>image/png</type>
+    <width>1529</width>
+    <height>1060</height>
+    
+     <frameset>
+	    <name>background</name>
+		<top>0</top>
+		<left>0</left>
+        <width>1529</width>
+        <height>1060</height>
+	</frameset>
+
+</spriteset>

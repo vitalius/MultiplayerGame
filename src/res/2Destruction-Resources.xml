@@ -1,8 +1,8 @@
 <resources>
 
     <spritesheet>
-        <imagesrc>2Destruction.PNG</imagesrc>
-        <framesrc>2Destruction-spritesheet.xml</framesrc>
+        <imagesrc>GameBackground.png</imagesrc>
+        <framesrc>GameBackground.xml</framesrc>
     </spritesheet>
 
 </resources>

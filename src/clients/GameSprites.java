@@ -48,6 +48,8 @@ public class GameSprites {
 			layer.add(so);
 			break;
 		case GameObject.BULLET:
+			// why is this never called?
+			System.out.println("Surpise!");
 			so = new GameObject("bullet");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
