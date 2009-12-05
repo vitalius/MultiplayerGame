@@ -185,7 +185,7 @@ public class LevelSet {
 						BufferedImage b[] = new BufferedImage[1];
 						b[0] = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 						Graphics g = b[0].getGraphics();
-						g.setColor(Color.BLACK);
+						g.setColor(Color.darkGray);
 						g.fillRect(0, 0, width, height);
 						g.dispose();
 						rsc = rsc.concat(String.valueOf(rscNum++));

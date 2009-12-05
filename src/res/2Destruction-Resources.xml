@@ -4,5 +4,10 @@
         <imagesrc>GameBackground.png</imagesrc>
         <framesrc>GameBackground.xml</framesrc>
     </spritesheet>
+    <spritesheet>
+         <imagesrc>ClientUI.png</imagesrc>
+      	 <framesrc>ClientUI.xml</framesrc>
+    </spritesheet>
+    
 
 </resources>

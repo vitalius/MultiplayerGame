@@ -9,9 +9,9 @@ Combat
 	Shooting         - added shooting, but no hurt.
 	Hit Detection
 	Health Rules     - Rolf - needs ability to be hurt first...
-	Crosshair Aiming - Rolf - err works, but wrong layering? I couldnt make it topmost.
+	Crosshair Aiming - Rolf - need gfx, but done.
 	GUI - healthbar  - Rolf
-	GUI - jetpackbar - Rolf - Both of those needs data from server on player health state and jetpack state.
+	GUI - jetpackbar - Rolf - Both bars done, has one bug, but just needs data from server to work.
 	Death            - Rolf - server working, client not so much.
 	
 Networking
@@ -32,6 +32,14 @@ Deathmatch - Josh
 Weapons 
 	Three types
 
-Animations and Graphics - Rolf - Need graphics... Background working however!
+Animations and Graphics - Rolf
+	Bullet - Need graphics...
+	player - Need graphics...
+	Background - done, but maybe more pictures?
+	Gui elements
+		jetpack, health bars -done, just need data to be actually used.
+		Buttons, logo UI graphics -unstarted.
+		
+	
 Networking - dies if there are too many objects - Vitaliy
 GUI for pre-join for client - Rolf - unstarted yet.

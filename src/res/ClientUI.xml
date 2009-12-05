@@ -1,0 +1,26 @@
+<spriteset>
+    <author>Rolf Redford</author>
+    <name>BACK</name>
+    <type>image/png</type>
+    <width>1529</width>
+    <height>1060</height>
+    
+     <frameset>
+	    <name>JetFuel</name>
+		<top>0</top>
+		<left>0</left>
+        <width>104</width>
+        <height>11</height>
+		<rows>26</rows>
+	</frameset>
+
+     <frameset>
+	    <name>Health</name>
+		<top>0</top>
+		<left>102</left>
+        <width>104</width>
+        <height>11</height>
+		<rows>26</rows>
+	</frameset>
+
+</spriteset>
