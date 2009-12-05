@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import clients.Player;
 import physics.CattoPhysicsEngine;
 import world.GameObject;
 import world.LevelMap;
@@ -44,7 +46,7 @@ public class Server extends ScrollingScreenGame {
 	private LevelSet levels;
 	private LevelMap level;
 	private int playerID;
-	private PlayerObject p;
+	private PlayerObject playerObject;
 	private Action oldInput;
 
 	private static final int maxBullets = 10;
@@ -91,11 +93,11 @@ public class Server extends ScrollingScreenGame {
 		level.buildLevel(gameState);
 		
 		// Add a player to test movement, remove when not needed
-		p = new PlayerObject("player");
-		p.set(100, 1.0, 1.0, 0.0);
+		playerObject = new PlayerObject("player");
+		playerObject.set(100, 1.0, 1.0, 0.0);
 		Vector2D a = level.playerInitSpots.get(0);
-		p.setPosition(new Vector2D(a.getX(), a.getY()));
-		playerID = gameState.add(p, GameObject.PLAYER);
+		playerObject.setPosition(new Vector2D(a.getX(), a.getY()));
+		playerID = gameState.add(playerObject, GameObject.PLAYER);
 		oldInput = new Action(playerID);
 
 		netState.update(gameState.getNetState());
@@ -121,11 +123,11 @@ public class Server extends ScrollingScreenGame {
 			pe.manageViewableSet(gameState.getLayer());
 
 		} else if (keyboard.isPressed(KeyEvent.VK_O) && playerID == -1) {
-			p = new PlayerObject("player");
-			p.set(100, 1.0, 1.0, 0.0);
+			playerObject = new PlayerObject("player");
+			playerObject.set(100, 1.0, 1.0, 0.0);
 			Vector2D a = level.playerInitSpots.get(0);
-			p.setPosition(new Vector2D(a.getX(), a.getY()));
-			playerID = gameState.add(p, GameObject.PLAYER);
+			playerObject.setPosition(new Vector2D(a.getX(), a.getY()));
+			playerID = gameState.add(playerObject, GameObject.PLAYER);
 			oldInput = new Action(playerID);
 			gameObjectLayers.clear();
 			gameObjectLayers.add(gameState.getLayer());
@@ -296,7 +298,7 @@ public class Server extends ScrollingScreenGame {
 		}
 		gameState.update();
 		//centerOn(p); // centers on player
-		p.updatePlayerState();
+		playerObject.updatePlayerState();
 		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 		//System.out.println("mouse center: " + mousePos.toString());
@@ -304,7 +306,7 @@ public class Server extends ScrollingScreenGame {
 		//System.out.println("average: " + new Vector2D((int)(pScreenPos.getX()+mouse.getLocation().getX())/2, 
 		//		(int)(pScreenPos.getY()+mouse.getLocation().getY())/2).toString());
 		//System.out.println("player center: " + p.getCenterPosition());
-		centerOnPoint((int)(p.getCenterPosition().getX()+mousePos.getX())/2, (int)(mousePos.getY())/2); // centers on player
+		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(mousePos.getY())/2); // centers on player
 	}
 
 	public static void main(String[] vars) {

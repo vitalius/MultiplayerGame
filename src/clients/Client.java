@@ -1,7 +1,15 @@
 package clients;
 
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.util.List;
+
 import physics.Box;
 import world.GameObject;
 import world.LevelMap;
@@ -9,8 +17,11 @@ import world.LevelSet;
 import net.Action;
 import net.NetStateManager;
 import net.SyncState;
+import jig.engine.CursorResource;
+import jig.engine.ImageResource;
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
+import jig.engine.ResourceFactory;
 import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
@@ -39,7 +50,6 @@ public class Client extends ScrollingScreenGame {
 	private LevelMap level;
 
 	private BodyLayer<Body> background = new AbstractBodyLayer.IterativeUpdate<Body>();
-	private BodyLayer<Body> targetLayer = new AbstractBodyLayer.IterativeUpdate<Body>();
 
 	GameSprites gameSprites;
 	
@@ -48,7 +58,9 @@ public class Client extends ScrollingScreenGame {
 	public Client() {
 
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
-
+		
+		ResourceFactory factory = ResourceFactory.getFactory();
+		
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1,
@@ -59,8 +71,11 @@ public class Client extends ScrollingScreenGame {
 				JIGSHAPE.RECTANGLE, Color.black);
 		PaintableCanvas.loadDefaultFrames("background", 100, 100, 1,
 				JIGSHAPE.RECTANGLE, Color.gray);
-		PaintableCanvas.loadDefaultFrames("target", 20, 20, 1,
+		PaintableCanvas.loadDefaultFrames("target", 5, 5, 1,
 				JIGSHAPE.CIRCLE, Color.red);
+		
+		CursorResource cr = factory.makeCursor("target", new Vector2D(0,0), 1);
+		mouse.setCursor(cr);
 		
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
@@ -104,12 +119,6 @@ public class Client extends ScrollingScreenGame {
 		Box back = new Box("background");
 		background.add(back);
 		gameObjectLayers.add(background);
-
-
-		back = new Box("target");
-		targetLayer.add(back);
-		gameObjectLayers.add(targetLayer);
-
 	}
 
 	/**
@@ -160,8 +169,6 @@ public class Client extends ScrollingScreenGame {
 			 
 		}
 		keyboardMovementHandler();
-		
-		targetLayer.get(0).setCenterPosition(new Vector2D(mouse.getLocation().getX(),mouse.getLocation().getY()));
 
 		if (shootlimit < 250) {
 			shootlimit += deltaMs;
@@ -181,7 +188,6 @@ public class Client extends ScrollingScreenGame {
 	public void render(RenderingContext rc) {
 		super.render(rc);
 		background.render(rc);
-		targetLayer.render(rc);
 	}
 
 	public static void main(String[] vars) {
