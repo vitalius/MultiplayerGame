@@ -49,6 +49,7 @@ public class Server extends ScrollingScreenGame {
 	private static final int maxBullets = 10;
 
 	public LinkedBlockingQueue<String> msgQueue;
+	private int shootlimit;
 
 	public Server() {
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
@@ -158,6 +159,29 @@ public class Server extends ScrollingScreenGame {
 			oldInput.copy(input);
 		}
 	}
+		
+	public void mouseHandler(long deltaMs) {
+		if (shootlimit < 250) {
+			shootlimit += deltaMs;
+		} else if (playerObject != null && mouse.isLeftButtonPressed()) {
+			if (playerObject.getCenterPosition() != null) {
+				shootlimit = 0;
+				// Since we know player is always generally in center of
+				// screen...
+				// Get shoot vector and normalize it.
+				Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
+						.getX(), mouse.getLocation().getY()));
+				Vector2D shot = new Vector2D(mousePos.getX()
+						- playerObject.getCenterPosition().getX(), mousePos.getY()
+						- playerObject.getCenterPosition().getY());
+				shot = shot.unitVector();
+				Action shooty = new Action(playerID, Action.SHOOT, shot);
+				String action = new Protocol().encodeAction(shooty);
+				processAction(action);
+			}
+			// System.out.println("Weapon fire keypress" + mouse.getLocation());
+		}
+	}
 
 	/**
 	 * Just like client has a "keyboardHandler" method that capture key strokes
@@ -259,7 +283,8 @@ public class Server extends ScrollingScreenGame {
 			} else {// not full yet. add new bullet.
 				// set place at player.
 				b = new GameObject("bullet");
-				b.set(1, .2, 1.0, 0.0);
+				b.set(1, 1, 1.0, 0.0);
+				b.setForce(pe.getGravity().scale(-1)); // don't let gravity affect the bullet
 				Vector2D place = objectList.get(a.getId()).getCenterPosition();
 				// Put bullet a
 				// little bit away from player
@@ -291,6 +316,7 @@ public class Server extends ScrollingScreenGame {
 			totalMS = 0;
 		}
 		keyboardMovementHandler();
+		mouseHandler(deltaMs);
 
 		while (msgQueue.size() > 0) {
 			this.processAction(msgQueue.poll());

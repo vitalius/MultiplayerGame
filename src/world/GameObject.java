@@ -2,6 +2,8 @@ package world;
 
 import java.util.Vector;
 
+import jig.engine.util.Vector2D;
+
 import physics.Box;
 
 public class GameObject extends Box {
@@ -44,5 +46,9 @@ public class GameObject extends Box {
 	
 	public void setRotation(double r) {
 		rotation =  r;
+	}
+	
+	public void setForce(Vector2D f) {
+		force =  f;
 	}
 }

@@ -108,6 +108,10 @@ public class CattoPhysicsEngine implements PhysicsEngine<Box> {
 	public void setGravity(final Vector2D g) {
 		gravity = g;
 	}
+	
+	public Vector2D getGravity() {
+		return gravity;
+	}
 
 	/**
 	 * Registers a viewable layer with the physics engine so that all objects in
