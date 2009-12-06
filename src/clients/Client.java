@@ -2,6 +2,8 @@ package clients;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.Random;
+
 import physics.Box;
 import server.NetworkEngine;
 import world.GameObject;
@@ -138,14 +140,13 @@ public class Client extends ScrollingScreenGame {
 		TcpClient control = new TcpClient(SERVER_IP, NetworkEngine.TCP_PORT);
 
 		/* Client id is 0 for now, we should make it some random digit */
-		player = new Player(0, control);
-		input = new Action(0, Action.INPUT);
-
-		gameObjectLayers.clear();
-
+		Random rand = new Random(); // this should actually come from the server
+		player = new Player(rand.nextInt(), control);
+		input = new Action(player.getID(), Action.INPUT);
 		player.join(SERVER_IP);
-
+		
 		// Create background object and add to layer, to window.
+		gameObjectLayers.clear();
 		Box back = new Box("blackback");
 		black.add(back);
 		// background graphic.

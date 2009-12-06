@@ -49,20 +49,20 @@ public class LevelSet {
 			InputStreamReader R = new InputStreamReader(LevelMap.class
 					.getResourceAsStream(filename));
 			//System.out.println(R);
-			BufferedReader s = new BufferedReader(R);
+			BufferedReader bufRead = new BufferedReader(R);
 			//System.out.println(s);
-			if (s == null)
+			if (bufRead == null)
 				return null;
-			String thisLine = s.readLine();
+			String thisLine = bufRead.readLine();
 			int levelnum = java.lang.Integer.parseInt(thisLine);
 
 			// Level loading.
 			for (int l = 0; l < levelnum; l++) {
 				// Read inital "Level"
-				thisLine = s.readLine();
+				thisLine = bufRead.readLine();
 				//System.out.println(thisLine.compareTo("Level") + "###");
 				if (thisLine.compareTo("Level") != 0) {
-					s.close();
+					bufRead.close();
 					res = null;
 					System.out
 							.println("Error: Level file not formatted properly!");
@@ -71,10 +71,10 @@ public class LevelSet {
 
 				// Create new levelmap and read title.
 				LevelMap thisMap = new LevelMap();
-				thisLine = s.readLine();
+				thisLine = bufRead.readLine();
 				//System.out.println(thisLine);
 				if (thisLine == null) {
-					s.close();
+					bufRead.close();
 					res = null;
 					System.out.println("Error: Level is missing title");
 					return null;
@@ -82,10 +82,10 @@ public class LevelSet {
 				thisMap.LevelTitle = thisLine;
 
 				// Read level type
-				thisLine = s.readLine();
+				thisLine = bufRead.readLine();
 				//System.out.println(thisLine);
 				if (thisLine == null) {
-					s.close();
+					bufRead.close();
 					res = null;
 					System.out.println("Error: Level is missing type");
 					return null;
@@ -93,10 +93,10 @@ public class LevelSet {
 				thisMap.LevelType = java.lang.Integer.parseInt(thisLine);
 				
 				// get the mirror flag
-				thisLine = s.readLine();
+				thisLine = bufRead.readLine();
 				//System.out.println(thisLine);
 				if (thisLine == null) {
-					s.close();
+					bufRead.close();
 					res = null;
 					System.out.println("Error: Level is missing mirror");
 					return null;
@@ -105,9 +105,9 @@ public class LevelSet {
 				else thisMap.mirror = false;
 				
 				// get the scaling factor
-				thisLine = s.readLine();
+				thisLine = bufRead.readLine();
 				if (thisLine == null) {
-					s.close();
+					bufRead.close();
 					res = null;
 					System.out.println("Error: Level is missing scale");
 					return null;
@@ -115,17 +115,17 @@ public class LevelSet {
 				thisMap.scale = java.lang.Double.parseDouble(thisLine);
 				
 				// get the offset position
-				thisLine = s.readLine();
+				thisLine = bufRead.readLine();
 				//System.out.println(thisLine);
 				if (thisLine == null) {
-					s.close();
+					bufRead.close();
 					res = null;
 					System.out.println("Error: Level is missing offset");
 					return null;
 				}
 				String[] os = thisLine.split(" ");
 				if (os.length < 2) {
-					s.close();
+					bufRead.close();
 					res = null;
 					System.out
 							.println("Error: Offset missing one number");
@@ -136,30 +136,30 @@ public class LevelSet {
 
 				// Load four spawn spots.
 				for (int y = 0; y < 4; y++) {
-					thisLine = s.readLine();
+					thisLine = bufRead.readLine();
 					//System.out.println(thisLine);
 					if (thisLine == null) {
-						s.close();
+						bufRead.close();
 						res = null;
 						System.out.println("Error: Level is misformatted!");
 						return null;
 					}
-					String[] a = thisLine.split(" ");
-					if (a.length < 2) {
-						s.close();
+					String[] splitLine = thisLine.split(" ");
+					if (splitLine.length < 2) {
+						bufRead.close();
 						res = null;
 						System.out
 								.println("Error: Player spawn spot is missing in least one number!");
 						return null;
 					}
 					Vector2D newspawn = new Vector2D(java.lang.Integer
-							.parseInt(a[0]), java.lang.Integer.parseInt(a[1]));
+							.parseInt(splitLine[0]), java.lang.Integer.parseInt(splitLine[1]));
 					thisMap.playerInitSpots.add(newspawn);
 					//System.out.println(newspawn);
 				}
 
 				// Load objects, if any.
-				thisLine = s.readLine();
+				thisLine = bufRead.readLine();
 				//System.out.println(thisLine);
 				while (thisLine != null && thisLine.compareTo("EndLevel") != 0) {
 					String[] splitLine = thisLine.split(" ");
@@ -202,7 +202,7 @@ public class LevelSet {
 						fric = java.lang.Double.parseDouble(splitLine[5]);
 						rest = java.lang.Double.parseDouble(splitLine[6]);
 					} else {
-						s.close();
+						bufRead.close();
 						res = null;
 						System.out.println("Error: Object parameters is missing in least one number!");
 						return null;
@@ -219,13 +219,13 @@ public class LevelSet {
 						thisMap.Objects.add(goM);
 					}
 					//System.out.println(go);
-					thisLine = s.readLine();
+					thisLine = bufRead.readLine();
 					//System.out.println(thisLine);
 				}
 				
 				res.add(thisMap);
 			}
-			s.close();
+			bufRead.close();
 			R.close();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());

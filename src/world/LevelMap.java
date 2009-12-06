@@ -31,31 +31,31 @@ public class LevelMap {
 	
 	// Build world from level data.
 	public void buildLevel(final ServerGameState gs) {
-
-		for (int x = 0; x < playerInitSpots.size(); x++) {
+		/*for (int i = 0; i < playerInitSpots.size(); i++) {
 			// GameObject not applicable due to being a place to spawn not an object.
-			GameObject a = new GameObject("playerSpawn");
-			a.setPosition(playerInitSpots.get(x));
-			System.out.println(a.getPosition());
-			gs.add(a, GameObject.PLAYERSPAWN);
-		}
+			GameObject go = new GameObject("playerSpawn");
+			go.setPosition(playerInitSpots.get(i));
+			System.out.println(go.getPosition());
+			gs.add(go, GameObject.PLAYERSPAWN);
+		}*/
 
 		// Create objects based on object type.
 		for (int i = 0; i < Objects.size(); i++) {
-			GameObject s = Objects.get(i);
+			GameObject go = Objects.get(i);
 			//System.out.println(s);
-			gs.add(s, s.getType());
+			gs.add(go, go.getType());
 		}
 	}
 	
 	// Build world from level data.
 	public void buildLevelClient(final GameSprites gs) {
+		
 		// Create objects based on object type.
 		for (int i = 0; i < Objects.size(); i++) {
-			GameObject s = Objects.get(i);
+			GameObject go = Objects.get(i);
 			//System.out.println(s);
-			gs.spriteList.put(s.hashCode(), s);
-			gs.getLayer().add(s);
+			gs.spriteList.put(go.hashCode(), go);
+			gs.getLayer().add(go);
 		}
 	}
 }
