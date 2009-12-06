@@ -42,4 +42,4 @@ Animations and Graphics - Rolf
 		
 	
 Networking - dies if there are too many objects - Vitaliy
-GUI for pre-join for client - Rolf - still commented out but being worked on.
+GUI for pre-join for client - Rolf -prompts for ip, but will make real dialog later.

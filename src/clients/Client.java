@@ -10,6 +10,7 @@ import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import net.Action;
+import net.NetState;
 import net.NetStateManager;
 import net.SyncState;
 import jig.engine.CursorResource;
@@ -31,8 +32,8 @@ public class Client extends ScrollingScreenGame {
 	// used for testing UI elements.
 	private class uiItem extends Body {
 
-		int slowdowntest = 0;
-		int counter = 0;
+		//int slowdowntest = 0;
+		//int counter = 0;
 
 		public uiItem(String imgrsc) {
 			super(imgrsc);
@@ -40,14 +41,14 @@ public class Client extends ScrollingScreenGame {
 
 		@Override
 		public void update(long deltaMs) {
-			if (slowdowntest < 1000) {
-				slowdowntest += deltaMs;
-			} else {
-				slowdowntest = 0;
-				counter += 1;
-				counter = counter % this.getFrameCount();
-				this.setFrame(counter);
-			}
+//			if (slowdowntest < 1000) {
+//				slowdowntest += deltaMs;
+//			} else {
+//				slowdowntest = 0;
+//				counter += 1;
+//				counter = counter % this.getFrameCount();
+//				this.setFrame(counter);
+//			}
 		}
 	}
 
@@ -219,6 +220,17 @@ public class Client extends ScrollingScreenGame {
 			centerOnPoint(
 					(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
 					(int) (mousePos.getY()) / 2); // centers on player
+
+			int hl = netStateMan.getState().objectList.get(player.getID())
+					.getHealth();
+			// it is assumed that health is in range [0-2000].
+			System.out.println(hl);
+			if (hl != 0) {
+				hl = 25 - (int) ((((double) (hl) / 2000.0) * 25));
+				health.setFrame(hl);
+			} else {
+				health.setFrame(25);
+			}
 
 		}
 		keyboardMovementHandler();
