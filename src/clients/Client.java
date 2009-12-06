@@ -170,8 +170,10 @@ public class Client extends ScrollingScreenGame {
 			// System.out.println("p: " + p.getPosition().toString());
 			background.get(0).setCenterPosition(
 			// Based on cursor pos.
-					new Vector2D(.99 * mousePos.getX() / 2,
-							.99 * mousePos.getY() / 2));
+				//	new Vector2D(.99 * mousePos.getX() / 2,
+				//			.99 * mousePos.getY() / 2));
+			new Vector2D(0 + .2 * p.getCenterPosition().getX() / 2,
+					0 + .2 * p.getCenterPosition().getY() / 2));
 			// System.out.println("mousePos: " + mousePos.toString());
 			// System.out.println("playerPos: " + p.getPosition().toString());
 			centerOnPoint(
