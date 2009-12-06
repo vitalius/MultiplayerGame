@@ -40,6 +40,10 @@ public class Protocol {
 				output += a.getArg().getX() + "#";
 				output += a.getArg().getY() + "#";
 				break;
+			case Action.CHANGE_HEALTH:
+			case Action.CHANGE_JETPACK:
+				output += a.getDouble() + "#";
+				break;
 			default:
 				break;
 		}
@@ -50,12 +54,9 @@ public class Protocol {
 		Action returnAction;
 		String[] token = input.split("#");
 		
-		// fix for weird packet error!
-		// really bad fix. forces function to exit safely if something screwed up.
-		if( token.length <= 1) {
-			String tempfix = "9999#0#0#0#0#";
-			String[] a = tempfix.split("#");;
-			token = a;
+		// fix messed up packets. Assumes messed up packets has 2 or less #s.
+		if( token.length <= 2) {
+			return new Action(0, Action.DO_NOTHING);
 		}
 		
 		//System.out.println(input + " " + token[0]);
@@ -63,7 +64,7 @@ public class Protocol {
 		int id = java.lang.Integer.parseInt(token[0]);//Integer.valueOf(token[0]).intValue();
 		int type = java.lang.Integer.parseInt(token[1]);//Integer.valueOf(token[1]).intValue();
 		
-		double x, y;
+		double x, y, dou;
 		
 		switch (type) {
 		case Action.CHANGE_VELOCITY:
@@ -89,6 +90,11 @@ public class Protocol {
 			y = Double.valueOf(token[3]).doubleValue();
 			returnAction = new Action(id, type, new Vector2D(x,y));
 			break;
+		case Action.CHANGE_HEALTH:
+		case Action.CHANGE_JETPACK:
+			dou = Double.valueOf(token[2]).doubleValue();
+			returnAction = new Action(id, type, dou);
+			break;			
 		default:
 			returnAction = new Action(0, Action.DO_NOTHING);
 			break;
