@@ -277,12 +277,10 @@ public class Server extends ScrollingScreenGame {
 				double xx = place.getX() + shootloc.getX() * 40;
 				double yy = place.getY() + shootloc.getY() * 40;
 				// set V in direction of travel 1000
-				b.setVelocity(shootloc.scale(1000)); // set position - away from
-				// player a little.
+				b.setVelocity(shootloc.scale(1000));
 				b.setPosition(new Vector2D(xx, yy));
 				obj.listBullets.add(b); //add as newest object.
 			} else {// not full yet. add new bullet.
-				// 1/10 player mass
 				// set place at player.
 				b = new GameObject("bullet");
 				b.set(1, 1, 1.0, 0.0);
@@ -293,8 +291,7 @@ public class Server extends ScrollingScreenGame {
 				double xx = place.getX() + shootloc.getX() * 40;
 				double yy = place.getY() + shootloc.getY() * 40;
 				// set V in direction of travel 1000
-				b.setVelocity(shootloc.scale(1000)); // set position - away from
-				// player a little.
+				b.setVelocity(shootloc.scale(1000));
 				b.setPosition(new Vector2D(xx, yy));
 				gameState.add(b, GameObject.BULLET);
 

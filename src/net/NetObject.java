@@ -59,7 +59,7 @@ public class NetObject {
 	        InetAddress addr = InetAddress.getLocalHost();
 	        ipAddress = addr.getHostAddress();
 	    } catch (UnknownHostException e) {
-	    	ipAddress = "127.0.0.0.1";
+	    	ipAddress = "127.0.0.1";
 	    }			
 	}
 	
@@ -85,6 +85,9 @@ public class NetObject {
 	
 	public String getIp() { return ipAddress; }
 	public void setIp(String ip) { ipAddress = ip; }
+	
+	public int getHealth() { return health; }
+	public void setHealth(int h) { health = h; }
 	
 	public int getType() { return type; }
 }

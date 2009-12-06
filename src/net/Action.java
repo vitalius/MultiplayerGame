@@ -10,6 +10,7 @@ public class Action {
 	public static final int INPUT           = 5;
 	public static final int SHOOT           = 6;
 	public static final int CHANGE_HEALTH 	= 7;
+	public static final int CHANGE_JETPACK 	= 8;
 
 	public boolean jet    = false;
 	public boolean left  = false;
@@ -23,6 +24,7 @@ public class Action {
 	private int type;
 	private Vector2D arg0;
 	private String msg;
+	private double dou;
 	
 	/**
 	 * Used by displacing position, updating velocity and shooting
@@ -35,6 +37,19 @@ public class Action {
 		id = requesterId;
 		type = t;
 		arg0 = v;
+	}
+	
+	/**
+	 * Used by change CHANGE_HEALTH, CHANGE_JETPACK
+	 * 
+	 * @param requesterId
+	 * @param t - CHANGE_HEALTH, CHANGE_JETPACK
+	 * @param d - double value
+	 */
+	public Action (int requesterId, int t, double d) {
+		id = requesterId;
+		type = t;
+		dou = d;
 	}
 	
 	/**
@@ -106,4 +121,5 @@ public class Action {
 	public int getId() { return id; }
 	public Vector2D getArg() { return arg0; }
 	public String getMsg() { return msg; }
+	public double getDouble() { return dou; }
 }
