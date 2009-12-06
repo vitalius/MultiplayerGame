@@ -113,7 +113,8 @@ public class Protocol {
 			output += (float)p.getPosition().getY()+"$";
 			output += (float)p.getVelocity().getX()+"$";
 			output += (float)p.getVelocity().getY()+"$";
-			output += (float)p.getRotation();
+			output += (float)p.getRotation()+"$";
+			output += p.getHealth();
 			output += "%";
 		}
 		
@@ -140,10 +141,12 @@ public class Protocol {
 			double vx = Double.valueOf(attr[4]).doubleValue();
 			double vy = Double.valueOf(attr[5]).doubleValue();
 			double r = Double.valueOf(attr[6]).doubleValue();
+			int h = Integer.valueOf(attr[7]).intValue();
 			
 			NetObject n = new NetObject(id, new Vector2D(x,y), type);
 			n.setVelocity(new Vector2D(vx,vy));
 			n.setRotation(r);
+			n.setHealth(h);
 			retState.add(n);
 		}
 		
