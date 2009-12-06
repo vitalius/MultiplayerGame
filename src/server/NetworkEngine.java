@@ -6,8 +6,8 @@ public class NetworkEngine {
 	public static final int BCAST_BUF_SIZE = 8192;
 	public static final int TCP_BUF_SIZE = 1024;
 	
-	public static final int BCAST_PORT = 5000;
-	public static final int TCP_PORT   = 5001;
+	public static final int BCAST_PORT = 49725;
+	public static final int TCP_PORT   = 49726;
 	
 	private Broadcaster bcaster;
 	private Server gameserver;

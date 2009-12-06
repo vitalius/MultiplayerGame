@@ -3,6 +3,7 @@ package clients;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import physics.Box;
+import server.NetworkEngine;
 import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
@@ -107,7 +108,7 @@ public class Client extends ScrollingScreenGame {
 		BroadcastListener bListen = new BroadcastListener(state);
 		bListen.start();
 
-		TcpClient control = new TcpClient(SERVER_IP, 5001);
+		TcpClient control = new TcpClient(SERVER_IP, NetworkEngine.TCP_PORT);
 
 		/* Client id is 0 for now, we should make it some random digit */
 		player = new Player(0, control);

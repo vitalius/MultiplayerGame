@@ -29,6 +29,7 @@ public class TcpClient {
 	
 	public void sendSocket(String sendString) {
 		try {
+			System.out.println(sendString);
 			socket = new Socket(serverIP, port);
 			OutputStream out = socket.getOutputStream();
 			out.write(sendString.getBytes());
