@@ -86,5 +86,8 @@ public class NetObject {
 	public String getIp() { return ipAddress; }
 	public void setIp(String ip) { ipAddress = ip; }
 	
+	public int getHealth() { return health; }
+	public void setHealth(int h) { health = h; }
+	
 	public int getType() { return type; }
 }
