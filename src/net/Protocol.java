@@ -61,8 +61,8 @@ public class Protocol {
 		
 		//System.out.println(input + " " + token[0]);
 
-		int id = java.lang.Integer.parseInt(token[0]);//Integer.valueOf(token[0]).intValue();
-		int type = java.lang.Integer.parseInt(token[1]);//Integer.valueOf(token[1]).intValue();
+		int id = Integer.valueOf(token[0]).intValue();
+		int type = Integer.valueOf(token[1]).intValue();
 		
 		double x, y, dou;
 		

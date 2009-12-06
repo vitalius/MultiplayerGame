@@ -2,6 +2,9 @@ package clients;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+
+import javax.swing.JOptionPane;
+
 import physics.Box;
 import server.NetworkEngine;
 import world.GameObject;
@@ -86,8 +89,9 @@ public class Client extends ScrollingScreenGame {
 		ResourceFactory.getFactory().loadResources("res",
 		"2Destruction-Resources.xml");
 		//newgame = new Button(SPRITE_SHEET + "#Start");
-
-
+	}
+	
+	public void runSetup() {
 		ResourceFactory factory = ResourceFactory.getFactory();
 
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
@@ -250,15 +254,15 @@ public class Client extends ScrollingScreenGame {
 		Client c = new Client();
 		int as = 0;
 		String s = null;
-		
+	/*	
 		// unfinished yet
-/*		while (as == 0) {
+		while (as == 0) {
 			s = JOptionPane
 					.showInputDialog("Enter server IP address or empty if want 127.0.0.1");
 			if (s == null)
 				s = "127.0.0.1";
 			String[] a = s.split(".");
-			System.out.println(a.length);
+			System.out.println(a.length + " length" + s + " string got from dialog");
 			if (a.length == 4) {
 				int a1 = java.lang.Integer.parseInt(a[0]);
 				int a2 = java.lang.Integer.parseInt(a[1]);
@@ -280,7 +284,8 @@ public class Client extends ScrollingScreenGame {
 			JOptionPane.showMessageDialog(null, "Client connection cancelled.");
 			System.exit(0);
 		}
-*/
+		*/
+		c.runSetup();
 		c.run();
 	}
 }
