@@ -20,7 +20,7 @@ public class NetworkEngine {
 		bcaster = new Broadcaster(BCAST_PORT);
 		
 		//bcaster.addIP(1, "127.0.0.1");
-		//bcaster.addIP(2, "10.97.53.61");
+		//bcaster.addIP(2, "10.97.53.61");wdddddddddddddddddddddddd
 		
 		tcpControl = new TcpServer(TCP_PORT, gameserver);
 		tcpControl.start();

@@ -1,13 +1,7 @@
 package clients;
 
-import java.awt.Button;
 import java.awt.Color;
-import java.awt.Panel;
-import java.awt.TextField;
 import java.awt.event.KeyEvent;
-import java.util.List;
-
-import javax.swing.JOptionPane;
 import physics.Box;
 import server.NetworkEngine;
 import world.GameObject;
@@ -256,6 +250,8 @@ public class Client extends ScrollingScreenGame {
 		Client c = new Client();
 		int as = 0;
 		String s = null;
+		
+		// unfinished yet
 /*		while (as == 0) {
 			s = JOptionPane
 					.showInputDialog("Enter server IP address or empty if want 127.0.0.1");

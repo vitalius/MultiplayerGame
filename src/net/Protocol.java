@@ -50,8 +50,18 @@ public class Protocol {
 		Action returnAction;
 		String[] token = input.split("#");
 		
-		int id = Integer.valueOf(token[0]).intValue();	
-		int type = Integer.valueOf(token[1]).intValue();
+		// fix for weird packet error!
+		// really bad fix. forces function to exit safely if something screwed up.
+		if( token.length <= 1) {
+			String tempfix = "9999#0#0#0#0#";
+			String[] a = tempfix.split("#");;
+			token = a;
+		}
+		
+		//System.out.println(input + " " + token[0]);
+
+		int id = java.lang.Integer.parseInt(token[0]);//Integer.valueOf(token[0]).intValue();
+		int type = java.lang.Integer.parseInt(token[1]);//Integer.valueOf(token[1]).intValue();
 		
 		double x, y;
 		
