@@ -8,16 +8,26 @@ import java.net.UnknownHostException;
 
 public class TcpClient {
 	
+	private Socket socket;
+	private String myIP;
 	private String serverIP;
 	private int port;
 	
 	public TcpClient(String server, int p) {
 		serverIP = server;
 		port = p;
+		try {
+			socket = new Socket(serverIP, port);
+			myIP = socket.getInetAddress().toString().substring(1);
+			socket.close();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void sendSocket(String sendString) {
-		Socket socket;
 		try {
 			socket = new Socket(serverIP, port);
 			OutputStream out = socket.getOutputStream();
@@ -28,5 +38,9 @@ public class TcpClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public String getMyIP() {
+		return myIP;
 	}
 }

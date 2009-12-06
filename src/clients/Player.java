@@ -35,7 +35,7 @@ public class Player {
 	}
 	
 	public void join(String ip) {
-		Action join = new Action(playerId, Action.JOIN, ip);
+		Action join = new Action(playerId, Action.JOIN, tcp.getMyIP());
 		tcp.sendSocket(prot.encodeAction(join));
 	}
 	

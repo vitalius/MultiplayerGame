@@ -87,7 +87,7 @@ public class PlayerObject extends GameObject {
 		} else if (keyJumpCrouch > 0) { // pressed button {
 			// TODO: Crouch
 		} else { // released key
-			if (velocity.getY() < 0){ // going up still
+			if (velocity.getY() < 0 && !keyJet){ // going up still
 				velocity = new Vector2D( velocity.getX(), NOVEL );
 			}
 		}
@@ -98,7 +98,7 @@ public class PlayerObject extends GameObject {
 		keyJet = jet;
 		if (keyJet) { // pressed button
 			if (jetFuel > 0) {
-				System.out.println(jetFuel);
+				System.out.println("Jet Fuel: " + jetFuel);
 				force = new Vector2D( force.getX(), JETFORCE*mass );
 			}
 		} else { // released button

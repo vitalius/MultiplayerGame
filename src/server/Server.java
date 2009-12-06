@@ -1,20 +1,16 @@
 package server;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import clients.Player;
 import physics.CattoPhysicsEngine;
 import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import world.PlayerObject;
 import jig.engine.PaintableCanvas;
-import jig.engine.ResourceFactory;
 import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.physics.BodyLayer;
@@ -38,6 +34,7 @@ public class Server extends ScrollingScreenGame {
 	 * as the server runs
 	 */
 	// private static int DELTA_MS = 30;
+	private int totalMS;
 
 	private NetStateManager netState;
 	private NetworkEngine ne;
@@ -63,6 +60,7 @@ public class Server extends ScrollingScreenGame {
 		// pe.setDrawArbiters(true);
 		fre.setActivation(true);
 		msgQueue = new LinkedBlockingQueue<String>();
+		totalMS = 0;
 
 		// temp resources
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
@@ -290,7 +288,11 @@ public class Server extends ScrollingScreenGame {
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
 		pe.applyLawsOfPhysics(deltaMs);
-		ne.update();
+		totalMS += deltaMs;
+		if (totalMS > 30) {
+			ne.update();
+			totalMS = 0;
+		}
 		keyboardMovementHandler();
 
 		while (msgQueue.size() > 0) {
