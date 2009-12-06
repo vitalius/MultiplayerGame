@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.swing.JOptionPane;
-
 import physics.Box;
 import world.GameObject;
 import world.LevelMap;
@@ -17,7 +16,6 @@ import net.Action;
 import net.NetStateManager;
 import net.SyncState;
 import jig.engine.CursorResource;
-import jig.engine.ImageResource;
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
@@ -59,7 +57,7 @@ public class Client extends ScrollingScreenGame {
 	static final String PICTUREBACKGROUND = "res/GameBackground.png";
 	static final String UIGFX = "res/ClientUI.png";
 
-	public String SERVER_IP = "65.102.28.127";// "127.0.0.1";
+	public String SERVER_IP = "127.0.0.1";
 
 	public static final int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 1024;
 
@@ -72,7 +70,7 @@ public class Client extends ScrollingScreenGame {
 	private Player player;
 	private LevelSet levels;
 	private LevelMap level;
-
+	
 	private uiItem jetpack, health;
 
 	private BodyLayer<Body> black = new AbstractBodyLayer.NoUpdate<Body>();
@@ -86,13 +84,14 @@ public class Client extends ScrollingScreenGame {
 	public Client() {
 
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
-
+		
 		// save those two lines for later.
-		// <imagesrc>2Destruction.PNG</imagesrc>
-		// <framesrc>2Destruction-spritesheet.xml</framesrc>
+        //<imagesrc>2Destruction.PNG</imagesrc>
+        //<framesrc>2Destruction-spritesheet.xml</framesrc>
 		ResourceFactory.getFactory().loadResources("res",
-				"2Destruction-Resources.xml");
-		// newgame = new Button(SPRITE_SHEET + "#Start");
+		"2Destruction-Resources.xml");
+		//newgame = new Button(SPRITE_SHEET + "#Start");
+
 
 		ResourceFactory factory = ResourceFactory.getFactory();
 
@@ -104,13 +103,11 @@ public class Client extends ScrollingScreenGame {
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
 				JIGSHAPE.RECTANGLE, Color.DARK_GRAY);
-		// cursor is required to be 32x32. Graphic can be mostly transparent
-		// anyway.
 		PaintableCanvas.loadDefaultFrames("target", 32, 32, 1, JIGSHAPE.CIRCLE,
 				Color.red);
-		// 1280, SCREEN_HEIGHT = 1024
-		PaintableCanvas.loadDefaultFrames("blackback", SCREEN_WIDTH,
-				SCREEN_HEIGHT, 1, JIGSHAPE.RECTANGLE, Color.black);
+		//1280, SCREEN_HEIGHT = 1024
+		PaintableCanvas.loadDefaultFrames("blackback", SCREEN_WIDTH, SCREEN_HEIGHT, 1,
+				JIGSHAPE.RECTANGLE, Color.black);
 
 		CursorResource cr = factory.makeCursor("target", new Vector2D(0, 0), 1);
 		mouse.setCursor(cr);
@@ -166,7 +163,6 @@ public class Client extends ScrollingScreenGame {
 		health = new uiItem(UIGFX + "#Health");
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
-
 		// Control of layering - background lowest layer of all.
 		gameObjectLayers.add(GUI);// last forced render will draw it topmost on
 		// screen coordities.
@@ -217,8 +213,10 @@ public class Client extends ScrollingScreenGame {
 			// System.out.println("p: " + p.getPosition().toString());
 			background.get(0).setCenterPosition(
 			// Based on cursor pos.
-					new Vector2D(.99 * mousePos.getX() / 2, .99 * mousePos
-							.getY() / 2));
+				//	new Vector2D(.99 * mousePos.getX() / 2,
+				//			.99 * mousePos.getY() / 2));
+			new Vector2D(0 + .2 * p.getCenterPosition().getX() / 2,
+					0 + .2 * p.getCenterPosition().getY() / 2));
 			// System.out.println("mousePos: " + mousePos.toString());
 			// System.out.println("playerPos: " + p.getPosition().toString());
 			centerOnPoint(
@@ -249,7 +247,7 @@ public class Client extends ScrollingScreenGame {
 	public void render(RenderingContext rc) {
 		black.render(rc);// draw at screen coordities.
 		super.render(rc);
-		GUI.render(rc);// draw at screen coordities.
+		GUI.render(rc);
 		// background.render(rc);
 	}
 
