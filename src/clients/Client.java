@@ -1,8 +1,13 @@
 package clients;
 
+import java.awt.Button;
 import java.awt.Color;
+import java.awt.Panel;
+import java.awt.TextField;
 import java.awt.event.KeyEvent;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import physics.Box;
 import world.GameObject;
@@ -28,14 +33,16 @@ import jig.engine.util.Vector2D;
  */
 public class Client extends ScrollingScreenGame {
 
-	//used for testing UI elements.
+	// used for testing UI elements.
 	private class uiItem extends Body {
 
 		int slowdowntest = 0;
 		int counter = 0;
+
 		public uiItem(String imgrsc) {
 			super(imgrsc);
 		}
+
 		@Override
 		public void update(long deltaMs) {
 			if (slowdowntest < 1000) {
@@ -52,7 +59,7 @@ public class Client extends ScrollingScreenGame {
 	static final String PICTUREBACKGROUND = "res/GameBackground.png";
 	static final String UIGFX = "res/ClientUI.png";
 
-	public static final String SERVER_IP = "127.0.0.1";
+	public String SERVER_IP = "65.102.28.127";// "127.0.0.1";
 
 	public static final int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 1024;
 
@@ -162,7 +169,7 @@ public class Client extends ScrollingScreenGame {
 
 		// Control of layering - background lowest layer of all.
 		gameObjectLayers.add(GUI);// last forced render will draw it topmost on
-									// screen coordities.
+		// screen coordities.
 		gameObjectLayers.add(black);
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
@@ -223,7 +230,7 @@ public class Client extends ScrollingScreenGame {
 
 		if (shootlimit < 250) {
 			shootlimit += deltaMs;
-		} else if (mouse.isLeftButtonPressed()) {
+		} else if (p != null && mouse.isLeftButtonPressed()) {
 			if (p.getCenterPosition() != null) {
 				shootlimit = 0;
 				// Since we know player is always generally in center of
@@ -248,6 +255,37 @@ public class Client extends ScrollingScreenGame {
 
 	public static void main(String[] vars) {
 		Client c = new Client();
+		int as = 0;
+		String s = null;
+/*		while (as == 0) {
+			s = JOptionPane
+					.showInputDialog("Enter server IP address or empty if want 127.0.0.1");
+			if (s == null)
+				s = "127.0.0.1";
+			String[] a = s.split(".");
+			System.out.println(a.length);
+			if (a.length == 4) {
+				int a1 = java.lang.Integer.parseInt(a[0]);
+				int a2 = java.lang.Integer.parseInt(a[1]);
+				int a3 = java.lang.Integer.parseInt(a[2]);
+				int a4 = java.lang.Integer.parseInt(a[3]);
+				System.out.println(a1 + "." + a2 + "." + a3 + "." + a4);
+				// check formatting if its properly done.
+				if (a1 > 0 && a1 < 254 && a2 >= 0 && a2 <= 254 && a3 >= 0
+						&& a3 <= 254 && a4 > 0 && a4 <= 254) {
+					c.SERVER_IP = s;// definitely correctly formatted.
+					as = 1;
+				}
+			}
+			if( as == 0)
+				JOptionPane.showMessageDialog(null, "I am NOT happy with " + s + "."); 
+		}
+
+		if(s == null) {
+			JOptionPane.showMessageDialog(null, "Client connection cancelled.");
+			System.exit(0);
+		}
+*/
 		c.run();
 	}
 }

@@ -5,17 +5,16 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-
 public class TcpClient {
-	
+
 	private String serverIP;
 	private int port;
-	
+
 	public TcpClient(String server, int p) {
 		serverIP = server;
 		port = p;
 	}
-	
+
 	public void sendSocket(String sendString) {
 		Socket socket;
 		try {
