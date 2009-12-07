@@ -7,18 +7,17 @@ Create Interesting Map - Done - Josh
 Player Movement - Done - Josh 
 Combat 
 	Shooting         - added shooting, but no hurt.
-	Hit Detection
+	Hit Detection    - Josh
 	Health Rules     - Rolf - needs ability to be hurt first...
-	Crosshair Aiming - Rolf - need gfx, but done.
+	Crosshair Aiming - Rolf - done, just need transparent. later when gfx file is done.
 	GUI - healthbar  - Rolf
-	GUI - jetpackbar - Rolf - Both bars done, has one bug, but just needs data from server to work.
+	GUI - jetpackbar - Rolf - done, just need jetpack done.
 	Death            - Rolf - server working, client not so much.
 	
 Networking
 	New server to client notifications:
 		Player join
-		Player jetpack fuel left
-		Player health left
+		Player health left            - done
 		Player kills
 	client to server notifications:
 		Player rejoin (using same id, and respawn)
@@ -31,13 +30,17 @@ Deathmatch - Josh
 
 Weapons 
 	Three types
+		Bullet
+		??? - Idea - mines. low impact requirement to kill player.
+		??? - grenades?
 
 Animations and Graphics - Rolf
 	Bullet - Need graphics...
 	player - Need graphics...
 	Background - done, but maybe more pictures?
 	Gui elements
-		jetpack, health bars -done, just need data to be actually used.
+		Cursor - done, will transparentize when done with all gui elements.
+		jetpack, health bars, mostly done, just need jetpack usage client done.
 		Buttons, logo UI graphics -unstarted.
 		
 	

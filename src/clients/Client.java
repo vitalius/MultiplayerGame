@@ -102,13 +102,12 @@ public class Client extends ScrollingScreenGame {
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
 				JIGSHAPE.RECTANGLE, Color.WHITE);
-		PaintableCanvas.loadDefaultFrames("target", 32, 32, 1, JIGSHAPE.CIRCLE,
-				Color.red);
 		// 1280, SCREEN_HEIGHT = 1024
 		PaintableCanvas.loadDefaultFrames("blackback", SCREEN_WIDTH,
 				SCREEN_HEIGHT, 1, JIGSHAPE.RECTANGLE, Color.black);
 
-		CursorResource cr = factory.makeCursor("target", new Vector2D(0, 0), 1);
+		// will be mostly transparent when done with adding gfx stuff.
+		CursorResource cr = factory.makeCursor(UIGFX + "#Cursor", new Vector2D(15, 15), 1);
 		mouse.setCursor(cr);
 
 		netStateMan = new NetStateManager();
@@ -224,7 +223,7 @@ public class Client extends ScrollingScreenGame {
 			int hl = netStateMan.getState().objectList.get(player.getID())
 					.getHealth();
 			// it is assumed that health is in range [0-2000].
-			System.out.println(hl);
+			//System.out.println(hl);
 			if (hl != 0) {
 				hl = 25 - (int) ((((double) (hl) / 2000.0) * 25));
 				health.setFrame(hl);

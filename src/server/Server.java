@@ -72,10 +72,6 @@ public class Server extends ScrollingScreenGame {
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
 				JIGSHAPE.RECTANGLE, Color.WHITE);
-		PaintableCanvas.loadDefaultFrames("background", 100, 100, 1,
-				JIGSHAPE.RECTANGLE, Color.gray);
-		PaintableCanvas.loadDefaultFrames("target", 20, 20, 1,
-				JIGSHAPE.CIRCLE, Color.red);
 
 		// Load all levels
 		levels = new LevelSet("/res/Levelset.txt");
@@ -308,6 +304,8 @@ public class Server extends ScrollingScreenGame {
 		gameState.update();
 		//centerOn(p); // centers on player
 		playerObject.updatePlayerState();
+		
+		
 		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 		//System.out.println("mouse center: " + mousePos.toString());

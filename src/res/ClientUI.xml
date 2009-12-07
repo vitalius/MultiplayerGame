@@ -23,4 +23,12 @@
 		<rows>26</rows>
 	</frameset>
 
+     <frameset>
+	    <name>Cursor</name>
+		<top>0</top>
+		<left>206</left>
+        <width>32</width>
+        <height>32</height>
+	</frameset>
+
 </spriteset>
