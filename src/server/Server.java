@@ -13,7 +13,6 @@ import world.PlayerObject;
 import jig.engine.PaintableCanvas;
 import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.ScrollingScreenGame;
-import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import net.Action;
 import net.NetStateManager;

@@ -15,7 +15,6 @@ public class NetObject {
 	private String ipAddress;
 	private int type;
 	private int health;
-	private int jetfuel;
 	
 	public static int MAXHEALTH = 2000;
 

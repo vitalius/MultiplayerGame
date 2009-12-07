@@ -6,8 +6,8 @@ Scrollable Map - Done - Josh
 Create Interesting Map - Done - Josh
 Player Movement - Done - Josh 
 Combat 
-	Shooting         - added shooting, but no hurt.
-	Hit Detection    - Josh
+	Shooting         - Done - Josh, Rolf
+	Hit Detection    - Done - Josh
 	Health Rules     - Rolf - needs ability to be hurt first...
 	Crosshair Aiming - Rolf - done, just need transparent. later when gfx file is done.
 	GUI - healthbar  - Rolf

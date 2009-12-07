@@ -125,10 +125,12 @@ public class ServerGameState {
 				if (arbit.getNumContacts() > 0) {
 					// disable the bullet
 					arbit.body1.setActivation(false);
+					arbit.body1.setVelocity(new Vector2D(0,0));
+					arbit.body1.setPosition(new Vector2D(-10000,-10000));
 					if (((GameObject)arbit.body2).getType() == GameObject.PLAYER) {
 						// lower player health
 						((PlayerObject)arbit.body2).setHealth(((PlayerObject)arbit.body2).getHealth()-1);
-						System.out.println("Player Health: " + ((PlayerObject)arbit.body2).getHealth());
+						//System.out.println("Player Health: " + ((PlayerObject)arbit.body2).getHealth());
 					}
 					return;
 				}
@@ -137,10 +139,12 @@ public class ServerGameState {
 				if (arbit.getNumContacts() > 0) {
 					// disable the bullet
 					arbit.body2.setActivation(false);
+					arbit.body2.setVelocity(new Vector2D(0,0));
+					arbit.body2.setPosition(new Vector2D(-10000,-10000));
 					if (((GameObject)arbit.body1).getType() == GameObject.PLAYER) {
 						// lower player health
 						((PlayerObject)arbit.body1).setHealth(((PlayerObject)arbit.body1).getHealth()-1);
-						System.out.println("Player Health: " + ((PlayerObject)arbit.body1).getHealth());
+						//System.out.println("Player Health: " + ((PlayerObject)arbit.body1).getHealth());
 					}
 					return;
 				}

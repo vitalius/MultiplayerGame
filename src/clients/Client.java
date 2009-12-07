@@ -10,7 +10,6 @@ import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import net.Action;
-import net.NetState;
 import net.NetStateManager;
 import net.SyncState;
 import jig.engine.CursorResource;
