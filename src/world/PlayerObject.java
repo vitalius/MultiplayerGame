@@ -16,10 +16,12 @@ public class PlayerObject extends GameObject {
 	private static final double NOFORCE = 0;
 	private static final double NOVEL = 0;
 	private static final double FRICTION = 1.0;
+	private static final int MAXHEALTH = 100;
 	private static final double MAXVEL = 300;
 	private static final int MAXJETFUEL = 2000;
 	
-	private boolean alive;
+	private int health;
+
 	private int keyLeftRight; // left right key
 	private int keyJumpCrouch; // jump key
 	private boolean keyJet; // jetpack key
@@ -38,8 +40,8 @@ public class PlayerObject extends GameObject {
 		keyJet = false; // jetpack key
 		keyRun = false; // run toggle
 		jetFuel = MAXJETFUEL;
+		health = MAXHEALTH;
 		onObject = false;
-		alive = true;
 	}
 	
 	public void setKeys(int leftRight, int jumpCrouch, boolean jet, 
@@ -148,9 +150,17 @@ public class PlayerObject extends GameObject {
 	
 	public void clamp() {
 		// keep vertical if not dead
-		if (alive) 
+		if (health > 0) 
 			setRotation(0);
 		velocity = velocity.clampX(-MAXVEL, MAXVEL);
 		velocity = velocity.clampY(-MAXVEL, MAXVEL);
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+
+	public void setHealth(int health) {
+		this.health = health;
 	}
 }

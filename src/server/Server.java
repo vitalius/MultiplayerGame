@@ -55,9 +55,9 @@ public class Server extends ScrollingScreenGame {
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
 		netState = new NetStateManager();
-		gameState = new ServerGameState();
-		ne = new NetworkEngine(this);
 		pe = new CattoPhysicsEngine(new Vector2D(0, 300));
+		gameState = new ServerGameState(pe);
+		ne = new NetworkEngine(this);
 		// pe.setDrawArbiters(true);
 		fre.setActivation(true);
 		msgQueue = new LinkedBlockingQueue<String>();
@@ -259,6 +259,7 @@ public class Server extends ScrollingScreenGame {
 
 			if (obj.bulletCount >= maxBullets) {// Full. reuse oldest bullet.
 				b = obj.listBullets.remove(0);// get from oldest one.
+				b.setActivation(true);
 				Vector2D place = objectList.get(a.getId()).getCenterPosition();
 				// Put bullet a
 				// little bit away from player
@@ -271,7 +272,7 @@ public class Server extends ScrollingScreenGame {
 			} else {// not full yet. add new bullet.
 				// set place at player.
 				b = new GameObject("bullet");
-				b.set(1, 1, 1.0, 0.0);
+				b.set(10, 1, 1.0, 0.0);
 				b.setForce(pe.getGravity().scale(-1)); // don't let gravity affect the bullet
 				Vector2D place = objectList.get(a.getId()).getCenterPosition();
 				// Put bullet a
@@ -306,15 +307,8 @@ public class Server extends ScrollingScreenGame {
 			this.processAction(msgQueue.poll());
 		}
 		gameState.update();
-		//centerOn(p); // centers on player
-		playerObject.updatePlayerState();
 		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
-		//System.out.println("mouse center: " + mousePos.toString());
-		//System.out.println("player center: " + p.getCenterPosition().toString());
-		//System.out.println("average: " + new Vector2D((int)(pScreenPos.getX()+mouse.getLocation().getX())/2, 
-		//		(int)(pScreenPos.getY()+mouse.getLocation().getY())/2).toString());
-		//System.out.println("player center: " + p.getCenterPosition());
 		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(mousePos.getY())/2); // centers on player
 	}
 

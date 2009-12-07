@@ -1,13 +1,18 @@
 package server;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.Set;
+
+import physics.Arbiter;
+import physics.CattoPhysicsEngine;
 
 import world.GameObject;
 import world.PlayerObject;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
+import jig.engine.util.Vector2D;
 import net.NetObject;
 import net.NetState;
 
@@ -20,12 +25,15 @@ public class ServerGameState {
 //	private BodyLayer<GameObject> bLayer; // bullet layer
 //	private BodyLayer<GameObject> dLayer; // dynamic layer
 //	private BodyLayer<GameObject> sLayer; // static layer
-	private Random generator = new Random();
+	private CattoPhysicsEngine pe;
+	private Random generator;
 
-	public ServerGameState() {
+	public ServerGameState(CattoPhysicsEngine pe) {
 		netState = new NetState();
 		goTable = new Hashtable<Integer, GameObject>();
 		layer = new AbstractBodyLayer.NoUpdate<GameObject>();
+		generator = new Random();
+		this.pe = pe;
 		//bLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
 		//dLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
 		//sLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
@@ -95,19 +103,48 @@ public class ServerGameState {
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goTable.keySet()) {
 			GameObject go = goTable.get(i);
-			if (go != null) {
-				NetObject no = netList.get(i);
-				if (no != null) {
+			if (go == null) return;
+			
+			NetObject no = netList.get(i);
+			if (no == null) return; // probably should add it
 
-					// null point common here...
-					no.setPosition(go.getPosition());
-
-					// System.out.println(b.getVelocity());
-					no.setVelocity(go.getVelocity());
-
-					no.setRotation(go.getRotation());
+			// null point common here...
+			no.setPosition(go.getPosition());
+			// System.out.println(b.getVelocity());
+			no.setVelocity(go.getVelocity());
+			no.setRotation(go.getRotation());
+		}
+		
+		// check for bullet collisions
+		// this could be added above to speed things up but for now
+		// I want it separate for simplicity sake
+		ArrayList<Arbiter> arbiters = pe.getArbiters();
+		
+		for (Arbiter arbit : arbiters) {
+			if (((GameObject)arbit.body1).getType() == GameObject.BULLET) {
+				if (arbit.getNumContacts() > 0) {
+					// disable the bullet
+					arbit.body1.setActivation(false);
+					if (((GameObject)arbit.body2).getType() == GameObject.PLAYER) {
+						// lower player health
+						((PlayerObject)arbit.body2).setHealth(((PlayerObject)arbit.body2).getHealth()-1);
+						System.out.println("Player Health: " + ((PlayerObject)arbit.body2).getHealth());
+					}
+					return;
 				}
 			}
+			if (((GameObject)arbit.body2).getType() == GameObject.BULLET) {
+				if (arbit.getNumContacts() > 0) {
+					// disable the bullet
+					arbit.body2.setActivation(false);
+					if (((GameObject)arbit.body1).getType() == GameObject.PLAYER) {
+						// lower player health
+						((PlayerObject)arbit.body1).setHealth(((PlayerObject)arbit.body1).getHealth()-1);
+						System.out.println("Player Health: " + ((PlayerObject)arbit.body1).getHealth());
+					}
+					return;
+				}
+			}			
 		}
 	}
 

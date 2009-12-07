@@ -66,7 +66,7 @@ public class Broadcaster {
 		    				InetAddress.getByName(s), port);
 	
 		    	socket.send(packet);
-		    	System.out.println("Sending: "+ s + ":" + port);//new String (packet.getData(),0,packet.getLength()));
+		    	//System.out.println("Sending: "+ s + ":" + port);//new String (packet.getData(),0,packet.getLength()));
 		    }
 	            
 	     } catch (IOException e) {

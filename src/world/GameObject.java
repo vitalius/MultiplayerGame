@@ -17,7 +17,6 @@ public class GameObject extends Box {
 	public Vector<GameObject> listBullets = new Vector<GameObject>();
 	public int bulletCount = 0;
 
-
 	public int type;
 	
 	public GameObject(String rsc) {

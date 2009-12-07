@@ -276,9 +276,13 @@ public class CattoPhysicsEngine implements PhysicsEngine<Box> {
 					if (bi.inverseMass == 0.0 && bj.inverseMass == 0.0) {
 						continue;
 					}
-					generateArbiter(bi, bj);
+					if (bi.isActive() && bj.isActive()) {
+						generateArbiter(bi, bj); // both active
+					} else {
+						arbiters.remove(new Arbiter(bi, bj)); // remove if one is inactive
+					}
+					
 				}
-
 			}
 		}
 	}
@@ -350,6 +354,10 @@ public class CattoPhysicsEngine implements PhysicsEngine<Box> {
 		double t = (double) smoothing / smoothLength / 1000.0;
 		step(t);
 
+	}
+	
+	public ArrayList<Arbiter> getArbiters() {
+		return arbiters;
 	}
 
 }
