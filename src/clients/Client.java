@@ -2,14 +2,15 @@ package clients;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
 import java.util.Random;
-
 import physics.Box;
 import server.NetworkEngine;
 import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import net.Action;
+import net.NetState;
 import net.NetStateManager;
 import net.SyncState;
 import jig.engine.CursorResource;
@@ -31,8 +32,8 @@ public class Client extends ScrollingScreenGame {
 	// used for testing UI elements.
 	private class uiItem extends Body {
 
-		int slowdowntest = 0;
-		int counter = 0;
+		//int slowdowntest = 0;
+		//int counter = 0;
 
 		public uiItem(String imgrsc) {
 			super(imgrsc);
@@ -40,14 +41,14 @@ public class Client extends ScrollingScreenGame {
 
 		@Override
 		public void update(long deltaMs) {
-			if (slowdowntest < 1000) {
-				slowdowntest += deltaMs;
-			} else {
-				slowdowntest = 0;
-				counter += 1;
-				counter = counter % this.getFrameCount();
-				this.setFrame(counter);
-			}
+//			if (slowdowntest < 1000) {
+//				slowdowntest += deltaMs;
+//			} else {
+//				slowdowntest = 0;
+//				counter += 1;
+//				counter = counter % this.getFrameCount();
+//				this.setFrame(counter);
+//			}
 		}
 	}
 
@@ -67,7 +68,7 @@ public class Client extends ScrollingScreenGame {
 	private Player player;
 	private LevelSet levels;
 	private LevelMap level;
-	
+
 	private uiItem jetpack, health;
 
 	private BodyLayer<Body> black = new AbstractBodyLayer.NoUpdate<Body>();
@@ -81,15 +82,16 @@ public class Client extends ScrollingScreenGame {
 	public Client() {
 
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
-		
+
 		// save those two lines for later.
-        //<imagesrc>2Destruction.PNG</imagesrc>
-        //<framesrc>2Destruction-spritesheet.xml</framesrc>
+		// <imagesrc>2Destruction.PNG</imagesrc>
+		// <framesrc>2Destruction-spritesheet.xml</framesrc>
 		ResourceFactory.getFactory().loadResources("res",
-		"2Destruction-Resources.xml");
-		//newgame = new Button(SPRITE_SHEET + "#Start");
+				"2Destruction-Resources.xml");
+		// newgame = new Button(SPRITE_SHEET + "#Start");
+	}
 
-
+	public void runSetup() {
 		ResourceFactory factory = ResourceFactory.getFactory();
 
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
@@ -102,9 +104,9 @@ public class Client extends ScrollingScreenGame {
 				JIGSHAPE.RECTANGLE, Color.WHITE);
 		PaintableCanvas.loadDefaultFrames("target", 32, 32, 1, JIGSHAPE.CIRCLE,
 				Color.red);
-		//1280, SCREEN_HEIGHT = 1024
-		PaintableCanvas.loadDefaultFrames("blackback", SCREEN_WIDTH, SCREEN_HEIGHT, 1,
-				JIGSHAPE.RECTANGLE, Color.black);
+		// 1280, SCREEN_HEIGHT = 1024
+		PaintableCanvas.loadDefaultFrames("blackback", SCREEN_WIDTH,
+				SCREEN_HEIGHT, 1, JIGSHAPE.RECTANGLE, Color.black);
 
 		CursorResource cr = factory.makeCursor("target", new Vector2D(0, 0), 1);
 		mouse.setCursor(cr);
@@ -144,7 +146,7 @@ public class Client extends ScrollingScreenGame {
 		player = new Player(rand.nextInt(), control);
 		input = new Action(player.getID(), Action.INPUT);
 		player.join(SERVER_IP);
-		
+
 		// Create background object and add to layer, to window.
 		gameObjectLayers.clear();
 		Box back = new Box("blackback");
@@ -209,15 +211,26 @@ public class Client extends ScrollingScreenGame {
 			// System.out.println("p: " + p.getPosition().toString());
 			background.get(0).setCenterPosition(
 			// Based on cursor pos.
-				//	new Vector2D(.99 * mousePos.getX() / 2,
-				//			.99 * mousePos.getY() / 2));
-			new Vector2D(0 + .2 * p.getCenterPosition().getX() / 2,
-					0 + .2 * p.getCenterPosition().getY() / 2));
+					// new Vector2D(.99 * mousePos.getX() / 2,
+					// .99 * mousePos.getY() / 2));
+					new Vector2D(0 + .2 * p.getCenterPosition().getX() / 2,
+							0 + .2 * p.getCenterPosition().getY() / 2));
 			// System.out.println("mousePos: " + mousePos.toString());
 			// System.out.println("playerPos: " + p.getPosition().toString());
 			centerOnPoint(
 					(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
 					(int) (mousePos.getY()) / 2);
+
+			int hl = netStateMan.getState().objectList.get(player.getID())
+					.getHealth();
+			// it is assumed that health is in range [0-2000].
+			System.out.println(hl);
+			if (hl != 0) {
+				hl = 25 - (int) ((((double) (hl) / 2000.0) * 25));
+				health.setFrame(hl);
+			} else {
+				health.setFrame(25);
+			}
 
 		}
 		keyboardMovementHandler();
@@ -250,16 +263,13 @@ public class Client extends ScrollingScreenGame {
 	public static void main(String[] vars) {
 		Client c = new Client();
 		int as = 0;
-		String s = null;
-		
 		// unfinished yet
-/*		while (as == 0) {
-			s = JOptionPane
+		while (as == 0) {
+			String s = JOptionPane
 					.showInputDialog("Enter server IP address or empty if want 127.0.0.1");
-			if (s == null)
+			if (s.compareTo("") == 0)
 				s = "127.0.0.1";
-			String[] a = s.split(".");
-			System.out.println(a.length);
+			String[] a = s.split("\\.");
 			if (a.length == 4) {
 				int a1 = java.lang.Integer.parseInt(a[0]);
 				int a2 = java.lang.Integer.parseInt(a[1]);
@@ -269,19 +279,22 @@ public class Client extends ScrollingScreenGame {
 				// check formatting if its properly done.
 				if (a1 > 0 && a1 < 254 && a2 >= 0 && a2 <= 254 && a3 >= 0
 						&& a3 <= 254 && a4 > 0 && a4 <= 254) {
-					c.SERVER_IP = s;// definitely correctly formatted.
+					String res = String.valueOf(a1 + "." + a2 + "." + a3 + "."
+							+ a4);
+					c.SERVER_IP = res;// definitely correctly formatted.
 					as = 1;
 				}
 			}
-			if( as == 0)
-				JOptionPane.showMessageDialog(null, "I am NOT happy with " + s + "."); 
+			if (as == 0)
+				JOptionPane
+						.showMessageDialog(
+								null,
+								"Misformatted IP address "
+										+ s
+										+ "\n\nNeed to be X.X.X.X with X in range [0-254].");
 		}
 
-		if(s == null) {
-			JOptionPane.showMessageDialog(null, "Client connection cancelled.");
-			System.exit(0);
-		}
-*/
+		c.runSetup();
 		c.run();
 	}
 }

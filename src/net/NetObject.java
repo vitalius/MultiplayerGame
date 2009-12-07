@@ -2,6 +2,8 @@ package net;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import world.GameObject;
 import jig.engine.util.Vector2D;
 
 public class NetObject {
@@ -14,6 +16,8 @@ public class NetObject {
 	private int type;
 	private int health;
 	private int jetfuel;
+	
+	public static int MAXHEALTH = 2000;
 
 	/**
 	 * Various level of initialization 
@@ -29,6 +33,8 @@ public class NetObject {
 	}
 
 	public NetObject(int id, Vector2D p, int type) {
+		if( type == GameObject.PLAYER)
+			health = MAXHEALTH;
 		init(id,p,type);
 	}
 	
