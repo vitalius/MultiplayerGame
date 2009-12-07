@@ -43,7 +43,7 @@ public class LevelMap {
 		for (int i = 0; i < Objects.size(); i++) {
 			GameObject go = Objects.get(i);
 			//System.out.println(s);
-			gs.add(go, go.getType());
+			gs.add(go);
 		}
 	}
 	
@@ -53,6 +53,8 @@ public class LevelMap {
 		// Create objects based on object type.
 		for (int i = 0; i < Objects.size(); i++) {
 			GameObject go = Objects.get(i);
+			//System.out.println("Object Type: " + go.getType());
+			if (go.getType() != GameObject.STATIC) continue;
 			//System.out.println(s);
 			gs.spriteList.put(go.hashCode(), go);
 			gs.getLayer().add(go);

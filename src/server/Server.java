@@ -70,8 +70,8 @@ public class Server extends ScrollingScreenGame {
 				JIGSHAPE.RECTANGLE, Color.blue);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
-		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
-				JIGSHAPE.RECTANGLE, Color.DARK_GRAY);
+		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
+				JIGSHAPE.RECTANGLE, Color.WHITE);
 		PaintableCanvas.loadDefaultFrames("background", 100, 100, 1,
 				JIGSHAPE.RECTANGLE, Color.gray);
 		PaintableCanvas.loadDefaultFrames("target", 20, 20, 1,
@@ -94,9 +94,10 @@ public class Server extends ScrollingScreenGame {
 		// Add a player to test movement, remove when not needed
 		playerObject = new PlayerObject("player");
 		playerObject.set(100, 1.0, 1.0, 0.0);
-		Vector2D a = level.playerInitSpots.get(0);
+		Vector2D a = level.playerInitSpots.get(2);
 		playerObject.setPosition(new Vector2D(a.getX(), a.getY()));
-		playerID = gameState.add(playerObject, GameObject.PLAYER);
+		playerID = 65001; // bleh
+		gameState.addPlayer(playerID, playerObject);
 		oldInput = new Action(playerID);
 
 		netState.update(gameState.getNetState());
@@ -116,22 +117,16 @@ public class Server extends ScrollingScreenGame {
 		if (keyboard.isPressed(KeyEvent.VK_P) && playerID != -1) {
 			gameState.removeByID(playerID);
 			playerID = -1;
-			gameObjectLayers.clear();
-			gameObjectLayers.add(gameState.getLayer());
-			pe.clear();
-			pe.manageViewableSet(gameState.getLayer());
 
 		} else if (keyboard.isPressed(KeyEvent.VK_O) && playerID == -1) {
 			playerObject = new PlayerObject("player");
 			playerObject.set(100, 1.0, 1.0, 0.0);
 			Vector2D a = level.playerInitSpots.get(0);
 			playerObject.setPosition(new Vector2D(a.getX(), a.getY()));
-			playerID = gameState.add(playerObject, GameObject.PLAYER);
+			playerID = 65001; // bleh
+			gameState.addPlayer(playerID, playerObject);
 			oldInput = new Action(playerID);
-			gameObjectLayers.clear();
-			gameObjectLayers.add(gameState.getLayer());
-			pe.clear();
-			pe.manageViewableSet(gameState.getLayer());
+			netState.update(gameState.getNetState());
 
 		}
 
@@ -230,8 +225,7 @@ public class Server extends ScrollingScreenGame {
 			if (a.right)
 				++x;
 
-			BodyLayer<GameObject> layer = gameState.getLayer();
-			playerObject.updatePlayer(x, y, a.jet, false, false, layer);
+			playerObject.updatePlayer(x, y, a.jet, false, false, gameState.getLayer());
 
 			break;
 
@@ -242,16 +236,10 @@ public class Server extends ScrollingScreenGame {
 
 			ne.addPlayer(a.getId(), a.getMsg());
 			PlayerObject player = new PlayerObject("player");
-			player.set(100, .2, 1.0, 0.0);
-			Vector2D spawn = level.playerInitSpots.get(0);
+			player.set(100, 1.0, 1.0, 0.0);
+			Vector2D spawn = level.playerInitSpots.get(1);
 			player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
-			gameState.add(a.getId(), player, GameObject.PLAYER);
-
-			// Reseting physics/render layers
-			gameObjectLayers.clear();
-			gameObjectLayers.add(gameState.getLayer());
-			pe.clear();
-			pe.manageViewableSet(gameState.getLayer());
+			gameState.addPlayer(a.getId(), player);
 
 			break;
 
@@ -293,12 +281,8 @@ public class Server extends ScrollingScreenGame {
 				// set V in direction of travel 1000
 				b.setVelocity(shootloc.scale(1000));
 				b.setPosition(new Vector2D(xx, yy));
-				gameState.add(b, GameObject.BULLET);
+				gameState.add(b);
 
-				// Reseting physics/render layers gameObjectLayers.clear();
-				gameObjectLayers.add(gameState.getLayer());
-				pe.clear();
-				pe.manageViewableSet(gameState.getLayer());
 				obj.listBullets.add(b); //add as newest object.
 				obj.bulletCount++;
 			}

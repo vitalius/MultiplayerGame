@@ -206,7 +206,7 @@ public class LevelSet {
 						res = null;
 						System.out.println("Error: Object parameters is missing in least one number!");
 						return null;
-					}
+					}					
 					
 					GameObject go = new GameObject(rsc);
 					go.set(mass, fric, rest, rot);

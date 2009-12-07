@@ -98,8 +98,8 @@ public class Client extends ScrollingScreenGame {
 				JIGSHAPE.RECTANGLE, Color.blue);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
-		PaintableCanvas.loadDefaultFrames("bullet", 10, 10, 1,
-				JIGSHAPE.RECTANGLE, Color.DARK_GRAY);
+		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
+				JIGSHAPE.RECTANGLE, Color.WHITE);
 		PaintableCanvas.loadDefaultFrames("target", 32, 32, 1, JIGSHAPE.CIRCLE,
 				Color.red);
 		//1280, SCREEN_HEIGHT = 1024
@@ -217,7 +217,7 @@ public class Client extends ScrollingScreenGame {
 			// System.out.println("playerPos: " + p.getPosition().toString());
 			centerOnPoint(
 					(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-					(int) (mousePos.getY()) / 2); // centers on player
+					(int) (mousePos.getY()) / 2);
 
 		}
 		keyboardMovementHandler();

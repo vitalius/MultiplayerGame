@@ -148,7 +148,8 @@ public class PlayerObject extends GameObject {
 	
 	public void clamp() {
 		// keep vertical if not dead
-		if (alive) setRotation(0);
+		if (alive) 
+			setRotation(0);
 		velocity = velocity.clampX(-MAXVEL, MAXVEL);
 		velocity = velocity.clampY(-MAXVEL, MAXVEL);
 	}

@@ -14,72 +14,87 @@ import net.NetState;
 public class ServerGameState {
 
 	private NetState netState;
-
-	private Hashtable<Integer, GameObject> goList = new Hashtable<Integer, GameObject>();
-	private BodyLayer<GameObject> layer;
+	private Hashtable<Integer, GameObject> goTable;
+	private BodyLayer<GameObject> layer; // all layer
+//	private BodyLayer<PlayerObject> pLayer; // player layer
+//	private BodyLayer<GameObject> bLayer; // bullet layer
+//	private BodyLayer<GameObject> dLayer; // dynamic layer
+//	private BodyLayer<GameObject> sLayer; // static layer
 	private Random generator = new Random();
 
 	public ServerGameState() {
 		netState = new NetState();
+		goTable = new Hashtable<Integer, GameObject>();
 		layer = new AbstractBodyLayer.NoUpdate<GameObject>();
+		//bLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
+		//dLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
+		//sLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
 	}
 
 	public int getUniqueId() {
-		Set<Integer> usedIds = goList.keySet();
-
+		Set<Integer> usedIds = goTable.keySet();
 		int id = 100;
 		while (usedIds.contains(id))
 			id = generator.nextInt(65000);
-
 		return id;
 	}
-
-	/**
-	 * 
-	 * Adds a 'Box' to the boxList and create a corresponding NetObject to send
-	 * to the clients
-	 * 
-	 * 
-	 * @param b
-	 *            - Box
-	 * @param type
-	 *            - type of object, this can be a player, a bullet, etc
-	 */
-	public int add(GameObject go, int type) {
-		int id = getUniqueId();
-
-		if (goList.containsKey(id))
-			return id;
-
-		goList.put(id, go);
-		layer.add(go);
-		if (go.type != GameObject.CUSTOM) {
-			netState.add(new NetObject(id, go.getPosition(), type));
-		}	
-		return id;
-	}
-
+	
 	/**
 	 * This method is called when adding a player because id is already provided
 	 * 
 	 */
-	public void add(int id, GameObject box, int type) {
-		if (goList.containsKey(id))
+	public void addPlayer(int id, PlayerObject p) {
+		if (goTable.containsKey(id)) return;
+		p.setID(id);
+		goTable.put(id, p);
+		netState.add(new NetObject(id, p.getPosition(), GameObject.PLAYER));
+		layer.add(p);
+		//	netState.add(new NetObject(id, p.getPosition(), GameObject));
+		//}
+	}
+	
+	public void add(GameObject go) {
+		if (go.type == GameObject.STATIC) {
+			addStatic(go);
 			return;
-
-		goList.put(id, box);
-		layer.add(box);
-		if (box.type != GameObject.CUSTOM) {
-			netState.add(new NetObject(id, box.getPosition(), type));
 		}
+		addDynamic(go);
+	}
+	
+	// add dynamic objects such as boxes
+	public int addDynamic(GameObject go) {
+		int id = getUniqueId();
+		go.setID(id);
+		if (goTable.containsKey(id)) return id;
+
+		//goTable.put(id, go);
+		
+		if (go.type == GameObject.BULLET) {
+			layer.add(go);
+		}
+		else if (go.type == GameObject.SMALLBOX) {
+			layer.add(go);
+		}
+		else {
+			return -1;
+		}
+		goTable.put(id, go);
+		netState.add(new NetObject(id, go.getPosition(), go.type));
+		
+		return id;
+	}
+	
+	// add static object such as platforms
+	public void addStatic(GameObject go) {
+		layer.add(go);
 	}
 
 	public void update() {
 		clampAndUpdatePlayers();
 		
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
-		for (Integer i : goList.keySet()) {
-			GameObject go = goList.get(i);
+		for (Integer i : goTable.keySet()) {
+			GameObject go = goTable.get(i);
 			if (go != null) {
 				NetObject no = netList.get(i);
 				if (no != null) {
@@ -88,23 +103,16 @@ public class ServerGameState {
 					no.setPosition(go.getPosition());
 
 					// System.out.println(b.getVelocity());
-					// Box's velocity vector is way too high for some reason,
-					// maybe it should be scaled by DELTA_MS, i dunno
 					no.setVelocity(go.getVelocity());
 
 					no.setRotation(go.getRotation());
 				}
 			}
-			PlayerObject p = null;
-			if (go.type == GameObject.PLAYER) {
-				p = (PlayerObject) go;
-				p.clamp();
-			}
 		}
 	}
 
 	public Hashtable<Integer, GameObject> getHashtable() {
-		return goList;
+		return goTable;
 	}
 
 	/**
@@ -116,6 +124,18 @@ public class ServerGameState {
 		return layer;
 	}
 
+//	public BodyLayer<GameObject> getbLayer() {
+//		return bLayer;
+//	}
+//
+//	public BodyLayer<GameObject> getdLayer() {
+//		return dLayer;
+//	}
+//
+//	public BodyLayer<GameObject> getsLayer() {
+//		return sLayer;
+//	}
+
 	/**
 	 * clamp players angle and velocity
 	 * 
@@ -123,11 +143,11 @@ public class ServerGameState {
 	 */
 	public void clampAndUpdatePlayers() {
 		PlayerObject p = null;
-		for (GameObject go : goList.values())
-			if (go.type == GameObject.PLAYER)
+		for (GameObject go : layer)
+			if (go.type == GameObject.PLAYER) {
 				p = (PlayerObject) go;
-				//p.clamp(); called by updatePlayerState() now.
 				p.updatePlayerState();
+			}
 		return;
 	}
 
@@ -138,7 +158,8 @@ public class ServerGameState {
 	public void removeByID(int ID) {
 		// GameObject ret = goList.get(ID);
 		//goList.get(ID).setActivation(false);
-		goList.remove(ID);
+		goTable.remove(ID);
+		netState.objectList.remove(ID);
 		// return ret;
 	}
 }
