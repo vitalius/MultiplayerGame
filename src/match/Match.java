@@ -1,12 +1,12 @@
-package server.gamerules;
+package match;
 
-public abstract class BlankRules {
+public abstract class Match {
 	
 	int timer = 0;
 	// list of players
 	
 	// initalize
-	protected BlankRules() {		
+	protected Match() {		
 	}
 	
 	// override to do timed stuff.

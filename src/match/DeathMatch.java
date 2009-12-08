@@ -1,14 +1,14 @@
-package server.gamerules;
+package match;
 
 //# of kills
 //# of deaths
 //a timer
 //where to spawn, etc.
-public class deathmatch extends BlankRules {
+public class DeathMatch extends Match {
 	
 	// need to get list of objects so it can get players from current list in initalizion.
 	// blankrules will have code.
-	public deathmatch() {
+	public DeathMatch() {
 		super();
 		
 	}
