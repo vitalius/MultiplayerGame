@@ -8,7 +8,7 @@ Player Movement - Done - Josh
 Combat 
 	Shooting         - Done - Josh, Rolf
 	Hit Detection    - Done - Josh
-	Health Rules     - Rolf - needs ability to be hurt first...
+	Health Rules     - Rolf - okay serverside players can die, but client dont seem to detect health changes.
 	Crosshair Aiming - Rolf - done, just need transparent. later when gfx file is done.
 	GUI - healthbar  - Rolf
 	GUI - jetpackbar - Rolf - done, just need jetpack done.
