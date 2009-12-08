@@ -6,12 +6,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 
-public class TcpServer extends Thread {
+public class TcpListener extends Thread {
 	
 	private ServerSocket servSock;
 	private Server gm;
 	
-	public TcpServer(int p, Server g) {
+	public TcpListener(int p, Server g) {
 		gm = g;
 		try {
 			servSock = new ServerSocket(p);
@@ -36,7 +36,6 @@ public class TcpServer extends Thread {
 				//System.out.println(msg + " len:"+msg.length());
 				synchronized(gm) {
 					gm.msgQueue.add(msg);
-					//gm.processAction(msg);
 				}
 				
 				clientSock.close(); 

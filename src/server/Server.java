@@ -173,6 +173,17 @@ public class Server extends ScrollingScreenGame {
 		}
 	}
 
+	public void joinClient(Action a) {
+		System.out.println("Adding player id:" + a.getId());
+
+		ne.addPlayer(a.getId(), a.getMsg());
+		PlayerObject player = new PlayerObject("player");
+		player.set(100, 1.0, 1.0, 0.0);
+		Vector2D spawn = level.playerInitSpots.get(1);
+		player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
+		gameState.addPlayer(a.getId(), player);
+	}
+	
 	/**
 	 * Just like client has a "keyboardHandler" method that capture key strokes
 	 * and acts on them, this method gets action request from clients and
@@ -227,15 +238,7 @@ public class Server extends ScrollingScreenGame {
 		// ///////////////////////////////////////////
 		// Adding a player
 		case Action.JOIN:
-			System.out.println("Adding player id:" + a.getId());
-
-			ne.addPlayer(a.getId(), a.getMsg());
-			PlayerObject player = new PlayerObject("player");
-			player.set(100, 1.0, 1.0, 0.0);
-			Vector2D spawn = level.playerInitSpots.get(1);
-			player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
-			gameState.addPlayer(a.getId(), player);
-
+			joinClient(a);
 			break;
 
 		case Action.CHANGE_VELOCITY:
