@@ -18,7 +18,7 @@ public class PlayerObject extends GameObject {
 	private static final double FRICTION = 1.0;
 	private static final int MAXHEALTH = 2000;
 	private static final double MAXVEL = 300;
-	private static final int MAXJETFUEL = 2000;
+	//private static final int MAXJETFUEL = 2000;// uneeded now, clients handle it now.
 	
 	private int health;
 
@@ -28,7 +28,7 @@ public class PlayerObject extends GameObject {
 	//private boolean keyCrouch; // crouch key
 	private boolean keyRun; // run toggle
 	
-	private int jetFuel;
+	//private int jetFuel;
 	private boolean onObject; // are we standing on an object
 
 	public PlayerObject(String rsc) {
@@ -39,7 +39,7 @@ public class PlayerObject extends GameObject {
 		//keyCrouch = false; // crouch key
 		keyJet = false; // jetpack key
 		keyRun = false; // run toggle
-		jetFuel = MAXJETFUEL;
+		//jetFuel = MAXJETFUEL;
 		health = MAXHEALTH;
 		onObject = false;
 	}
@@ -81,7 +81,7 @@ public class PlayerObject extends GameObject {
 	public void jumpCrouch(int jumpCrouch) {
 		keyJumpCrouch = jumpCrouch;
 
-		if (keyJumpCrouch < 0 && jetFuel > 0) { // pressed button
+		if (keyJumpCrouch < 0 ) {//&& jetFuel > 0) { // pressed button
 			if (onObject){ // on object
 				velocity = new Vector2D( velocity.getX(), JUMPVEL );
 			}
@@ -98,10 +98,10 @@ public class PlayerObject extends GameObject {
 	public void jet(boolean jet) {
 		keyJet = jet;
 		if (keyJet) { // pressed button
-			if (jetFuel > 0) {
+			//if (jetFuel > 0) {
 				//System.out.println("Jet Fuel: " + jetFuel);
 				force = new Vector2D( force.getX(), JETFORCE*mass );
-			}
+			//}
 		} else { // released button
 			force = new Vector2D( force.getX(), NOFORCE);
 		}
@@ -136,13 +136,13 @@ public class PlayerObject extends GameObject {
 	
 	public void updatePlayerState() {
 		//System.out.println(jetFuel);
-		if(keyJet && jetFuel > 0) {
-			jetFuel = jetFuel - 2;
-		} else if(!keyJet && jetFuel < MAXJETFUEL) {
-			jetFuel++;
-		}
-		if(jetFuel <= 0)
-			force = new Vector2D( force.getX(), NOFORCE);
+		//if(keyJet && jetFuel > 0) {
+			//jetFuel = jetFuel - 2;
+		//} else if(!keyJet && jetFuel < MAXJETFUEL) {
+			//jetFuel++;
+		//}
+		//if(jetFuel <= 0)
+			//force = new Vector2D( force.getX(), NOFORCE);
 
 		clamp();
 	}
