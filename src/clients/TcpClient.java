@@ -17,7 +17,7 @@ public class TcpClient {
 		port = p;
 		try {
 			socket = new Socket(serverIP, port);
-			myIP = socket.getInetAddress().toString().substring(1);
+			myIP = socket.getLocalAddress().getHostAddress(); // this is done server side now
 			socket.close();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();

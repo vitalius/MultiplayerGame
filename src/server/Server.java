@@ -36,7 +36,7 @@ public class Server extends ScrollingScreenGame {
 	private int totalMS;
 
 	private NetStateManager netState;
-	private NetworkEngine ne;
+	public NetworkEngine ne;
 	private CattoPhysicsEngine pe;
 	public ServerGameState gameState;
 	private LevelSet levels;
@@ -229,12 +229,12 @@ public class Server extends ScrollingScreenGame {
 		case Action.JOIN:
 			System.out.println("Adding player id:" + a.getId());
 
-			ne.addPlayer(a.getId(), a.getMsg());
+			//ne.addPlayer(a.getId(), a.getMsg()); // this is done during the tcp connection establishment
 			PlayerObject player = new PlayerObject("player");
 			player.set(100, 1.0, 1.0, 0.0);
 			Vector2D spawn = level.playerInitSpots.get(1);
 			player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
-			gameState.addPlayer(a.getId(), player);
+			gameState.addPlayer(a.getId(), player); 
 
 			break;
 

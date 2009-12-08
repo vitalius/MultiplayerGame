@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Hashtable;
+import java.util.ArrayList;
 
 /**
  * Broadcasts game state to a set of IPs
@@ -19,7 +19,7 @@ public class Broadcaster {
 	private DatagramSocket socket;
 	private int port;
 	
-	private Hashtable<Integer, String> ipList = new Hashtable<Integer, String>();
+	private ArrayList<String> ipList = new ArrayList<String>();
 	
 	public Broadcaster (int p) {	
 	   port = p;
@@ -39,7 +39,11 @@ public class Broadcaster {
 	 */
 	public void addIP(int id, String ip) {
 		System.out.println("Adding "+id+" at "+ip+" to broadcasting list.");
-		ipList.put(id, ip);
+		synchronized(this) {
+		if (!ipList.contains(ip))
+		ipList.add(ip);
+		}
+
 	}
 	
 	public void clearIPs() {
@@ -61,13 +65,15 @@ public class Broadcaster {
 		buf = state.getBytes();
 			
 		try {
-			for(String s : ipList.values()) {
+			synchronized(this) {
+			for(String s : ipList) {
 		    	DatagramPacket packet = new DatagramPacket(buf, buf.length,
 		    				InetAddress.getByName(s), port);
 	
 		    	socket.send(packet);
 		    	//System.out.println("Sending: "+ s + ":" + port);//new String (packet.getData(),0,packet.getLength()));
 		    }
+			}
 	            
 	     } catch (IOException e) {
 	        e.printStackTrace();
