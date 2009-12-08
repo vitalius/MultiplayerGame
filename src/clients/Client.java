@@ -59,6 +59,7 @@ public class Client extends ScrollingScreenGame {
 	public String SERVER_IP = "127.0.0.1";
 
 	public static final int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 1024;
+	private static final int MAXJETFUEL = 2000;
 
 	boolean keyPressed = false;
 	boolean keyReleased = true;
@@ -79,8 +80,10 @@ public class Client extends ScrollingScreenGame {
 	GameSprites gameSprites;
 
 	private SyncState state;
-	
+
 	private LinkedBlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();
+
+	private int jetFuel = MAXJETFUEL;
 
 	public Client() {
 
@@ -143,9 +146,10 @@ public class Client extends ScrollingScreenGame {
 		bListen.start();
 
 		/* Thread with TCP networking for server specific commands */
-		TcpListener tcpListen = new TcpListener(NetworkEngine.TCP_CLIENT_PORT, msgQueue);
+		TcpListener tcpListen = new TcpListener(NetworkEngine.TCP_CLIENT_PORT,
+				msgQueue);
 		tcpListen.start();
-		
+
 		/* Send TCP data via this object */
 		TcpSender control = new TcpSender(SERVER_IP, NetworkEngine.TCP_PORT);
 
@@ -181,25 +185,40 @@ public class Client extends ScrollingScreenGame {
 	/**
 	 * Handle keyboard strokes for movement
 	 */
-	public void keyboardMovementHandler() {
+	public void keyboardMovementHandler(long deltaMs) {
 		keyboard.poll();
 
-		input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN)
-				|| keyboard.isPressed(KeyEvent.VK_S);
-		input.jet = keyboard.isPressed(KeyEvent.VK_UP)
-				|| keyboard.isPressed(KeyEvent.VK_W);
-		input.left = keyboard.isPressed(KeyEvent.VK_LEFT)
-				|| keyboard.isPressed(KeyEvent.VK_A);
-		input.right = keyboard.isPressed(KeyEvent.VK_RIGHT)
-				|| keyboard.isPressed(KeyEvent.VK_D);
-		input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
+		if (netStateMan.getState().objectList.get(player.getID()).getHealth() > 0) {
+			input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN)
+					|| keyboard.isPressed(KeyEvent.VK_S);
+			GameObject p = gameSprites.spriteList.get(player.getID());
+			if (jetFuel > 0
+					&& (keyboard.isPressed(KeyEvent.VK_UP) || keyboard
+							.isPressed(KeyEvent.VK_W))) {
+				input.jet = true;
+				jetFuel -= 2;
+			} else {
+				input.jet = false;
+			}
+			if (!(keyboard.isPressed(KeyEvent.VK_UP) || keyboard
+					.isPressed(KeyEvent.VK_W)) && jetFuel < MAXJETFUEL)
+				++jetFuel;
 
-		// dunno if correct way? probably not.
-		// if not need a method to reanimate the player. :)
-		//right now however health for clientside dont seem to work
-		// so it can use jetpack and stuff dead. :P
-		if (netStateMan.getState().objectList.get(player.getID()).getHealth() > 0)
+			input.left = keyboard.isPressed(KeyEvent.VK_LEFT)
+					|| keyboard.isPressed(KeyEvent.VK_A);
+			input.right = keyboard.isPressed(KeyEvent.VK_RIGHT)
+					|| keyboard.isPressed(KeyEvent.VK_D);
+			input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
 			player.move(input);
+		} else {
+			input.crouch = false;
+			input.jet = false;
+			input.left = false;
+			input.right = false;
+			input.jump = false;
+			player.move(input);
+		}
+
 	}
 
 	int shootlimit = 0;
@@ -212,8 +231,10 @@ public class Client extends ScrollingScreenGame {
 
 		// get messages from the server
 		String s = state.get();
-		if (s != null) netStateMan.sync(s);
+		if (s != null)
+			netStateMan.sync(s);
 		gameSprites.sync(netStateMan);
+
 
 		// Move background to 90% of cursor world coordite location.
 		// as seen from player view
@@ -232,27 +253,31 @@ public class Client extends ScrollingScreenGame {
 					(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
 					(int) (mousePos.getY()) / 2);
 
+			// it is assumed that health is in range [0-2000].
+			// System.out.println(hl);
 			int hl = netStateMan.getState().objectList.get(player.getID())
 					.getHealth();
-			// it is assumed that health is in range [0-2000].
-			//System.out.println(hl);
 			if (hl > 0) {
-				hl = 25 - (int) ((((double) (hl) / 2000.0) * 25));
-				health.setFrame(hl);
+				int hframe = 25 - (int) ((((double) hl) / 2000.0) * 25);
+				//System.out.println(hframe + " hframe, client");
+				health.setFrame(hframe);
 			} else {
 				health.setFrame(25);
 			}
-
+			if (jetFuel > 0) {
+				int jframe = 25 - (int) ((((double) jetFuel) / 2000.0) * 25);
+				//System.out.println(jframe + " jframe " + jetFuel + "jetfuel, client");
+				jetpack.setFrame(jframe);
+			} else {
+				jetpack.setFrame(25);
+			}
 		}
-		keyboardMovementHandler();
+		keyboardMovementHandler(deltaMs);
 
-		//the health for clientside dont seem to work
-		// so it can use jetpack and stuff dead. :P
 		if (shootlimit < 250) {
 			shootlimit += deltaMs;
-		} else if (p != null
-				&& mouse.isLeftButtonPressed()
-				&& netStateMan.getState().objectList.get(player.getID()).getHealth() >= 0) {
+		} else if (p != null && mouse.isLeftButtonPressed() && netStateMan.getState().objectList.get(player.getID())
+				.getHealth() > 0) {
 			if (p.getCenterPosition() != null) {
 				shootlimit = 0;
 				// Since we know player is always generally in center of

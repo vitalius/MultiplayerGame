@@ -8,11 +8,13 @@ Player Movement - Done - Josh
 Combat 
 	Shooting         - Done - Josh, Rolf
 	Hit Detection    - Done - Josh
-	Health Rules     - Rolf - okay serverside players can die, but client dont seem to detect health changes.
+	Health Rules     - Rolf - works well. Just need game Rules objects done to finish.
 	Crosshair Aiming - Rolf - done, just need transparent. later when gfx file is done.
-	GUI - healthbar  - Rolf
-	GUI - jetpackbar - Rolf - done, just need jetpack done.
-	Death            - Rolf - server working, client not so much.
+	GUI - healthbar  - Rolf - done
+	GUI - jetpackbar - Rolf - done
+	Death            - Rolf - both server and client works
+	Respawn          - Rolf - unstarted on client
+	
 	
 Networking
 	New server to client notifications:
@@ -38,9 +40,10 @@ Animations and Graphics - Rolf
 	Bullet - Need graphics...
 	player - Need graphics...
 	Background - done, but maybe more pictures?
+	Method to tile any size object with certain tile size - unstarted
 	Gui elements
 		Cursor - done, will transparentize when done with all gui elements.
-		jetpack, health bars, mostly done, just need jetpack usage client done.
+		jetpack, health bars - Rolf - Done
 		Buttons, logo UI graphics -unstarted.
 		
 	

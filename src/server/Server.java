@@ -125,10 +125,6 @@ public class Server extends ScrollingScreenGame {
 
 		}
 
-		// current issues - if jetpack is on or jumping player will fall up
-		// forever.
-		// otherwise acts like dead body (that can stay standing. go figure.)
-
 		// Bother with new input only when player is alive.
 		if (playerID != -1) {
 			Action input = new Action(playerID, Action.INPUT);
