@@ -41,6 +41,15 @@ Animations and Graphics - Rolf
 	player - Need graphics...
 	Background - done, but maybe more pictures?
 	Method to tile any size object with certain tile size - unstarted
+		http://www.java-tips.org/java-se-tips/java.awt/a-demonstration-of-java2d-transformations.html
+		b = new BufferedImage[1];
+	    b[0] = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
+    	g = b[0].getGraphics();
+    	g.setColor(Color.blue);
+		g.fillRect(0, 0, 32, 32);
+    	g.dispose();
+    	factory.putFrames("smallbox", b);
+
 	Gui elements
 		Cursor - done, will transparentize when done with all gui elements.
 		jetpack, health bars - Rolf - Done
