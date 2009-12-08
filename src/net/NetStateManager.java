@@ -2,8 +2,6 @@ package net;
 
 import java.util.Hashtable;
 
-import world.GameObject;
-
 
 public class NetStateManager {
 	

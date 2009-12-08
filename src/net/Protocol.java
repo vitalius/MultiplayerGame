@@ -1,6 +1,5 @@
 package net;
 
-import world.GameObject;
 import jig.engine.util.Vector2D;
 
 /**

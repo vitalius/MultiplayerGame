@@ -151,7 +151,7 @@ public class ServerGameState {
 			if (((PlayerObject) other).getHealth() > 0) {
 				// lower player health
 				((PlayerObject) other).setHealth(((PlayerObject) other)
-						.getHealth() - 10000);// way overkill, test code.
+						.getHealth() - 200); // TODO: no hardcoding
 				if (((PlayerObject) other).getHealth() < 0)
 					((PlayerObject) other).setHealth(0);
 
