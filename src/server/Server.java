@@ -32,11 +32,11 @@ public class Server extends ScrollingScreenGame {
 	 * This is a static, constant time between frames, all clients run as fast
 	 * as the server runs
 	 */
-	private static int DELTA_MS = 30;
+	// private static int DELTA_MS = 30;
 	private int totalMS;
 
 	private NetStateManager netState;
-	public NetworkEngine ne;
+	private NetworkEngine ne;
 	private CattoPhysicsEngine pe;
 	public ServerGameState gameState;
 	private LevelSet levels;
@@ -173,6 +173,17 @@ public class Server extends ScrollingScreenGame {
 		}
 	}
 
+	public void joinClient(Action a) {
+		System.out.println("Adding player id:" + a.getId());
+
+		ne.addPlayer(a.getId(), a.getMsg());
+		PlayerObject player = new PlayerObject("player");
+		player.set(100, 1.0, 1.0, 0.0);
+		Vector2D spawn = level.playerInitSpots.get(1);
+		player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
+		gameState.addPlayer(a.getId(), player);
+	}
+	
 	/**
 	 * Just like client has a "keyboardHandler" method that capture key strokes
 	 * and acts on them, this method gets action request from clients and
@@ -227,15 +238,7 @@ public class Server extends ScrollingScreenGame {
 		// ///////////////////////////////////////////
 		// Adding a player
 		case Action.JOIN:
-			System.out.println("Adding player id:" + a.getId());
-
-			//ne.addPlayer(a.getId(), a.getMsg()); // this is done during the tcp connection establishment
-			PlayerObject player = new PlayerObject("player");
-			player.set(100, 1.0, 1.0, 0.0);
-			Vector2D spawn = level.playerInitSpots.get(1);
-			player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
-			gameState.addPlayer(a.getId(), player); 
-
+			joinClient(a);
 			break;
 
 		case Action.CHANGE_VELOCITY:
@@ -290,17 +293,20 @@ public class Server extends ScrollingScreenGame {
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
 		pe.applyLawsOfPhysics(deltaMs);
-		gameState.update();
 		totalMS += deltaMs;
-		if (totalMS > DELTA_MS) {
+		if (totalMS > 30) {
 			ne.update();
 			totalMS = 0;
 		}
 		keyboardMovementHandler();
 		mouseHandler(deltaMs);
+
 		while (msgQueue.size() > 0) {
 			this.processAction(msgQueue.poll());
 		}
+		gameState.update();
+		
+		
 		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(mousePos.getY())/2); // centers on player

@@ -5,14 +5,14 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class TcpClient {
+public class TcpSender {
 	
 	private Socket socket;
 	private String myIP;
 	private String serverIP;
 	private int port;
 
-	public TcpClient(String server, int p) {
+	public TcpSender(String server, int p) {
 		serverIP = server;
 		port = p;
 		try {

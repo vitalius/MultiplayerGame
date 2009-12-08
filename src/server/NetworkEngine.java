@@ -8,11 +8,12 @@ public class NetworkEngine {
 	
 	public static final int BCAST_PORT = 49725;
 	public static final int TCP_PORT   = 49726;
+	public static final int TCP_CLIENT_PORT   = 49727;
 	
 	private Broadcaster bcaster;
 	private Server gameserver;
 	private Protocol prot;
-	private TcpServer tcpControl;
+	private TcpListener tcpControl;
 	
 	public NetworkEngine(Server gs) {
 		gameserver = gs;
@@ -22,7 +23,7 @@ public class NetworkEngine {
 		//bcaster.addIP(1, "127.0.0.1");
 		//bcaster.addIP(2, "10.97.53.61");
 		
-		tcpControl = new TcpServer(TCP_PORT, gameserver);
+		tcpControl = new TcpListener(TCP_PORT, gameserver);
 		tcpControl.start();
 	}
 	

@@ -13,16 +13,21 @@ import net.Protocol;
  */
 public class Player {
 	
+	public final static int JOINED  = 0;
+	public final static int WAITING = 1;
+	
 	private int playerId;
-	private TcpClient tcp;
+	private TcpSender tcp;
 	private Protocol prot;
 	private Action input;
+	public int state;
 	
-	public Player(int id, TcpClient t) {
+	public Player(int id, TcpSender t) {
 		playerId = id;
 		tcp = t;
 		input = new Action(id, Action.INPUT);
 		prot = new Protocol();
+		state = WAITING;
 	}
 
 	

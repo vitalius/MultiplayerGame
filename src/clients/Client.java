@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import physics.Box;
 import server.NetworkEngine;
 import world.GameObject;
@@ -77,6 +79,8 @@ public class Client extends ScrollingScreenGame {
 	GameSprites gameSprites;
 
 	private SyncState state;
+	
+	private LinkedBlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();
 
 	public Client() {
 
@@ -138,7 +142,12 @@ public class Client extends ScrollingScreenGame {
 		BroadcastListener bListen = new BroadcastListener(state);
 		bListen.start();
 
-		TcpClient control = new TcpClient(SERVER_IP, NetworkEngine.TCP_PORT);
+		/* Thread with TCP networking for server specific commands */
+		TcpListener tcpListen = new TcpListener(NetworkEngine.TCP_CLIENT_PORT, msgQueue);
+		tcpListen.start();
+		
+		/* Send TCP data via this object */
+		TcpSender control = new TcpSender(SERVER_IP, NetworkEngine.TCP_PORT);
 
 		/* Client id is 0 for now, we should make it some random digit */
 		Random rand = new Random(); // this should actually come from the server
