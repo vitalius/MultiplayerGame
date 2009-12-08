@@ -294,7 +294,7 @@ public class Server extends ScrollingScreenGame {
 		super.update(deltaMs);
 		pe.applyLawsOfPhysics(deltaMs);
 		totalMS += deltaMs;
-		if (totalMS > 30) {
+		if (totalMS > 300) {
 			ne.update();
 			totalMS = 0;
 		}
