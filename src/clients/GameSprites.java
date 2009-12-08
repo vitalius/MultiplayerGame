@@ -75,26 +75,6 @@ public class GameSprites {
 	
 	}
 	
-	/*
-	public synchronized void sync(NetStateManager gameState, Vector2D offset) {
-			for (NetObject no : gameState.getState().getNetObjects()) {
-				if (spriteList.containsKey(no.getId())) {
-					
-					// fixing the offset, because in jig, rectangle extending VanillaShere is just a giant sphere
-					SpriteObject s = (SpriteObject)spriteList.get(no.getId());
-					Vector2D p = no.getPosition();
-					Vector2D newPos = new Vector2D(p.getX()-(s.getRadius()-s.getImgWidth()/2) - offset.getX(), 
-												   p.getY()-(s.getRadius()-s.getImgHeight()/2) - offset.getY());
-					spriteList.get(no.getId()).setPosition(newPos);
-					//System.out.println(no.getVelocity());
-					spriteList.get(no.getId()).setVelocity(no.getVelocity());
-					spriteList.get(no.getId()).setRotation(no.getRotation());
-				} else
-					init(no);
-			}
-	}
-	*/
-	
 	public Collection<GameObject> getSprites() { 
 		return spriteList.values(); 
 	}

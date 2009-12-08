@@ -16,7 +16,7 @@ public class Protocol {
 	}
 
 	public String encodeAction (Action a) {
-		String output = a.getId()+"#";
+		String output = a.getID()+"#";
 		output += a.getType() + "#";
 		
 		switch(a.getType()) {
@@ -25,7 +25,13 @@ public class Protocol {
 				output += a.getArg().getX() + "#";
 				output += a.getArg().getY() + "#";
 				break;
-			case Action.JOIN:
+			case Action.JOIN_REQUEST:
+				output += a.getMsg() + "#";
+				break;
+			case Action.JOIN_ACCEPT:
+				output += a.getMsg() + "#";
+				break;
+			case Action.LEAVE_SERVER:
 				output += a.getMsg() + "#";
 				break;
 			case Action.INPUT:
@@ -73,7 +79,13 @@ public class Protocol {
 			y = Double.valueOf(token[3]).doubleValue();
 			returnAction = new Action(id, type, new Vector2D(x,y));
 			break;
-		case Action.JOIN:
+		case Action.JOIN_REQUEST:
+			returnAction = new Action(id, type, token[2]);
+			break;
+		case Action.JOIN_ACCEPT:
+			returnAction = new Action(id, type, token[2]);
+			break;
+		case Action.LEAVE_SERVER:
 			returnAction = new Action(id, type, token[2]);
 			break;
 		case Action.INPUT:

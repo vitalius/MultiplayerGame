@@ -50,7 +50,6 @@ public class BroadcastListener extends Thread {
 		while(true) {
 			String s = readBPacket();
 			state.set(s);
-			//gm.sync(s);
 			//System.out.println(s);
 		}
 	}
