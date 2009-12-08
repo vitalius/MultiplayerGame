@@ -16,7 +16,7 @@ public class PlayerObject extends GameObject {
 	private static final double NOFORCE = 0;
 	private static final double NOVEL = 0;
 	private static final double FRICTION = 1.0;
-	private static final int MAXHEALTH = 100;
+	private static final int MAXHEALTH = 2000;
 	private static final double MAXVEL = 300;
 	private static final int MAXJETFUEL = 2000;
 	

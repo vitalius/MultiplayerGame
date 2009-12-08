@@ -10,6 +10,7 @@ import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import net.Action;
+import net.NetState;
 import net.NetStateManager;
 import net.SyncState;
 import jig.engine.CursorResource;
@@ -31,8 +32,8 @@ public class Client extends ScrollingScreenGame {
 	// used for testing UI elements.
 	private class uiItem extends Body {
 
-		//int slowdowntest = 0;
-		//int counter = 0;
+		// int slowdowntest = 0;
+		// int counter = 0;
 
 		public uiItem(String imgrsc) {
 			super(imgrsc);
@@ -40,14 +41,14 @@ public class Client extends ScrollingScreenGame {
 
 		@Override
 		public void update(long deltaMs) {
-//			if (slowdowntest < 1000) {
-//				slowdowntest += deltaMs;
-//			} else {
-//				slowdowntest = 0;
-//				counter += 1;
-//				counter = counter % this.getFrameCount();
-//				this.setFrame(counter);
-//			}
+			// if (slowdowntest < 1000) {
+			// slowdowntest += deltaMs;
+			// } else {
+			// slowdowntest = 0;
+			// counter += 1;
+			// counter = counter % this.getFrameCount();
+			// this.setFrame(counter);
+			// }
 		}
 	}
 
@@ -106,7 +107,8 @@ public class Client extends ScrollingScreenGame {
 				SCREEN_HEIGHT, 1, JIGSHAPE.RECTANGLE, Color.black);
 
 		// will be mostly transparent when done with adding gfx stuff.
-		CursorResource cr = factory.makeCursor(UIGFX + "#Cursor", new Vector2D(15, 15), 1);
+		CursorResource cr = factory.makeCursor(UIGFX + "#Cursor", new Vector2D(
+				15, 15), 1);
 		mouse.setCursor(cr);
 
 		netStateMan = new NetStateManager();
@@ -184,7 +186,12 @@ public class Client extends ScrollingScreenGame {
 				|| keyboard.isPressed(KeyEvent.VK_D);
 		input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
 
-		player.move(input);
+		// dunno if correct way? probably not.
+		// if not need a method to reanimate the player. :)
+		//right now however health for clientside dont seem to work
+		// so it can use jetpack and stuff dead. :P
+		if (netStateMan.getState().objectList.get(player.getID()).getHealth() > 0)
+			player.move(input);
 	}
 
 	int shootlimit = 0;
@@ -222,7 +229,7 @@ public class Client extends ScrollingScreenGame {
 			int hl = netStateMan.getState().objectList.get(player.getID())
 					.getHealth();
 			// it is assumed that health is in range [0-2000].
-			//System.out.println(hl);
+			// System.out.println(hl);
 			if (hl != 0) {
 				hl = 25 - (int) ((((double) (hl) / 2000.0) * 25));
 				health.setFrame(hl);
@@ -233,9 +240,14 @@ public class Client extends ScrollingScreenGame {
 		}
 		keyboardMovementHandler();
 
+		//the health for clientside dont seem to work
+		// so it can use jetpack and stuff dead. :P
 		if (shootlimit < 250) {
 			shootlimit += deltaMs;
-		} else if (p != null && mouse.isLeftButtonPressed()) {
+		} else if (p != null
+				&& mouse.isLeftButtonPressed()
+				&& netStateMan.getState().objectList.get(player.getID())
+						.getHealth() >= 0) {
 			if (p.getCenterPosition() != null) {
 				shootlimit = 0;
 				// Since we know player is always generally in center of

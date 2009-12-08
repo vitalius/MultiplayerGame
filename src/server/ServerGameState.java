@@ -2,6 +2,7 @@ package server;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.Set;
 
@@ -21,10 +22,10 @@ public class ServerGameState {
 	private NetState netState;
 	private Hashtable<Integer, GameObject> goTable;
 	private BodyLayer<GameObject> layer; // all layer
-//	private BodyLayer<PlayerObject> pLayer; // player layer
-//	private BodyLayer<GameObject> bLayer; // bullet layer
-//	private BodyLayer<GameObject> dLayer; // dynamic layer
-//	private BodyLayer<GameObject> sLayer; // static layer
+	// private BodyLayer<PlayerObject> pLayer; // player layer
+	// private BodyLayer<GameObject> bLayer; // bullet layer
+	// private BodyLayer<GameObject> dLayer; // dynamic layer
+	// private BodyLayer<GameObject> sLayer; // static layer
 	private CattoPhysicsEngine pe;
 	private Random generator;
 
@@ -34,9 +35,9 @@ public class ServerGameState {
 		layer = new AbstractBodyLayer.NoUpdate<GameObject>();
 		generator = new Random();
 		this.pe = pe;
-		//bLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
-		//dLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
-		//sLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
+		// bLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
+		// dLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
+		// sLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
 	}
 
 	public int getUniqueId() {
@@ -46,21 +47,22 @@ public class ServerGameState {
 			id = generator.nextInt(65000);
 		return id;
 	}
-	
+
 	/**
 	 * This method is called when adding a player because id is already provided
 	 * 
 	 */
 	public void addPlayer(int id, PlayerObject p) {
-		if (goTable.containsKey(id)) return;
+		if (goTable.containsKey(id))
+			return;
 		p.setID(id);
 		goTable.put(id, p);
 		netState.add(new NetObject(id, p.getPosition(), GameObject.PLAYER));
 		layer.add(p);
-		//	netState.add(new NetObject(id, p.getPosition(), GameObject));
-		//}
+		// netState.add(new NetObject(id, p.getPosition(), GameObject));
+		// }
 	}
-	
+
 	public void add(GameObject go) {
 		if (go.type == GameObject.STATIC) {
 			addStatic(go);
@@ -68,30 +70,29 @@ public class ServerGameState {
 		}
 		addDynamic(go);
 	}
-	
+
 	// add dynamic objects such as boxes
 	public int addDynamic(GameObject go) {
 		int id = getUniqueId();
 		go.setID(id);
-		if (goTable.containsKey(id)) return id;
+		if (goTable.containsKey(id))
+			return id;
 
-		//goTable.put(id, go);
-		
+		// goTable.put(id, go);
+
 		if (go.type == GameObject.BULLET) {
 			layer.add(go);
-		}
-		else if (go.type == GameObject.SMALLBOX) {
+		} else if (go.type == GameObject.SMALLBOX) {
 			layer.add(go);
-		}
-		else {
+		} else {
 			return -1;
 		}
 		goTable.put(id, go);
 		netState.add(new NetObject(id, go.getPosition(), go.type));
-		
+
 		return id;
 	}
-	
+
 	// add static object such as platforms
 	public void addStatic(GameObject go) {
 		layer.add(go);
@@ -99,14 +100,16 @@ public class ServerGameState {
 
 	public void update() {
 		clampAndUpdatePlayers();
-		
+
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goTable.keySet()) {
 			GameObject go = goTable.get(i);
-			if (go == null) return;
-			
+			if (go == null)
+				return;
+
 			NetObject no = netList.get(i);
-			if (no == null) return; // probably should add it
+			if (no == null)
+				return; // probably should add it
 
 			// null point common here...
 			no.setPosition(go.getPosition());
@@ -114,41 +117,48 @@ public class ServerGameState {
 			no.setVelocity(go.getVelocity());
 			no.setRotation(go.getRotation());
 		}
-		
+
 		// check for bullet collisions
 		// this could be added above to speed things up but for now
 		// I want it separate for simplicity sake
 		ArrayList<Arbiter> arbiters = pe.getArbiters();
-		
+
 		for (Arbiter arbit : arbiters) {
-			if (((GameObject)arbit.body1).getType() == GameObject.BULLET) {
+			if (((GameObject) arbit.body1).getType() == GameObject.BULLET) {
 				if (arbit.getNumContacts() > 0) {
-					// disable the bullet
-					arbit.body1.setActivation(false);
-					arbit.body1.setVelocity(new Vector2D(0,0));
-					arbit.body1.setPosition(new Vector2D(-10000,-10000));
-					if (((GameObject)arbit.body2).getType() == GameObject.PLAYER) {
-						// lower player health
-						((PlayerObject)arbit.body2).setHealth(((PlayerObject)arbit.body2).getHealth()-1);
-						//System.out.println("Player Health: " + ((PlayerObject)arbit.body2).getHealth());
-					}
+					handleBullet((GameObject) arbit.body1,
+							(GameObject) arbit.body2);
 					return;
 				}
 			}
-			if (((GameObject)arbit.body2).getType() == GameObject.BULLET) {
+			if (((GameObject) arbit.body2).getType() == GameObject.BULLET) {
 				if (arbit.getNumContacts() > 0) {
-					// disable the bullet
-					arbit.body2.setActivation(false);
-					arbit.body2.setVelocity(new Vector2D(0,0));
-					arbit.body2.setPosition(new Vector2D(-10000,-10000));
-					if (((GameObject)arbit.body1).getType() == GameObject.PLAYER) {
-						// lower player health
-						((PlayerObject)arbit.body1).setHealth(((PlayerObject)arbit.body1).getHealth()-1);
-						//System.out.println("Player Health: " + ((PlayerObject)arbit.body1).getHealth());
-					}
+					handleBullet((GameObject) arbit.body2,
+							(GameObject) arbit.body1);
 					return;
 				}
-			}			
+			}
+		}
+	}
+
+	private void handleBullet(GameObject bullet, GameObject other) {
+		bullet.setActivation(false);
+		bullet.setVelocity(new Vector2D(0, 0));
+		bullet.setPosition(new Vector2D(-10000, -10000));
+		if (other.getType() == GameObject.PLAYER) {
+			if (((PlayerObject) other).getHealth() > 0) {
+				// lower player health
+				((PlayerObject) other).setHealth(((PlayerObject) other)
+						.getHealth() - 10000);// way overkill, test code.
+				if (((PlayerObject) other).getHealth() < 0)
+					((PlayerObject) other).setHealth(0);
+
+				// System.out.println("Player Health: " +
+				// ((PlayerObject)arbit.body1).getHealth());
+			} else {
+				((PlayerObject) other).setHealth(0);
+
+			}
 		}
 	}
 
@@ -165,17 +175,17 @@ public class ServerGameState {
 		return layer;
 	}
 
-//	public BodyLayer<GameObject> getbLayer() {
-//		return bLayer;
-//	}
-//
-//	public BodyLayer<GameObject> getdLayer() {
-//		return dLayer;
-//	}
-//
-//	public BodyLayer<GameObject> getsLayer() {
-//		return sLayer;
-//	}
+	// public BodyLayer<GameObject> getbLayer() {
+	// return bLayer;
+	// }
+	//
+	// public BodyLayer<GameObject> getdLayer() {
+	// return dLayer;
+	// }
+	//
+	// public BodyLayer<GameObject> getsLayer() {
+	// return sLayer;
+	// }
 
 	/**
 	 * clamp players angle and velocity
@@ -198,7 +208,7 @@ public class ServerGameState {
 
 	public void removeByID(int ID) {
 		// GameObject ret = goList.get(ID);
-		//goList.get(ID).setActivation(false);
+		// goList.get(ID).setActivation(false);
 		goTable.remove(ID);
 		netState.objectList.remove(ID);
 		// return ret;
