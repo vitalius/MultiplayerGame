@@ -49,6 +49,8 @@ public class Server extends ScrollingScreenGame {
 
 	public LinkedBlockingQueue<String> msgQueue;
 	private int shootlimit;
+	
+	private TcpSender tcpSender;
 
 	public Server() {
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
@@ -61,6 +63,7 @@ public class Server extends ScrollingScreenGame {
 		fre.setActivation(true);
 		msgQueue = new LinkedBlockingQueue<String>();
 		totalMS = 0;
+		tcpSender = new TcpSender();
 
 		// temp resources
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
@@ -174,14 +177,19 @@ public class Server extends ScrollingScreenGame {
 	}
 
 	public void joinClient(Action a) {
-		System.out.println("Adding player id:" + a.getId());
+		String clientIP = a.getMsg();
+		int playerID = gameState.getUniqueId();
+		
+		System.out.println("Adding player ip:" + clientIP + " id:" + playerID);
 
-		ne.addPlayer(a.getId(), a.getMsg());
 		PlayerObject player = new PlayerObject("player");
 		player.set(100, 1.0, 1.0, 0.0);
 		Vector2D spawn = level.playerInitSpots.get(1);
 		player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
-		gameState.addPlayer(a.getId(), player);
+		gameState.addPlayer(playerID, player);
+		
+		/* Add clients ip to the broadcasting list */
+		ne.addPlayer(a.getId(), a.getMsg());
 	}
 	
 	/**
