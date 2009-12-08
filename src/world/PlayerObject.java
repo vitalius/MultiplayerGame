@@ -80,7 +80,6 @@ public class PlayerObject extends GameObject {
 	// jump
 	public void jumpCrouch(int jumpCrouch) {
 		keyJumpCrouch = jumpCrouch;
-		System.out.println(jetFuel);
 
 		if (keyJumpCrouch < 0 && jetFuel > 0) { // pressed button
 			if (onObject){ // on object
@@ -100,7 +99,7 @@ public class PlayerObject extends GameObject {
 		keyJet = jet;
 		if (keyJet) { // pressed button
 			if (jetFuel > 0) {
-				System.out.println("Jet Fuel: " + jetFuel);
+				//System.out.println("Jet Fuel: " + jetFuel);
 				force = new Vector2D( force.getX(), JETFORCE*mass );
 			}
 		} else { // released button

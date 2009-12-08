@@ -60,10 +60,15 @@ public class GameSprites {
 			if (spriteList.containsKey(no.getId())) {
 					
 				Vector2D p = no.getPosition();
-				spriteList.get(no.getId()).setPosition(p);
+				GameObject go = spriteList.get(no.getId());
+				go.setPosition(p);
 				//System.out.println(no.getVelocity());
-				spriteList.get(no.getId()).setVelocity(no.getVelocity());
-				spriteList.get(no.getId()).setRotation(no.getRotation());
+				go.setVelocity(no.getVelocity());
+				go.setRotation(no.getRotation());
+				if (go.type == GameObject.PLAYER) {
+					//System.out.println("sync health: " + no.getHealth());
+					((PlayerObject)go).setHealth(no.getHealth());
+				}
 			} else
 				init(no);
 		}

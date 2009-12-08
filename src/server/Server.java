@@ -32,11 +32,11 @@ public class Server extends ScrollingScreenGame {
 	 * This is a static, constant time between frames, all clients run as fast
 	 * as the server runs
 	 */
-	// private static int DELTA_MS = 30;
+	private static int DELTA_MS = 30;
 	private int totalMS;
 
 	private NetStateManager netState;
-	private NetworkEngine ne;
+	public NetworkEngine ne;
 	private CattoPhysicsEngine pe;
 	public ServerGameState gameState;
 	private LevelSet levels;
@@ -294,7 +294,8 @@ public class Server extends ScrollingScreenGame {
 		super.update(deltaMs);
 		pe.applyLawsOfPhysics(deltaMs);
 		totalMS += deltaMs;
-		if (totalMS > 300) {
+		
+		if (totalMS > DELTA_MS) {
 			ne.update();
 			totalMS = 0;
 		}

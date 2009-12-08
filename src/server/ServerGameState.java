@@ -2,7 +2,6 @@ package server;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.Random;
 import java.util.Set;
 
@@ -116,6 +115,9 @@ public class ServerGameState {
 			// System.out.println(b.getVelocity());
 			no.setVelocity(go.getVelocity());
 			no.setRotation(go.getRotation());
+			if (go.getType() == GameObject.PLAYER){
+				no.setHealth(((PlayerObject)go).getHealth());
+			}
 		}
 
 		// check for bullet collisions
@@ -149,7 +151,7 @@ public class ServerGameState {
 			if (((PlayerObject) other).getHealth() > 0) {
 				// lower player health
 				((PlayerObject) other).setHealth(((PlayerObject) other)
-						.getHealth() - 10000);// way overkill, test code.
+						.getHealth() - 200); // TODO: no hardcoding
 				if (((PlayerObject) other).getHealth() < 0)
 					((PlayerObject) other).setHealth(0);
 
