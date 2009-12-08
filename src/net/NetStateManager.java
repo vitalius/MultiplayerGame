@@ -2,6 +2,8 @@ package net;
 
 import java.util.Hashtable;
 
+import world.GameObject;
+
 
 public class NetStateManager {
 	
@@ -33,9 +35,11 @@ public class NetStateManager {
 		for(NetObject n : d.getNetObjects()) {
 			
 			if(objectList.containsKey(n.getId())) {
-				objectList.get(n.getId()).setPosition(n.getPosition());
-				objectList.get(n.getId()).setVelocity(n.getVelocity());
-				objectList.get(n.getId()).setRotation(n.getRotation());
+				NetObject no = objectList.get(n.getId());
+				no.setPosition(n.getPosition());
+				no.setVelocity(n.getVelocity());
+				no.setRotation(n.getRotation());
+				no.setHealth(n.getHealth());
 			}
 			else
 				objectList.put(n.getId(), n);

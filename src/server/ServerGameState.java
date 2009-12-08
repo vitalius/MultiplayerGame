@@ -2,7 +2,6 @@ package server;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.Random;
 import java.util.Set;
 
@@ -116,6 +115,9 @@ public class ServerGameState {
 			// System.out.println(b.getVelocity());
 			no.setVelocity(go.getVelocity());
 			no.setRotation(go.getRotation());
+			if (go.getType() == GameObject.PLAYER){
+				no.setHealth(((PlayerObject)go).getHealth());
+			}
 		}
 
 		// check for bullet collisions

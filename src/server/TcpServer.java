@@ -36,7 +36,7 @@ public class TcpServer extends Thread {
 				in.read(buf, 0, NetworkEngine.TCP_BUF_SIZE);
 		
 				msg = new String(buf);
-				System.out.println(msg + " len:"+msg.length());
+				//System.out.println(msg + " len:"+msg.length());
 				synchronized(gm) {
 					gm.msgQueue.add(msg);
 					//gm.processAction(msg);

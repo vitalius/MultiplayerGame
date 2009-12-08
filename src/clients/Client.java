@@ -10,7 +10,6 @@ import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import net.Action;
-import net.NetState;
 import net.NetStateManager;
 import net.SyncState;
 import jig.engine.CursorResource;
@@ -202,11 +201,9 @@ public class Client extends ScrollingScreenGame {
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
 				.getX(), mouse.getLocation().getY()));
 
+		// get messages from the server
 		String s = state.get();
-		if (s != null) {
-			netStateMan.sync(s);
-		}
-
+		if (s != null) netStateMan.sync(s);
 		gameSprites.sync(netStateMan);
 
 		// Move background to 90% of cursor world coordite location.
@@ -229,8 +226,8 @@ public class Client extends ScrollingScreenGame {
 			int hl = netStateMan.getState().objectList.get(player.getID())
 					.getHealth();
 			// it is assumed that health is in range [0-2000].
-			// System.out.println(hl);
-			if (hl != 0) {
+			//System.out.println(hl);
+			if (hl > 0) {
 				hl = 25 - (int) ((((double) (hl) / 2000.0) * 25));
 				health.setFrame(hl);
 			} else {
@@ -246,8 +243,7 @@ public class Client extends ScrollingScreenGame {
 			shootlimit += deltaMs;
 		} else if (p != null
 				&& mouse.isLeftButtonPressed()
-				&& netStateMan.getState().objectList.get(player.getID())
-						.getHealth() >= 0) {
+				&& netStateMan.getState().objectList.get(player.getID()).getHealth() >= 0) {
 			if (p.getCenterPosition() != null) {
 				shootlimit = 0;
 				// Since we know player is always generally in center of

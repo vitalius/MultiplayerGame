@@ -32,7 +32,7 @@ public class Server extends ScrollingScreenGame {
 	 * This is a static, constant time between frames, all clients run as fast
 	 * as the server runs
 	 */
-	// private static int DELTA_MS = 30;
+	private static int DELTA_MS = 30;
 	private int totalMS;
 
 	private NetStateManager netState;
@@ -290,20 +290,17 @@ public class Server extends ScrollingScreenGame {
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
 		pe.applyLawsOfPhysics(deltaMs);
+		gameState.update();
 		totalMS += deltaMs;
-		if (totalMS > 30) {
+		if (totalMS > DELTA_MS) {
 			ne.update();
 			totalMS = 0;
 		}
 		keyboardMovementHandler();
 		mouseHandler(deltaMs);
-
 		while (msgQueue.size() > 0) {
 			this.processAction(msgQueue.poll());
 		}
-		gameState.update();
-		
-		
 		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(mousePos.getY())/2); // centers on player
