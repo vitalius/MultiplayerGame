@@ -126,15 +126,15 @@ public class Client extends ScrollingScreenGame {
 		gameSprites = new GameSprites();
 		fre.setActivation(true);
 
-		// Load entire level.
-		levels = new LevelSet("/res/Levelset.txt");
+		// Load entire level. change to false when get picture layer working.
+		levels = new LevelSet("/res/Levelset.txt", true);
 		// Is there actual level?
 		if (levels.getNumLevels() == 0) {
 			System.err.println("Error: Levels loading failed.\n");
 			System.exit(1);
 		}
 		// Get specified level.
-		level = levels.getThisLevel(0);
+		level = levels.getThisLevel(1);
 		// Is there actual level?
 		if (level == null) {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
