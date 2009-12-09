@@ -182,7 +182,7 @@ public class LevelSet {
 						rest = java.lang.Double.parseDouble(splitLine[8]);
 						
 						// create custom resource
-						BufferedImage b[] = new BufferedImage[1];
+						/*BufferedImage b[] = new BufferedImage[1];
 						b[0] = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 						Graphics g = b[0].getGraphics();
 						g.setColor(Color.darkGray);
@@ -190,6 +190,10 @@ public class LevelSet {
 						g.dispose();
 						rsc = rsc.concat(String.valueOf(rscNum++));
 						ResourceFactory.getFactory().putFrames(rsc, b);
+						
+						*/
+						world.TileMaker.generateTexture(width, height);
+						rsc = "static" + width + "x" + height;
 					} else if (splitLine.length == 7) {
 						rsc = splitLine[0];
 						x = java.lang.Integer.parseInt(splitLine[1]);
