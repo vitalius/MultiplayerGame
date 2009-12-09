@@ -1,162 +1,83 @@
 <spriteset>
-    <author>Rolf Redford</author>
-    <name>RolfKyeGFX</name>
+    <author>Derek Stewart</author>
+    <name>MasterTS</name>
     <type>image/png</type>
-    <width>420</width>
-    <height>620</height>
-    
-     <frameset>
-	    <name>Interface</name>
-		<top>160</top>
-		<left>0</left>
-		<width>420</width>
-		<height>40</height>
-	</frameset>
-	<frameset>
-		<name>Intro</name>
-		<top>200</top>
-		<left>0</left>
-		<width>420</width>
-		<height>420</height>
-	</frameset>
+    <width>1152</width>
+    <height>400</height>
 
-     <frameset>
-        <name>player</name>
+    <frameset>
+        <name>Player</name>
         <top>0</top>
-        <left>40</left>
+        <left>0</left>
+        <width>32</width>
+        <height>48</height>
+        <columns>36</columns>
+        <rows>7</rows>
+	</frameset>
+
+	<frameset>
+        <name>Explosion</name>
+        <top>336</top>
+        <left>128</left>
+        <width>64</width>
+        <height>64</height>
+        <columns>15</columns>
+	</frameset>
+	<frameset>
+        <name>Drum</name>
+        <top>336</top>
+        <left>0</left>
+        <width>64</width>
+        <height>64</height>
+	</frameset>
+	<frameset>
+        <name>Crate</name>
+        <top>336</top>
+        <left>64</left>
+        <width>64</width>
+        <height>64</height>
+	</frameset>
+	<frameset>
+        <name>BrushedMetal</name>
+        <top>272</top>
+        <left>1120</left>
+        <width>32</width>
+        <height>32</height>
+	</frameset>
+	<frameset>
+        <name>Marble</name>
+        <top>304</top>
+        <left>1120</left>
+        <width>32</width>
+        <height>32</height>
+	</frameset>
+	<frameset>
+        <name>Rock</name>
+        <top>336</top>
+        <left>1120</left>
+        <width>32</width>
+        <height>32</height>
+	</frameset>
+	<frameset>
+        <name>Soil</name>
+        <top>368</top>
+        <left>1120</left>
+        <width>32</width>
+        <height>32</height>
+	</frameset>
+	<frameset>
+        <name>BulletRight</name>
+        <top>330</top>
+        <left>128</left>
         <width>20</width>
-        <height>20</height>
-    </frameset>
-    
+        <height>6</height>
+	</frameset>
 	<frameset>
-        <name>collectible</name>
-        <top>0</top>
-        <left>20</left>
+        <name>BulletLeft</name>
+        <top>330</top>
+        <left>148</left>
         <width>20</width>
-        <height>20</height>
-    </frameset>
-
-	<frameset>
-        <name>hiddenWall</name>
-        <top>0</top>
-        <left>300</left>
-        <width>20</width>
-        <height>20</height>
-    </frameset>
-
-	<frameset>
-		<name>floors</name>
-		<top>105</top>
-		<left>0</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>6</columns>
-	</frameset>
-	<frameset>
-		<name>walls</name>
-		<top>84</top>
-		<left>0</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>11</columns>
+        <height>6</height>
 	</frameset>
 	
-	<frameset>
-		<name>enemies</name>
-		<top>21</top>
-		<left>0</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>6</columns>
-	</frameset>
-	<frameset>
-		<name>block</name>
-		<top>42</top>
-		<left>0</left>
-		<width>20</width>
-		<height>20</height>
-	</frameset>
-	<frameset>
-		<name>movingBlock</name>
-		<top>42</top>
-		<left>20</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>4</columns>
-	</frameset>
-	<frameset>
-		<name>movingBall</name>
-		<top>42</top>
-		<left>100</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>4</columns>
-	</frameset>
-	<frameset>
-		<name>bully</name>
-		<top>63</top>
-		<left>0</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>5</columns>
-	</frameset>
-	
-	<frameset>
-		<name>turnBlock</name>
-		<top>0</top>
-		<left>60</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>2</columns>
-	</frameset>
-	<frameset>
-		<name>redirectorBlock</name>
-		<top>0</top>
-		<left>100</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>4</columns>
-	</frameset>
-	<frameset>
-		<name>magnet</name>
-		<top>126</top>
-		<left>80</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>2</columns>
-	</frameset>
-	<frameset>
-		<name>bullet</name>
-		<top>126</top>
-		<left>0</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>4</columns>
-	</frameset>
-	
-	<frameset>
-		<name>leftrightRunner</name>
-		<top>21</top>
-		<left>120</left>
-		<width>20</width>
-		<height>20</height>
-		<columns>8</columns>
-	</frameset>
-	
-	<frameset>
-		<name>Start</name>
-		<top>0</top>
-		<left>185</left>
-		<width>37</width>
-		<height>18</height>
-	</frameset>
-	<frameset>
-		<name>Restart</name>
-		<top>0</top>
-		<left>230</left>
-		<width>51</width>
-		<height>18</height>
-	</frameset>
-
-
-</spriteset>
+	</spriteset>

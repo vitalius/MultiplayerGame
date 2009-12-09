@@ -82,7 +82,7 @@ public class Server extends ScrollingScreenGame {
 			System.exit(1);
 		}
 		// Get specified level.
-		level = levels.getThisLevel(1);
+		level = levels.getThisLevel(0);
 		if (level == null) {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
 			System.exit(1);
