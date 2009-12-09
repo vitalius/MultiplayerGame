@@ -15,7 +15,9 @@
 
 package physics;
 
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 import jig.engine.ImageResource;
@@ -239,6 +241,23 @@ public class Box extends Body implements Comparable<Box> {
 		return 0;
 	}
 
+	public void renderImg(Graphics2D g) {
+		
+		double xrot = width/2;
+		double yrot = height/2;
+		double rot = getRotation();
+		
+		double tx = position.getX()+2175;
+		double ty = position.getY()+750;
+		
+		g.translate(tx, ty);
+		g.rotate(rot, xrot, yrot);
+		frames.get(0).draw(g, null);
+		g.rotate(-rot, xrot, yrot);
+		g.translate(-tx, -ty);
+		
+	}
+	
 	/**
 	 * This method has no effect for Box instances, and should not be called.
 	 * Boxes must be updated with a CattoPhysicsEngine.
