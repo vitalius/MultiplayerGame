@@ -15,48 +15,39 @@ public class TileMaker {
 	// used to generate textures
 	static ResourceFactory factory = ResourceFactory.getFactory();
 
-	static public void generateTexture(int x, int y, int wid, int hei, double rot) {
+	static public String generateTexture(int x, int y, int wid, int hei,
+			double rot) {
 
-		int xx = x;
-		int yy = y;
+		int xx = x, yy = y;
 
-		// make sure positive number for mod
 		while (xx < 0) {
-			xx += 50; 
+			xx += 50;
 		}
 		while (yy < 0) {
 			yy += 50;
 		}
 
 		// get offset
-		xx = 50 - xx % 50;
-		yy = 50 - yy % 50;
+		xx = 50 - (xx % 50);
+		yy = 50 - (yy % 50);
 
 		System.out.print(xx + " " + yy + " " + wid + " " + hei + " " + rot
 				+ " tilemaker\n");
 
 		// if (!factory.areFramesLoaded("static" + wid + "x" + hei)) {
 
-		BufferedImage[] b = new BufferedImage[1];
-
-		b[0] = // Create an image
-		new BufferedImage(wid, hei, BufferedImage.TYPE_INT_RGB);
-
 		BufferedImage tile = new BufferedImage(50, 50,
 				BufferedImage.TYPE_INT_RGB);
 
-		Graphics g = b[0].getGraphics();
-
 		// draw on tile, need to change to load image
 		Graphics2D tg = tile.createGraphics();
-		
+
 		// draw picture at offset
-		tg.translate(xx,yy);
+		tg.translate(xx, yy);
 		tg.setColor(Color.DARK_GRAY);
 		tg.fillRect(0, 0, 50, 50);
 		tg.setPaint(new GradientPaint(40, 0, Color.green, 0, 40, Color.gray));
 		tg.fillOval(5, 5, 40, 40); // Draw a circle with this gradient
-		
 
 		// draw again at negative y (translate on existing tranlation)
 		tg.translate(0, -50);
@@ -78,20 +69,27 @@ public class TileMaker {
 		tg.fillRect(0, 0, 50, 50);
 		tg.setPaint(new GradientPaint(40, 0, Color.green, 0, 40, Color.gray));
 		tg.fillOval(5, 5, 40, 40); // Draw a circle with this gradient
-		
+
 		// whew done. now use texture to draw large object.
+
+		BufferedImage[] b = new BufferedImage[1];
+
+		b[0] = // Create an image
+		new BufferedImage(wid, hei, BufferedImage.TYPE_INT_RGB);
+		Graphics g = b[0].getGraphics();
 
 		// Use this new tile to create a TexturePaint
 		((Graphics2D) g).setPaint(new TexturePaint(tile, new Rectangle(0, 0,
 				50, 50)));
 		Rectangle rect = new Rectangle(wid, hei);
-		rect.translate(xx, yy);
 		((Graphics2D) g).fill(rect);
 
 		// clean up.
 		g.dispose();
 		tg.dispose();
-		factory.putFrames("static" + wid + "x" + hei, b);
+		String res = "static" + x + y + xx + yy + wid + hei + rot;
+		factory.putFrames(res, b);
+		return res;
 		// }
 	}
 
