@@ -173,7 +173,7 @@ public class LevelSet {
 						width = java.lang.Integer.parseInt(splitLine[3]);
 						height = java.lang.Integer.parseInt(splitLine[4]);
 						y = -(y + height);
-						rot = Math.toRadians(java.lang.Integer.parseInt(splitLine[5]));
+						rot = Math.toRadians((double)java.lang.Integer.parseInt(splitLine[5]));
 						mass = java.lang.Double.parseDouble(splitLine[6]);
 						if(mass < 0) {
 							mass = Double.MAX_VALUE;
@@ -192,7 +192,7 @@ public class LevelSet {
 						ResourceFactory.getFactory().putFrames(rsc, b);
 						
 						*/
-						world.TileMaker.generateTexture(width, height);
+						world.TileMaker.generateTexture(x, y, width, height, rot);
 						rsc = "static" + width + "x" + height;
 					} else if (splitLine.length == 7) {
 						rsc = splitLine[0];
