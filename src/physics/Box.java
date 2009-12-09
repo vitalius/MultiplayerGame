@@ -15,7 +15,9 @@
 
 package physics;
 
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 import jig.engine.ImageResource;
@@ -239,6 +241,13 @@ public class Box extends Body implements Comparable<Box> {
 		return 0;
 	}
 
+	public void renderImg(Graphics2D g) {
+		AffineTransform at = new AffineTransform();
+		at.translate(position.getX()+2175, position.getY()+750);
+
+		frames.get(0).draw(g, at);
+	}
+	
 	/**
 	 * This method has no effect for Box instances, and should not be called.
 	 * Boxes must be updated with a CattoPhysicsEngine.
