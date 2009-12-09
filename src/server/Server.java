@@ -92,7 +92,7 @@ public class Server extends ScrollingScreenGame {
 		// Add a player to test movement, remove when not needed
 		playerObject = new PlayerObject("player");
 		playerObject.set(100, 1.0, 1.0, 0.0);
-		Vector2D a = level.playerInitSpots.get(2);
+		Vector2D a = level.playerInitSpots.get(0);
 		playerObject.setPosition(new Vector2D(a.getX(), a.getY()));
 		playerID = 65001; // bleh
 		gameState.addPlayer(playerID, playerObject);

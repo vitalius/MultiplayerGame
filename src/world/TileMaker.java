@@ -15,20 +15,22 @@ public class TileMaker {
 	// used to generate textures
 	static ResourceFactory factory = ResourceFactory.getFactory();
 
-	static public void generateTexture(int x, int y, int wid, int hei,
-			double rot) {
+	static public void generateTexture(int x, int y, int wid, int hei, double rot) {
 
-		int xx = x, yy = y;
+		int xx = x;
+		int yy = y;
 
 		// make sure positive number for mod
-		if (xx < 0)
-			xx = -xx;
-		if (yy < 0)
-			yy = -yy;
+		while (xx < 0) {
+			xx += 50; 
+		}
+		while (yy < 0) {
+			yy += 50;
+		}
 
 		// get offset
-		xx = xx % 50;
-		yy = yy % 50;
+		xx = 50 - xx % 50;
+		yy = 50 - yy % 50;
 
 		System.out.print(xx + " " + yy + " " + wid + " " + hei + " " + rot
 				+ " tilemaker\n");
@@ -49,11 +51,12 @@ public class TileMaker {
 		Graphics2D tg = tile.createGraphics();
 		
 		// draw picture at offset
-		tg.translate(xx, yy);
+		tg.translate(xx,yy);
 		tg.setColor(Color.DARK_GRAY);
 		tg.fillRect(0, 0, 50, 50);
 		tg.setPaint(new GradientPaint(40, 0, Color.green, 0, 40, Color.gray));
 		tg.fillOval(5, 5, 40, 40); // Draw a circle with this gradient
+		
 
 		// draw again at negative y (translate on existing tranlation)
 		tg.translate(0, -50);
@@ -82,6 +85,7 @@ public class TileMaker {
 		((Graphics2D) g).setPaint(new TexturePaint(tile, new Rectangle(0, 0,
 				50, 50)));
 		Rectangle rect = new Rectangle(wid, hei);
+		rect.translate(xx, yy);
 		((Graphics2D) g).fill(rect);
 
 		// clean up.
