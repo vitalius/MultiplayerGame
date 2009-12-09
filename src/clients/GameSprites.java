@@ -18,6 +18,13 @@ public class GameSprites {
 	
 	public Hashtable<Integer, GameObject> spriteList = new Hashtable<Integer, GameObject>();
 	
+	static final String SPRITES = "res/2Destruction-spritesheet.png";
+	
+	static final public int LOC_PLAYER_RUN = 0;
+	static final public int LOC_PLAYER_STAND = 0;
+	static final public int ROWDOWN = 36;
+	
+	
 	public GameSprites () {
 		layer = new AbstractBodyLayer.IterativeUpdate<GameObject>();
 	}
@@ -33,7 +40,7 @@ public class GameSprites {
 		GameObject so = null;
 		switch(no.getType()) {
 		case GameObject.PLAYER:
-			so = new PlayerObject("player");
+			so = new PlayerObject("player");//SPRITES + "#Player");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
@@ -49,6 +56,7 @@ public class GameSprites {
 			break;
 		case GameObject.BULLET:
 			so = new GameObject("bullet");
+			Vector2D a = so.getVelocity();
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
@@ -68,6 +76,7 @@ public class GameSprites {
 				if (go.type == GameObject.PLAYER) {
 					//System.out.println("sync health: " + no.getHealth());
 					((PlayerObject)go).setHealth(no.getHealth());
+					// set state here
 				}
 			} else
 				init(no);

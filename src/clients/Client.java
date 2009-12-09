@@ -58,6 +58,7 @@ public class Client extends ScrollingScreenGame {
 
 	static final String PICTUREBACKGROUND = "res/GameBackground.png";
 	static final String UIGFX = "res/ClientUI.png";
+	static final String SPRITES = "res/2Destruction-spritesheet.png";
 
 	public String SERVER_IP = "127.0.0.1";
 
@@ -96,9 +97,6 @@ public class Client extends ScrollingScreenGame {
 
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
-		// save those two lines for later.
-		// <imagesrc>2Destruction.PNG</imagesrc>
-		// <framesrc>2Destruction-spritesheet.xml</framesrc>
 		ResourceFactory.getFactory().loadResources("res",
 				"2Destruction-Resources.xml");
 		// newgame = new Button(SPRITE_SHEET + "#Start");
@@ -168,6 +166,7 @@ public class Client extends ScrollingScreenGame {
 		gameObjectLayers.clear();
 		Box back = new Box("blackback");
 		black.add(back);
+		
 		// background graphic.
 		back = new Box(PICTUREBACKGROUND + "#background");
 		background.add(back);
