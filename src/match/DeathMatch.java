@@ -1,5 +1,8 @@
 package match;
 
+import jig.engine.util.Vector2D;
+import world.PlayerObject;
+
 //# of kills
 //# of deaths
 //a timer
@@ -10,33 +13,17 @@ public class DeathMatch extends Match {
 	// blankrules will have code.
 	public DeathMatch() {
 		super();
-		
 	}
-
 	
-	// add parameters as nesscary
 	@Override
-	public void addPlayer() {
+	public void startMatch() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void playerDie() {
+	public void endMatch() {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void playerRespawn() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removePlayer() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
