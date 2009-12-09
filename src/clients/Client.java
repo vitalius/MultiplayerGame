@@ -283,7 +283,6 @@ public class Client extends ScrollingScreenGame {
 		}
 		gameSprites.sync(netStateMan);
 
-
 		// Move background to 90% of cursor world coordinate location.
 		// as seen from player view
 		GameObject p = gameSprites.spriteList.get(player.getID());
