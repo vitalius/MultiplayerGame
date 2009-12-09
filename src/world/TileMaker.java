@@ -42,7 +42,9 @@ public class TileMaker {
 		// draw on tile, need to change to load image
 		Graphics2D tg = tile.createGraphics();
 
+		//rot = 
 		// draw picture at offset
+		
 		tg.translate(xx, yy);
 		tg.setColor(Color.DARK_GRAY);
 		tg.fillRect(0, 0, 50, 50);
@@ -69,7 +71,7 @@ public class TileMaker {
 		tg.fillRect(0, 0, 50, 50);
 		tg.setPaint(new GradientPaint(40, 0, Color.green, 0, 40, Color.gray));
 		tg.fillOval(5, 5, 40, 40); // Draw a circle with this gradient
-
+		tg.rotate(-rot);
 		// whew done. now use texture to draw large object.
 
 		BufferedImage[] b = new BufferedImage[1];
