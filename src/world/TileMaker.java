@@ -15,7 +15,7 @@ public class TileMaker {
 	// used to generate textures
 	static ResourceFactory factory = ResourceFactory.getFactory();
 
-	static public void generateTexture(int wid, int hei) {
+	static public void generateTexture(int wid, int hei, int offx, int offy, double rot) {
 
 		if (!factory.areFramesLoaded("static" + wid + "x" + hei)) {
 
@@ -33,9 +33,9 @@ public class TileMaker {
 			Graphics2D tg = tile.createGraphics();
 			tg.setColor(Color.DARK_GRAY);
 			tg.fillRect(0, 0, 50, 50);
-			tg
-					.setPaint(new GradientPaint(40, 0, Color.green, 0, 40,
+			tg.setPaint(new GradientPaint(40, 0, Color.green, 0, 40,
 							Color.gray));
+			tg.rotate(-rot);// anti-rotate?
 			tg.fillOval(5, 5, 40, 40); // Draw a circle with this gradient
 
 			// Use this new tile to create a TexturePaint

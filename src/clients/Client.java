@@ -2,16 +2,8 @@ package clients;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.TexturePaint;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-
 import javax.swing.JOptionPane;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -306,14 +298,14 @@ public class Client extends ScrollingScreenGame {
 
 			// Adjust background position relative to mouse cursor to create the
 			// effect of depth
-			double bg_deltaPos = 0.8;
-			Vector2D bgPos = new Vector2D(mousePos.getX() / 2 * bg_deltaPos,
-					mousePos.getY() / 2 * bg_deltaPos);
+			double bg_deltaPos = 0.3;
+			Vector2D bgPos = new Vector2D((p.getCenterPosition().getX() + mousePos.getX()) / 2 * bg_deltaPos,
+					(p.getCenterPosition().getY() + mousePos.getY()) / 2 * bg_deltaPos);
 			background.get(0).setCenterPosition(bgPos);
 
 			centerOnPoint(
 					(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-					(int) (mousePos.getY()) / 2);
+					(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2);
 
 			// it is assumed that health is in range [0-2000].
 			// System.out.println(hl);

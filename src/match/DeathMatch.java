@@ -1,8 +1,5 @@
 package match;
 
-import jig.engine.util.Vector2D;
-import world.PlayerObject;
-
 //# of kills
 //# of deaths
 //a timer

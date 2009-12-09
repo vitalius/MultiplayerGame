@@ -1,14 +1,10 @@
 package world;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
-import jig.engine.ResourceFactory;
 import jig.engine.util.Vector2D;
 
 /* Rolf Redford
@@ -172,7 +168,7 @@ public class LevelSet {
 						y = java.lang.Integer.parseInt(splitLine[2]);
 						width = java.lang.Integer.parseInt(splitLine[3]);
 						height = java.lang.Integer.parseInt(splitLine[4]);
-						y = -(y + height);
+						if (thisMap.mirror) y = -(y + height); // flip upside down inkspape coords :P
 						rot = Math.toRadians(java.lang.Integer.parseInt(splitLine[5]));
 						mass = java.lang.Double.parseDouble(splitLine[6]);
 						if(mass < 0) {
@@ -192,7 +188,7 @@ public class LevelSet {
 						ResourceFactory.getFactory().putFrames(rsc, b);
 						
 						*/
-						world.TileMaker.generateTexture(width, height);
+						world.TileMaker.generateTexture(width, height, x, y, rot);
 						rsc = "static" + width + "x" + height;
 					} else if (splitLine.length == 7) {
 						rsc = splitLine[0];

@@ -29,6 +29,10 @@ public class PlayerObject extends GameObject {
 	
 	private int jetFuel;
 	private boolean onObject; // are we standing on an object
+	
+	// statistics
+	private int kills;
+	private int deaths;
 
 	public PlayerObject(String rsc) {
 		super(rsc);
@@ -41,6 +45,8 @@ public class PlayerObject extends GameObject {
 		jetFuel = MAXJETFUEL;
 		health = MAXHEALTH;
 		onObject = false;
+		kills = 0;
+		deaths = 0;
 	}
 	
 	public void setKeys(int leftRight, int jumpCrouch, boolean jet, 
@@ -158,5 +164,21 @@ public class PlayerObject extends GameObject {
 
 	public void setHealth(int health) {
 		this.health = health;
+	}
+	
+	public int getKills() {
+		return kills;
+	}
+
+	public void setKills(int kills) {
+		this.kills = kills;
+	}
+
+	public int getDeaths() {
+		return deaths;
+	}
+
+	public void setDeaths(int deaths) {
+		this.deaths = deaths;
 	}
 }
