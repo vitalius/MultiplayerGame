@@ -188,7 +188,7 @@ public class LevelSet {
 						ResourceFactory.getFactory().putFrames(rsc, b);
 						
 						*/
-						world.TileMaker.generateTexture(width, height, x, y, rot);
+						world.TileMaker.generateTexture(x, y, width, height, rot);
 						rsc = "static" + width + "x" + height;
 					} else if (splitLine.length == 7) {
 						rsc = splitLine[0];
