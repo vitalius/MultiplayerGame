@@ -1,4 +1,4 @@
-2
+3
 Level
 Josh's Test Map!
 0
@@ -89,4 +89,19 @@ static -369 219 333 22 0 -1 0.8 1.0 top center
 static -1100 109 700 80 0 -1 0.8 1.0 
 static -587 100 270 212 -45 -1 0.8 1.0 
 static -1200 95 170 200 -45 -1 0.8 1.0 
+EndLevel
+Level
+tile test
+0
+false
+1
+0 0
+10 10
+10 10
+10 10
+10 10
+static -105 -101 200 200 0 -1 0.8 1.0
+static -40 53 200 200 0 -1 0.8 1.0
+static 54 -60 200 200 0 -1 0.8 1.0
+static 120 107 200 200 0 -1 0.8 1.0
 EndLevel
