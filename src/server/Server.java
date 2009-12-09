@@ -1,16 +1,25 @@
 package server;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.imageio.ImageIO;
+
+import physics.Box;
 import physics.CattoPhysicsEngine;
 import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import world.PlayerObject;
 import jig.engine.PaintableCanvas;
+import jig.engine.RenderingContext;
 import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.util.Vector2D;
@@ -126,6 +135,23 @@ public class Server extends ScrollingScreenGame {
 			oldInput = new Action(playerID);
 			netState.update(gameState.getNetState());
 
+		}
+		
+		if (keyboard.isPressed(KeyEvent.VK_R)) {
+
+	        File f = new File("image.png");
+	        BufferedImage bi = new BufferedImage(4250, 1500, BufferedImage.TYPE_INT_RGB);
+	        gameframe.getRenderingContext();
+	        Graphics2D g2 = bi.createGraphics();
+	        for(Box b : gameState.getLayer())
+	        	b.renderImg(g2);
+	        try {
+	                ImageIO.write(bi, "png", f);
+	        } catch (IOException ex) {
+	            ex.printStackTrace();
+	        }
+			
+	        System.exit(0);
 		}
 
 		// Bother with new input only when player is alive.
@@ -328,8 +354,6 @@ public class Server extends ScrollingScreenGame {
 			this.processAction(msgQueue.poll());
 		}
 		gameState.update();
-		
-		
 		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(playerObject.getCenterPosition().getY()+mousePos.getY())/2); // centers on player
