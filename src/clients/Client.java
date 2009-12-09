@@ -136,7 +136,7 @@ public class Client extends ScrollingScreenGame {
 			System.exit(1);
 		}
 		// Get specified level.
-		level = levels.getThisLevel(1);
+		level = levels.getThisLevel(0);
 		// Is there actual level?
 		if (level == null) {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
