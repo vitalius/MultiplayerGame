@@ -1,7 +1,10 @@
 package clients;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
+
 import javax.swing.JOptionPane;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -15,6 +18,7 @@ import net.NetObject;
 import net.NetStateManager;
 import net.SyncState;
 import jig.engine.CursorResource;
+import jig.engine.FontResource;
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
@@ -58,7 +62,7 @@ public class Client extends ScrollingScreenGame {
 
 	public String SERVER_IP = "127.0.0.1";
 
-	public static final int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 1024;
+	public static final int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 	private static final int MAXJETFUEL = 2000;
 
 	boolean keyPressed = false;
@@ -85,6 +89,10 @@ public class Client extends ScrollingScreenGame {
 
 	private int jetFuel = MAXJETFUEL;
 
+	FontResource fontWhite = ResourceFactory.getFactory().getFontResource(
+			new Font("Sans Serif", Font.BOLD, 24), Color.white, null );
+	public String gameStatusString = "";
+	
 	public Client() {
 
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
@@ -177,6 +185,8 @@ public class Client extends ScrollingScreenGame {
 		gameObjectLayers.add(black);
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
+		
+		gameStatusString = "Connecting to the server...";
 
 	}
 
@@ -238,22 +248,19 @@ public class Client extends ScrollingScreenGame {
 				player.setID(newID);
 				input.setID(newID);
 				player.state = Player.JOINED;
-				System.out.println("Connected, starting the game.");
+				gameStatusString = "Connected.";
 			}
 			
 			// Server has refused JOIN_REQUEST or asked us to leave
 			if (a.getType() == Action.LEAVE_SERVER) {
-				System.out.println("Connection to the server lost.");
+				gameStatusString = "Connection to the server lost.";
 				player.state = Player.WAITING;
-				
-				// For now just exit the game
-				System.exit(0);
 			}
 		}
 		
 		// Player has not joined a server game yet, still waiting for server's response
 		if (player.state != Player.JOINED) {
-			System.out.println("Connecting to server ...");
+			gameStatusString = "Conecting to the server...";
 			return false;
 		}
 		return true;
@@ -343,6 +350,8 @@ public class Client extends ScrollingScreenGame {
 		super.render(rc);
 		GUI.render(rc);
 		// background.render(rc);
+		fontWhite.render(gameStatusString, rc, 
+				AffineTransform.getTranslateInstance(180, 7));
 	}
 
 	public static void main(String[] vars) {
