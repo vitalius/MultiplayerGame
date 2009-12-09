@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
-
 import javax.swing.JOptionPane;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -90,7 +89,7 @@ public class Client extends ScrollingScreenGame {
 	private int jetFuel = MAXJETFUEL;
 
 	FontResource fontWhite = ResourceFactory.getFactory().getFontResource(
-			new Font("Sans Serif", Font.BOLD, 24), Color.white, null );
+			new Font("Sans Serif", Font.BOLD, 24), Color.white, null);
 	public String gameStatusString = "";
 	
 	public Client() {
@@ -137,7 +136,7 @@ public class Client extends ScrollingScreenGame {
 			System.exit(1);
 		}
 		// Get specified level.
-		level = levels.getThisLevel(1);
+		level = levels.getThisLevel(0);
 		// Is there actual level?
 		if (level == null) {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
@@ -185,7 +184,7 @@ public class Client extends ScrollingScreenGame {
 		gameObjectLayers.add(black);
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
-		
+
 		gameStatusString = "Connecting to the server...";
 
 	}
@@ -196,13 +195,13 @@ public class Client extends ScrollingScreenGame {
 	public void keyboardMovementHandler(long deltaMs) {
 		if (!netStateMan.getState().objectList.containsKey(player.getID()))
 			return;
-		
+
 		keyboard.poll();
 
 		if (netStateMan.getState().objectList.get(player.getID()).getHealth() > 0) {
 			input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN)
 					|| keyboard.isPressed(KeyEvent.VK_S);
-			//GameObject p = gameSprites.spriteList.get(player.getID());
+			// GameObject p = gameSprites.spriteList.get(player.getID());
 			if (jetFuel > 0
 					&& (keyboard.isPressed(KeyEvent.VK_UP) || keyboard
 							.isPressed(KeyEvent.VK_W))) {
@@ -212,7 +211,8 @@ public class Client extends ScrollingScreenGame {
 				input.jet = false;
 			}
 			if (!(keyboard.isPressed(KeyEvent.VK_UP) || keyboard
-					.isPressed(KeyEvent.VK_W)) && jetFuel < MAXJETFUEL)
+					.isPressed(KeyEvent.VK_W))
+					&& jetFuel < MAXJETFUEL)
 				++jetFuel;
 
 			input.left = keyboard.isPressed(KeyEvent.VK_LEFT)
@@ -231,16 +231,17 @@ public class Client extends ScrollingScreenGame {
 		}
 
 	}
-	
+
 	/**
-	 * This method checks player's state and returns True if player has joined a server game
-	 * and false otherwise
+	 * This method checks player's state and returns True if player has joined a
+	 * server game and false otherwise
 	 * 
 	 * @return - boolean
 	 */
 	public boolean areWeInGame() {
-		// When joining the game, request for a player ID is sent and this loop awaits Server's response
-		while(msgQueue.size() > 0) {
+		// When joining the game, request for a player ID is sent and this loop
+		// awaits Server's response
+		while (msgQueue.size() > 0) {
 			// We are only looking for servers response to a JOIN_REQUEST here
 			Action a = netStateMan.prot.decodeAction(msgQueue.poll());
 			if (a.getType() == Action.JOIN_ACCEPT) {
@@ -250,15 +251,16 @@ public class Client extends ScrollingScreenGame {
 				player.state = Player.JOINED;
 				gameStatusString = "Connected.";
 			}
-			
+
 			// Server has refused JOIN_REQUEST or asked us to leave
 			if (a.getType() == Action.LEAVE_SERVER) {
 				gameStatusString = "Connection to the server lost.";
 				player.state = Player.WAITING;
 			}
 		}
-		
-		// Player has not joined a server game yet, still waiting for server's response
+
+		// Player has not joined a server game yet, still waiting for server's
+		// response
 		if (player.state != Player.JOINED) {
 			gameStatusString = "Conecting to the server...";
 			return false;
@@ -266,14 +268,12 @@ public class Client extends ScrollingScreenGame {
 		return true;
 	}
 
-	
-	
 	int shootlimit = 0;
 
-	public void update(long deltaMs) {	
+	public void update(long deltaMs) {
 		if (areWeInGame() == false)
 			return;
-		
+
 		super.update(deltaMs);
 
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
@@ -284,7 +284,8 @@ public class Client extends ScrollingScreenGame {
 		if (s != null)
 			netStateMan.sync(s);
 		else {
-			// if no message from the server, update position of objects with local deltaMs
+			// if no message from the server, update position of objects with
+			// local deltaMs
 			for (NetObject n : netStateMan.getState().getNetObjects())
 				n.update(deltaMs);
 		}
@@ -294,15 +295,17 @@ public class Client extends ScrollingScreenGame {
 		// as seen from player view
 		GameObject p = gameSprites.spriteList.get(player.getID());
 		if (p != null && p.getCenterPosition() != null) {
-			
-			// Adjust background position relative to mouse cursor to create the effect of depth
-			double bg_deltaPos = 0.8;
-			Vector2D bgPos = new Vector2D(mousePos.getX()/2*bg_deltaPos, mousePos.getY()/2*bg_deltaPos);
+
+			// Adjust background position relative to mouse cursor to create the
+			// effect of depth
+			double bg_deltaPos = 0.3;
+			Vector2D bgPos = new Vector2D((p.getCenterPosition().getX() + mousePos.getX()) / 2 * bg_deltaPos,
+					(p.getCenterPosition().getY() + mousePos.getY()) / 2 * bg_deltaPos);
 			background.get(0).setCenterPosition(bgPos);
-			
+
 			centerOnPoint(
 					(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-					(int) (mousePos.getY()) / 2);
+					(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2);
 
 			// it is assumed that health is in range [0-2000].
 			// System.out.println(hl);
@@ -310,26 +313,29 @@ public class Client extends ScrollingScreenGame {
 					.getHealth();
 			if (hl > 0) {
 				int hframe = 25 - (int) ((((double) hl) / 2000.0) * 25);
-				//System.out.println(hframe + " hframe, client");
+				// System.out.println(hframe + " hframe, client");
 				health.setFrame(hframe);
 			} else {
 				health.setFrame(25);
 			}
 			if (jetFuel > 0) {
 				int jframe = 25 - (int) ((((double) jetFuel) / 2000.0) * 25);
-				//System.out.println(jframe + " jframe " + jetFuel + "jetfuel, client");
+				// System.out.println(jframe + " jframe " + jetFuel +
+				// "jetfuel, client");
 				jetpack.setFrame(jframe);
 			} else {
 				jetpack.setFrame(25);
 			}
 		}
-		
+
 		keyboardMovementHandler(deltaMs);
 
 		if (shootlimit < 250) {
 			shootlimit += deltaMs;
-		} else if (p != null && mouse.isLeftButtonPressed() && netStateMan.getState().objectList.get(player.getID())
-				.getHealth() > 0) {
+		} else if (p != null
+				&& mouse.isLeftButtonPressed()
+				&& netStateMan.getState().objectList.get(player.getID())
+						.getHealth() > 0) {
 			if (p.getCenterPosition() != null) {
 				shootlimit = 0;
 				// Since we know player is always generally in center of
@@ -350,8 +356,8 @@ public class Client extends ScrollingScreenGame {
 		super.render(rc);
 		GUI.render(rc);
 		// background.render(rc);
-		fontWhite.render(gameStatusString, rc, 
-				AffineTransform.getTranslateInstance(180, 7));
+		fontWhite.render(gameStatusString, rc, AffineTransform
+				.getTranslateInstance(180, 7));
 	}
 
 	public static void main(String[] vars) {

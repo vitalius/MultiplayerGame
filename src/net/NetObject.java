@@ -65,7 +65,8 @@ public class NetObject {
 	        ipAddress = addr.getHostAddress();
 	    } catch (UnknownHostException e) {
 	    	ipAddress = "127.0.0.1";
-	    }			
+	    }	
+	    
 	}
 	
 	public void update(long deltaMs) {
