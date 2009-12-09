@@ -3,7 +3,6 @@ package clients;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
-import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import physics.Box;
@@ -12,6 +11,7 @@ import world.GameObject;
 import world.LevelMap;
 import world.LevelSet;
 import net.Action;
+import net.NetObject;
 import net.NetStateManager;
 import net.SyncState;
 import jig.engine.CursorResource;
@@ -153,10 +153,8 @@ public class Client extends ScrollingScreenGame {
 		/* Send TCP data via this object */
 		TcpSender control = new TcpSender(SERVER_IP, NetworkEngine.TCP_PORT);
 
-		/* Client id is 0 for now, we should make it some random digit */
-		Random rand = new Random(); // this should actually come from the server
-		player = new Player(rand.nextInt(), control);
-		input = new Action(player.getID(), Action.INPUT);
+		player = new Player(0, control);
+		input = new Action(0, Action.INPUT);
 		player.join(SERVER_IP);
 
 		// Create background object and add to layer, to window.
@@ -186,12 +184,15 @@ public class Client extends ScrollingScreenGame {
 	 * Handle keyboard strokes for movement
 	 */
 	public void keyboardMovementHandler(long deltaMs) {
+		if (!netStateMan.getState().objectList.containsKey(player.getID()))
+			return;
+		
 		keyboard.poll();
 
 		if (netStateMan.getState().objectList.get(player.getID()).getHealth() > 0) {
 			input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN)
 					|| keyboard.isPressed(KeyEvent.VK_S);
-			GameObject p = gameSprites.spriteList.get(player.getID());
+			//GameObject p = gameSprites.spriteList.get(player.getID());
 			if (jetFuel > 0
 					&& (keyboard.isPressed(KeyEvent.VK_UP) || keyboard
 							.isPressed(KeyEvent.VK_W))) {
@@ -220,10 +221,52 @@ public class Client extends ScrollingScreenGame {
 		}
 
 	}
+	
+	/**
+	 * This method checks player's state and returns True if player has joined a server game
+	 * and false otherwise
+	 * 
+	 * @return - boolean
+	 */
+	public boolean areWeInGame() {
+		// When joining the game, request for a player ID is sent and this loop awaits Server's response
+		while(msgQueue.size() > 0) {
+			// We are only looking for servers response to a JOIN_REQUEST here
+			Action a = netStateMan.prot.decodeAction(msgQueue.poll());
+			if (a.getType() == Action.JOIN_ACCEPT) {
+				Integer newID = Integer.valueOf(a.getMsg()).intValue();
+				player.setID(newID);
+				input.setID(newID);
+				player.state = Player.JOINED;
+				System.out.println("Connected, starting the game.");
+			}
+			
+			// Server has refused JOIN_REQUEST or asked us to leave
+			if (a.getType() == Action.LEAVE_SERVER) {
+				System.out.println("Connection to the server lost.");
+				player.state = Player.WAITING;
+				
+				// For now just exit the game
+				System.exit(0);
+			}
+		}
+		
+		// Player has not joined a server game yet, still waiting for server's response
+		if (player.state != Player.JOINED) {
+			System.out.println("Connecting to server ...");
+			return false;
+		}
+		return true;
+	}
 
+	
+	
 	int shootlimit = 0;
 
-	public void update(long deltaMs) {
+	public void update(long deltaMs) {	
+		if (areWeInGame() == false)
+			return;
+		
 		super.update(deltaMs);
 
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
@@ -233,22 +276,24 @@ public class Client extends ScrollingScreenGame {
 		String s = state.get();
 		if (s != null)
 			netStateMan.sync(s);
+		else {
+			// if no message from the server, update position of objects with local deltaMs
+			for (NetObject n : netStateMan.getState().getNetObjects())
+				n.update(deltaMs);
+		}
 		gameSprites.sync(netStateMan);
 
 
-		// Move background to 90% of cursor world coordite location.
+		// Move background to 90% of cursor world coordinate location.
 		// as seen from player view
 		GameObject p = gameSprites.spriteList.get(player.getID());
 		if (p != null && p.getCenterPosition() != null) {
-			// System.out.println("p: " + p.getPosition().toString());
-			background.get(0).setCenterPosition(
-			// Based on cursor pos.
-					// new Vector2D(.99 * mousePos.getX() / 2,
-					// .99 * mousePos.getY() / 2));
-					new Vector2D(0 + .2 * p.getCenterPosition().getX() / 2,
-							0 + .2 * p.getCenterPosition().getY() / 2));
-			// System.out.println("mousePos: " + mousePos.toString());
-			// System.out.println("playerPos: " + p.getPosition().toString());
+			
+			// Adjust background position relative to mouse cursor to create the effect of depth
+			double bg_deltaPos = 0.8;
+			Vector2D bgPos = new Vector2D(mousePos.getX()/2*bg_deltaPos, mousePos.getY()/2*bg_deltaPos);
+			background.get(0).setCenterPosition(bgPos);
+			
 			centerOnPoint(
 					(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
 					(int) (mousePos.getY()) / 2);
@@ -272,6 +317,7 @@ public class Client extends ScrollingScreenGame {
 				jetpack.setFrame(25);
 			}
 		}
+		
 		keyboardMovementHandler(deltaMs);
 
 		if (shootlimit < 250) {

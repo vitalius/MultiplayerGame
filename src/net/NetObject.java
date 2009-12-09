@@ -72,8 +72,8 @@ public class NetObject {
 		Vector2D p = getPosition();
 		Vector2D v = getVelocity();
 		
-		setPosition(new Vector2D(p.getX()+v.getX()*deltaMs/1000,
-				                 p.getY()+v.getY()*deltaMs/1000));
+		setPosition(new Vector2D(p.getX()+v.getX()*deltaMs/900,
+				                 p.getY()+v.getY()*deltaMs/900));
 	}
 	
 	

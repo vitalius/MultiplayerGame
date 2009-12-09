@@ -5,12 +5,14 @@ import jig.engine.util.Vector2D;
 public class Action {
 	public static final int CHANGE_VELOCITY = 0;
 	public static final int CHANGE_POSITION = 1;
-	public static final int JOIN            = 2;
-	public static final int DO_NOTHING      = 4;
-	public static final int INPUT           = 5;
-	public static final int SHOOT           = 6;
-	public static final int CHANGE_HEALTH 	= 7;
-	public static final int CHANGE_JETPACK 	= 8;
+	public static final int JOIN_REQUEST    = 2;
+	public static final int JOIN_ACCEPT     = 3;
+	public static final int LEAVE_SERVER    = 4;
+	public static final int DO_NOTHING      = 5;
+	public static final int INPUT           = 6;
+	public static final int SHOOT           = 7;
+	public static final int CHANGE_HEALTH 	= 8;
+	public static final int CHANGE_JETPACK 	= 9;
 
 	public boolean jet    = false;
 	public boolean left  = false;
@@ -118,7 +120,8 @@ public class Action {
 	}
 	
 	public int getType () { return type; }
-	public int getId() { return id; }
+	public int getID() { return id; }
+	public void setID(int i) { id = i; }
 	public Vector2D getArg() { return arg0; }
 	public String getMsg() { return msg; }
 	public double getDouble() { return dou; }

@@ -40,7 +40,7 @@ public class Player {
 	}
 	
 	public void join(String ip) {
-		Action join = new Action(playerId, Action.JOIN, tcp.getMyIP());
+		Action join = new Action(playerId, Action.JOIN_REQUEST, tcp.getMyIP());
 		tcp.sendSocket(prot.encodeAction(join));
 	}
 	
@@ -50,7 +50,6 @@ public class Player {
 		tcp.sendSocket(prot.encodeAction(shooty));
 	}
 	
-	public int getID() {
-		return playerId;
-	}
+	public void setID(int id) { playerId = id; } 
+	public int getID() { return playerId; }
 }

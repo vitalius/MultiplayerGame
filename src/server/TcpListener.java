@@ -29,9 +29,6 @@ public class TcpListener extends Thread {
 			try {
 				
 				Socket clientSock = servSock.accept();
-				gm.ne.addPlayer(0, clientSock.getInetAddress().getHostAddress()); // this will broadcast the gamestate 
-					// to any client that is establishing a tcp connection. the ip should be removed on disconnect.
-					// we shouldn't really need the id since we are pumping the entire game state to each client
 				InputStream in = clientSock.getInputStream();
 				in.read(buf, 0, NetworkEngine.TCP_BUF_SIZE);
 		
