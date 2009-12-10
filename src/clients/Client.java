@@ -6,12 +6,9 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import javax.swing.JOptionPane;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import physics.Box;
 import server.NetworkEngine;
 import world.GameObject;
-import world.LevelMap;
-import world.LevelSet;
 import net.Action;
 import net.NetObject;
 import net.NetStateManager;
@@ -27,6 +24,10 @@ import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
+
+import clients.TcpListener;
+import clients.TcpSender;
+
 
 /**
  * Client
@@ -73,6 +74,7 @@ public class Client extends ScrollingScreenGame {
 	static final String PICTUREBACKGROUND = "res/GameBackground.png";
 	static final String UIGFX = "res/ClientUI.png";
 	static final String SPRITES = "res/2Destruction-spritesheet.png";
+	static final String LEVEL1 = "res/LEVEL1.png";
 
 	public String SERVER_IP = "127.0.0.1";
 
@@ -86,14 +88,12 @@ public class Client extends ScrollingScreenGame {
 
 	private NetStateManager netStateMan;
 	private Player player;
-	private LevelSet levels;
-	private LevelMap level;
 
 	private uiItem jetpack, health;
 
 	private BodyLayer<Body> black = new AbstractBodyLayer.NoUpdate<Body>();
 	private BodyLayer<Body> background = new AbstractBodyLayer.IterativeUpdate<Body>();
-	private BodyLayer<Explode> exploder = new AbstractBodyLayer.IterativeUpdate<Explode>();
+	private BodyLayer<Body> front = new AbstractBodyLayer.IterativeUpdate<Body>();
 	private BodyLayer<uiItem> GUI = new AbstractBodyLayer.IterativeUpdate<uiItem>();
 
 	GameSprites gameSprites;
@@ -140,24 +140,6 @@ public class Client extends ScrollingScreenGame {
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
 		fre.setActivation(true);
-/*
-		// Load entire level. change to false when get picture layer working.
-		levels = new LevelSet("/res/Levelset.txt", true);
-		// Is there actual level?
-		if (levels.getNumLevels() == 0) {
-			System.err.println("Error: Levels loading failed.\n");
-			System.exit(1);
-		}
-		// Get specified level.
-		level = levels.getThisLevel(1);
-		// Is there actual level?
-		if (level == null) {
-			System.err.println("Error: Level wasn't correctly loaded.\n");
-			System.exit(1);
-		}
-		// Build world from level data
-		level.buildLevelClient(gameSprites);
-		*/
 
 		// stateQueue = new LinkedBlockingQueue<String>(1);
 		state = new SyncState();
@@ -193,13 +175,18 @@ public class Client extends ScrollingScreenGame {
 		health = new uiItem(UIGFX + "#Health");
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
-		// Control of layering - background lowest layer of all.
+		
+		Box level = new Box(LEVEL1 + "#LEVEL1");//4250
+		level.setPosition(new Vector2D(-2125,-800));
+		front.add(level);
+		
+		// Control of layering
 		gameObjectLayers.add(GUI);// last forced render will draw it topmost on
 		// screen coordities.
 		gameObjectLayers.add(black);
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
-		gameObjectLayers.add(exploder);
+		gameObjectLayers.add(front);
 
 		gameStatusString = "Connecting to the server...";
 
@@ -246,9 +233,9 @@ public class Client extends ScrollingScreenGame {
 			player.move(input);
 		}
 		if(keyboard.isPressed(KeyEvent.VK_B)) {
-			Explode boomy = new Explode(SPRITES + "#Drum");//"#Explosion");
+			Explode boomy = new Explode(SPRITES + "#Explosion");
 			boomy.setCenterPosition(this.screenToWorld(new Vector2D(mouse.getLocation().x,mouse.getLocation().y)));
-			exploder.add(boomy);
+			front.add(boomy);
 		}
 
 	}
