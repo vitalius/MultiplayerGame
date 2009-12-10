@@ -40,18 +40,12 @@ public class GameSprites {
 		GameObject so = null;
 		switch(no.getType()) {
 		case GameObject.PLAYER:
-			so = new PlayerObject(SPRITES + "#Player");
+			so = new PlayerObject("player");//SPRITES + "#Player");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
 		case GameObject.SMALLBOX:
-			so = new GameObject(SPRITES + "#Crate");//"smallbox");
-			spriteList.put(no.getId(), so);
-			layer.add(so);
-			break;
-		case GameObject.DRUM:
-			System.out.print("Surpise! drum! gamesprites\n");
-			so = new GameObject(SPRITES + "#Drum");//"smallbox");
+			so = new GameObject("smallbox");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
@@ -62,7 +56,6 @@ public class GameSprites {
 			break;
 		case GameObject.BULLET:
 			so = new GameObject("bullet");
-			//Vector2D a = so.getVelocity();
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;

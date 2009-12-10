@@ -17,7 +17,6 @@ package physics;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 import jig.engine.ImageResource;

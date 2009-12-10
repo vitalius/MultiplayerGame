@@ -19,12 +19,11 @@ public class Action {
 	public boolean right = false;
 	public boolean crouch  = false;
 	public boolean jump  = false;
-	
 	public boolean shoot = false;
 
 	private int id;
 	private int type;
-	private Vector2D arg0;
+	public Vector2D arg0;
 	private String msg;
 	private double dou;
 	
