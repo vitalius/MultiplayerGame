@@ -13,6 +13,10 @@
 		 <framesrc>2Destruction-spritesheet.xml</framesrc>
     </spritesheet>
     
+    <spritesheet>
+    	 <imagesrc>LEVEL1.png</imagesrc>
+		 <framesrc>LEVEL1.xml</framesrc>
+    </spritesheet>
     
 
 </resources>
