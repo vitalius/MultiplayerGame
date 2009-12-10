@@ -102,7 +102,7 @@ public class ServerGameState {
 
 	public void update(long deltaMs) {
 		totalMs += deltaMs;
-		clampAndUpdatePlayers();
+		updatePlayers();
 
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goTable.keySet()) {
@@ -198,7 +198,7 @@ public class ServerGameState {
 	 * 
 	 * @return
 	 */
-	public void clampAndUpdatePlayers() {
+	public void updatePlayers() {
 		PlayerObject p = null;
 		for (GameObject go : layer)
 			if (go.type == GameObject.PLAYER) {

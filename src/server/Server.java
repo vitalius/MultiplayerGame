@@ -258,7 +258,7 @@ public class Server extends ScrollingScreenGame {
 			if (a.right)
 				++x;
 
-			playerObject.updatePlayer(x, y, a.jet, false, false, a.shoot, a.arg0, gameState.getLayer(), deltaMs);
+			playerObject.procInput(x, y, a.jet, false, false, a.shoot, a.arg0, gameState.getLayer(), deltaMs);
 
 			break;
 
@@ -292,6 +292,7 @@ public class Server extends ScrollingScreenGame {
 		}
 		gameState.update(deltaMs);
 		
+		// just for the server player
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(playerObject.getCenterPosition().getY()+mousePos.getY())/2); // centers on player
 	}
