@@ -77,8 +77,10 @@ public class Server extends ScrollingScreenGame {
 		// temp resources
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
-		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1,
+		PaintableCanvas.loadDefaultFrames("smallbox", 64, 64, 1,
 				JIGSHAPE.RECTANGLE, Color.blue);
+		PaintableCanvas.loadDefaultFrames("drum", 64, 64, 1,
+				JIGSHAPE.RECTANGLE, Color.cyan);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,

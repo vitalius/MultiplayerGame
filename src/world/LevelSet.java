@@ -206,19 +206,10 @@ public class LevelSet {
 								ResourceFactory.getFactory().putFrames(rsc, b);
 							}
 							// add object.
-							GameObject go = addObject(rsc, x, y, mass, fric, rest, rot, thisMap);
-							
-							/*if (thisMap.mirror && splitLine.length >= 9 && server) {
-							GameObject goM = new GameObject(rsc);
-							goM.set(mass, fric, rest, Math.PI - rot);
-							goM.setPosition(new Vector2D(-go.getPosition().getX()
-									- go.getWidth(), go.getPosition().getY()));
-							thisMap.Objects.add(goM);
-						}*/
+							addObject(rsc, x, y, mass, fric, rest, rot, thisMap);
 							if (thisMap.mirror) {
 								// add object.
-								x = (int)(-go.getPosition().getX()
-										- go.getWidth());
+								x = (int)(-x - width);
 								addObject(rsc, x, y, mass, fric, rest,Math.PI - rot,
 										thisMap);
 							}
@@ -263,12 +254,11 @@ public class LevelSet {
 		return res;
 	}
 
-	private GameObject addObject(String rsc, int x, int y, double mass, double fric,
+	private void addObject(String rsc, int x, int y, double mass, double fric,
 			double rest, double rot, LevelMap thisMap) {
 		GameObject go = new GameObject(rsc);
 		go.set(mass, fric, rest, rot);
 		go.setPosition(new Vector2D(x, y));
 		thisMap.Objects.add(go);
-		return go;
 	}
 }

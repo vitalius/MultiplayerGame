@@ -58,6 +58,7 @@ smallbox 150 -450 0 100 0.8 1.0
 smallbox 400 -450 0 100 0.8 1.0
 smallbox 650 -450 0 100 0.8 1.0
 smallbox 400 -250 0 100 0.8 1.0
+drum 400 -250 0 100 0.8 1.0
 static -1600 -650 1600 120 0 -1 0.8 1.0 bottom outer
 static -1752 -655 164 727 -3 -1 0.8 1.0 left bottom outer
 static -1922 -50 200 120 0 -1 0.8 1.0 left bottom horz
