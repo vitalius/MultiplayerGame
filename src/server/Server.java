@@ -169,8 +169,8 @@ public class Server extends ScrollingScreenGame {
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation()
 					.getX(), mouse.getLocation().getY()));
 
-			if (oldInput.equals(input))
-				return;
+			//if (oldInput.equals(input))
+			//	return;
 			String action = new Protocol().encodeAction(input);
 			processAction(action, deltaMs);
 			oldInput.copy(input);
