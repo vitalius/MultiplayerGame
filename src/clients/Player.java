@@ -32,7 +32,7 @@ public class Player {
 
 	
 	public void move(Action a) {	
-		if (input.equals(a))
+		if (input.equals(a)) // if performance is still good leave this commented
 			return;
 	
 		tcp.sendSocket(prot.encodeAction(a));

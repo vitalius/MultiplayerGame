@@ -236,6 +236,9 @@ public class Client extends ScrollingScreenGame {
 			input.right = keyboard.isPressed(KeyEvent.VK_RIGHT)
 					|| keyboard.isPressed(KeyEvent.VK_D);
 			input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
+			input.shoot = mouse.isLeftButtonPressed();
+			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation()
+					.getX(), mouse.getLocation().getY()));
 			player.move(input);
 		} else {
 			input.crouch = false;

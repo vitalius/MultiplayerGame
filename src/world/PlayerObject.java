@@ -156,7 +156,7 @@ public class PlayerObject extends GameObject {
 		if (keyLeftRight != leftRight) leftright(leftRight);
 		if (keyJumpCrouch != jumpCrouch) jumpCrouch(jumpCrouch);
 		if (keyJet != jet) jet(jet);
-		if (keyShoot != shoot) shoot(shoot, cursor, deltaMs);
+		shoot(shoot, cursor, deltaMs);
 	}
 	
 	public void updatePlayerState() {
@@ -174,8 +174,6 @@ public class PlayerObject extends GameObject {
 	}
 	
 	public void clamp() {
-		// keep vertical if not dead
-		//if (health > 0) // death animation takes care of this
 		setRotation(0);
 		velocity = velocity.clampX(-MAXVEL, MAXVEL);
 		velocity = velocity.clampY(-MAXVEL, MAXVEL);

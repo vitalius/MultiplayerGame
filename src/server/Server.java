@@ -39,7 +39,7 @@ public class Server extends ScrollingScreenGame {
 	 * This is a static, constant time between frames, all clients run as fast
 	 * as the server runs
 	 */
-	private static int DELTA_MS = 30;
+	private static int NET_MS = 30;
 	private long netMS;
 
 	private NetStateManager netState;
@@ -53,7 +53,6 @@ public class Server extends ScrollingScreenGame {
 	private Action oldInput;
 
 	public LinkedBlockingQueue<String> msgQueue;
-	private int shootlimit;
 	
 	private TcpSender tcpSender;
 
@@ -117,7 +116,7 @@ public class Server extends ScrollingScreenGame {
 
 	// this can be removed when the server no longer needs to test player
 	// movement
-	public void keyboardMovementHandler(long deltaMs) {
+	public void inputHandler(long deltaMs) {
 		keyboard.poll();
 
 		// player alive/dead test code.
@@ -176,30 +175,7 @@ public class Server extends ScrollingScreenGame {
 			processAction(action, deltaMs);
 			oldInput.copy(input);
 		}
-	}
-		
-//	public void mouseHandler(long deltaMs) {
-//		if (shootlimit < 250) {
-//			shootlimit += deltaMs;
-//		} else if (playerObject != null && mouse.isLeftButtonPressed()) {
-//			if (playerObject.getCenterPosition() != null) {
-//				shootlimit = 0;
-//				// Since we know player is always generally in center of
-//				// screen...
-//				// Get shoot vector and normalize it.
-//				Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
-//						.getX(), mouse.getLocation().getY()));
-//				Vector2D shot = new Vector2D(mousePos.getX()
-//						- playerObject.getCenterPosition().getX(), mousePos.getY()
-//						- playerObject.getCenterPosition().getY());
-//				shot = shot.unitVector();
-//				Action shooty = new Action(playerID, Action.SHOOT, shot);
-//				String action = new Protocol().encodeAction(shooty);
-//				processAction(action, deltaMs);
-//			}
-//			// System.out.println("Weapon fire keypress" + mouse.getLocation());
-//		}
-//	}
+	} 
 
 	/**
 	 * Joining a new client to the server game
@@ -262,7 +238,7 @@ public class Server extends ScrollingScreenGame {
 		// ////////////////////////////////////////////
 		// Handling players input, keystrokes
 		case Action.INPUT:
-			// System.out.println("Player id: "+a.getId());
+			
 			// System.out.println("up:"+a.up+" down:"+a.down+" left:"+a.left+
 			// " right:"+a.right+" jump:"+a.jump);
 
@@ -291,53 +267,12 @@ public class Server extends ScrollingScreenGame {
 		case Action.JOIN_REQUEST:
 			joinClient(a);
 			break;
-
 		case Action.CHANGE_VELOCITY:
 			objectList.get(a.getID()).setVelocity(a.getArg());
 			break;
 		case Action.CHANGE_POSITION:
 			objectList.get(a.getID()).setPosition(a.getArg());
 			break;
-
-//		case Action.SHOOT:
-//			System.out.println(a.getID() + " " + a.getArg());
-//
-//			Vector2D shootloc = a.getArg();
-//			GameObject b, obj;
-//			obj = objectList.get(a.getID());
-//
-//			if (obj.bulletCount >= maxBullets) {// Full. reuse oldest bullet.
-//				b = obj.listBullets.remove(0);// get from oldest one.
-//				b.setActivation(true);
-//				Vector2D place = objectList.get(a.getID()).getCenterPosition();
-//				// Put bullet a
-//				// little bit away from player
-//				double xx = place.getX() + shootloc.getX() * 40;
-//				double yy = place.getY() + shootloc.getY() * 40;
-//				// set V in direction of travel 1000
-//				b.setVelocity(shootloc.scale(1000));
-//				b.setPosition(new Vector2D(xx, yy));
-//				obj.listBullets.add(b); //add as newest object.
-//			} else {// not full yet. add new bullet.
-//				// set place at player.
-//				b = new GameObject("bullet");
-//				b.set(10, 1, 1.0, 0.0);
-//				b.setForce(pe.getGravity().scale(-1)); // don't let gravity affect the bullet
-//				Vector2D place = objectList.get(a.getID()).getCenterPosition();
-//				// Put bullet a
-//				// little bit away from player
-//				double xx = place.getX() + shootloc.getX() * 40;
-//				double yy = place.getY() + shootloc.getY() * 40;
-//				// set V in direction of travel 1000
-//				b.setVelocity(shootloc.scale(1000));
-//				b.setPosition(new Vector2D(xx, yy));
-//				gameState.add(b);
-//
-//				obj.listBullets.add(b); //add as newest object.
-//				obj.bulletCount++;
-//			}
-//
-//			break;
 		}
 	}
 
@@ -346,12 +281,11 @@ public class Server extends ScrollingScreenGame {
 		pe.applyLawsOfPhysics(deltaMs);
 		netMS += deltaMs;
 		
-		if (netMS > DELTA_MS) {
+		if (netMS > NET_MS) {
 			ne.update();
 			netMS = 0;
 		}
-		keyboardMovementHandler(deltaMs);
-		//mouseHandler(deltaMs);
+		inputHandler(deltaMs);
 
 		while (msgQueue.size() > 0) {
 			this.processAction(msgQueue.poll(), deltaMs);
