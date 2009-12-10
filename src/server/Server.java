@@ -75,21 +75,23 @@ public class Server extends ScrollingScreenGame {
 		// temp resources
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
-		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1,
+		PaintableCanvas.loadDefaultFrames("smallbox", 64, 64, 1,
 				JIGSHAPE.RECTANGLE, Color.blue);
+		PaintableCanvas.loadDefaultFrames("drum", 64, 64, 1,
+				JIGSHAPE.RECTANGLE, Color.cyan);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
 				JIGSHAPE.RECTANGLE, Color.WHITE);
 
-		// Load all levels
-		levels = new LevelSet("/res/Levelset.txt");
+		// Load all levels, server mode
+		levels = new LevelSet("/res/Levelset.txt", true);
 		if (levels.getNumLevels() == 0) {
 			System.err.println("Error: Levels loading failed.\n");
 			System.exit(1);
 		}
 		// Get specified level.
-		level = levels.getThisLevel(0);
+		level = levels.getThisLevel(1);
 		if (level == null) {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
 			System.exit(1);

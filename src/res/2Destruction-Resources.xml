@@ -8,6 +8,10 @@
          <imagesrc>ClientUI.png</imagesrc>
       	 <framesrc>ClientUI.xml</framesrc>
     </spritesheet>
+    <spritesheet>
+    	 <imagesrc>2Destruction-spritesheet.png</imagesrc>
+		 <framesrc>2Destruction-spritesheet.xml</framesrc>
+    </spritesheet>
     
     
 

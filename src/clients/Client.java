@@ -36,23 +36,37 @@ public class Client extends ScrollingScreenGame {
 	// used for testing UI elements.
 	private class uiItem extends Body {
 
-		// int slowdowntest = 0;
-		// int counter = 0;
-
 		public uiItem(String imgrsc) {
 			super(imgrsc);
 		}
 
 		@Override
 		public void update(long deltaMs) {
-			// if (slowdowntest < 1000) {
-			// slowdowntest += deltaMs;
-			// } else {
-			// slowdowntest = 0;
-			// counter += 1;
-			// counter = counter % this.getFrameCount();
-			// this.setFrame(counter);
-			// }
+		}
+	}
+
+	private class Explode extends Body {
+
+		int slowdowntest = 0;
+		int counter = 0;
+
+		public Explode(String imgrsc) {
+			super(imgrsc);
+		}
+
+		@Override
+		public void update(long deltaMs) {
+			if (slowdowntest < 50) {
+				slowdowntest += deltaMs;
+			} else {
+				slowdowntest = 0;
+				counter += 1;
+				//counter = counter % this.getFrameCount();
+				this.setFrame(counter);
+			}
+			if(counter == getFrameCount()) {
+				this.setActivation(false);
+			}
 		}
 	}
 
@@ -79,6 +93,7 @@ public class Client extends ScrollingScreenGame {
 
 	private BodyLayer<Body> black = new AbstractBodyLayer.NoUpdate<Body>();
 	private BodyLayer<Body> background = new AbstractBodyLayer.IterativeUpdate<Body>();
+	private BodyLayer<Explode> exploder = new AbstractBodyLayer.IterativeUpdate<Explode>();
 	private BodyLayer<uiItem> GUI = new AbstractBodyLayer.IterativeUpdate<uiItem>();
 
 	GameSprites gameSprites;
@@ -92,7 +107,7 @@ public class Client extends ScrollingScreenGame {
 	FontResource fontWhite = ResourceFactory.getFactory().getFontResource(
 			new Font("Sans Serif", Font.BOLD, 24), Color.white, null);
 	public String gameStatusString = "";
-	
+
 	public Client() {
 
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
@@ -125,16 +140,16 @@ public class Client extends ScrollingScreenGame {
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
 		fre.setActivation(true);
-
-		// Load entire level.
-		levels = new LevelSet("/res/Levelset.txt");
+/*
+		// Load entire level. change to false when get picture layer working.
+		levels = new LevelSet("/res/Levelset.txt", true);
 		// Is there actual level?
 		if (levels.getNumLevels() == 0) {
 			System.err.println("Error: Levels loading failed.\n");
 			System.exit(1);
 		}
 		// Get specified level.
-		level = levels.getThisLevel(0);
+		level = levels.getThisLevel(1);
 		// Is there actual level?
 		if (level == null) {
 			System.err.println("Error: Level wasn't correctly loaded.\n");
@@ -142,6 +157,7 @@ public class Client extends ScrollingScreenGame {
 		}
 		// Build world from level data
 		level.buildLevelClient(gameSprites);
+		*/
 
 		// stateQueue = new LinkedBlockingQueue<String>(1);
 		state = new SyncState();
@@ -166,7 +182,7 @@ public class Client extends ScrollingScreenGame {
 		gameObjectLayers.clear();
 		Box back = new Box("blackback");
 		black.add(back);
-		
+
 		// background graphic.
 		back = new Box(PICTUREBACKGROUND + "#background");
 		background.add(back);
@@ -183,6 +199,7 @@ public class Client extends ScrollingScreenGame {
 		gameObjectLayers.add(black);
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
+		gameObjectLayers.add(exploder);
 
 		gameStatusString = "Connecting to the server...";
 
@@ -227,6 +244,11 @@ public class Client extends ScrollingScreenGame {
 			input.right = false;
 			input.jump = false;
 			player.move(input);
+		}
+		if(keyboard.isPressed(KeyEvent.VK_B)) {
+			Explode boomy = new Explode(SPRITES + "#Drum");//"#Explosion");
+			boomy.setCenterPosition(this.screenToWorld(new Vector2D(mouse.getLocation().x,mouse.getLocation().y)));
+			exploder.add(boomy);
 		}
 
 	}
@@ -285,8 +307,13 @@ public class Client extends ScrollingScreenGame {
 		else {
 			// if no message from the server, update position of objects with
 			// local deltaMs
-			for (NetObject n : netStateMan.getState().getNetObjects())
+			for (NetObject n : netStateMan.getState().getNetObjects()) {
 				n.update(deltaMs);
+				GameObject a = gameSprites.spriteList.get(n.getId());
+				if( a.getType() == GameObject.PLAYER) {
+					
+				}
+			}
 		}
 		gameSprites.sync(netStateMan);
 
@@ -298,8 +325,11 @@ public class Client extends ScrollingScreenGame {
 			// Adjust background position relative to mouse cursor to create the
 			// effect of depth
 			double bg_deltaPos = 0.3;
-			Vector2D bgPos = new Vector2D((p.getCenterPosition().getX() + mousePos.getX()) / 2 * bg_deltaPos,
-					(p.getCenterPosition().getY() + mousePos.getY()) / 2 * bg_deltaPos);
+			Vector2D bgPos = new Vector2D(
+					(p.getCenterPosition().getX() + mousePos.getX()) / 2
+							* bg_deltaPos,
+					(p.getCenterPosition().getY() + mousePos.getY()) / 2
+							* bg_deltaPos);
 			background.get(0).setCenterPosition(bgPos);
 
 			centerOnPoint(
@@ -337,8 +367,6 @@ public class Client extends ScrollingScreenGame {
 						.getHealth() > 0) {
 			if (p.getCenterPosition() != null) {
 				shootlimit = 0;
-				// Since we know player is always generally in center of
-				// screen...
 				// Get shoot vector and normalize it.
 				Vector2D shot = new Vector2D(mousePos.getX()
 						- p.getCenterPosition().getX(), mousePos.getY()

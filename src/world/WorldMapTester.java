@@ -71,7 +71,7 @@ public class WorldMapTester extends StaticScreenGame {
 		factory.putFrames("smallbox", b);
 
 		// Load entire level.
-		levels = new LevelSet("/res/Levelset.txt");
+		levels = new LevelSet("/res/Levelset.txt", true);
 		
 		// Is there actual level?
 		if (levels.getNumLevels() == 0) {

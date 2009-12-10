@@ -241,10 +241,20 @@ public class Box extends Body implements Comparable<Box> {
 	}
 
 	public void renderImg(Graphics2D g) {
-		AffineTransform at = new AffineTransform();
-		at.translate(position.getX()+2175, position.getY()+750);
-
-		frames.get(0).draw(g, at);
+		
+		double xrot = width/2;
+		double yrot = height/2;
+		double rot = getRotation();
+		
+		double tx = position.getX()+2175;
+		double ty = position.getY()+750;
+		
+		g.translate(tx, ty);
+		g.rotate(rot, xrot, yrot);
+		frames.get(0).draw(g, null);
+		g.rotate(-rot, xrot, yrot);
+		g.translate(-tx, -ty);
+		
 	}
 	
 	/**
