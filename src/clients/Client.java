@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import javax.swing.JOptionPane;
+
+import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import physics.Box;
 import server.NetworkEngine;
@@ -27,7 +29,6 @@ import jig.engine.util.Vector2D;
 
 import clients.TcpListener;
 import clients.TcpSender;
-
 
 /**
  * Client
@@ -62,10 +63,10 @@ public class Client extends ScrollingScreenGame {
 			} else {
 				slowdowntest = 0;
 				counter += 1;
-				//counter = counter % this.getFrameCount();
+				// counter = counter % this.getFrameCount();
 				this.setFrame(counter);
 			}
-			if(counter == getFrameCount()) {
+			if (counter == getFrameCount()) {
 				this.setActivation(false);
 			}
 		}
@@ -93,6 +94,7 @@ public class Client extends ScrollingScreenGame {
 
 	private BodyLayer<Body> black = new AbstractBodyLayer.NoUpdate<Body>();
 	private BodyLayer<Body> background = new AbstractBodyLayer.IterativeUpdate<Body>();
+	private BodyLayer<Body> levelmap = new AbstractBodyLayer.IterativeUpdate<Body>();
 	private BodyLayer<Body> front = new AbstractBodyLayer.IterativeUpdate<Body>();
 	private BodyLayer<uiItem> GUI = new AbstractBodyLayer.IterativeUpdate<uiItem>();
 
@@ -101,6 +103,8 @@ public class Client extends ScrollingScreenGame {
 	private SyncState state;
 
 	private LinkedBlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();
+
+	private LinkedList<Box> levelboxes = new LinkedList<Box>();
 
 	private int jetFuel = MAXJETFUEL;
 
@@ -175,15 +179,25 @@ public class Client extends ScrollingScreenGame {
 		health = new uiItem(UIGFX + "#Health");
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
-		
-		Box level = new Box(LEVEL1 + "#LEVEL1");//4250
-		level.setPosition(new Vector2D(-2125,-800));
-		front.add(level);
-		
+
+		// wow way ugly. need defined level limit!
+		// say, 4000x2000, and all level has postive obhect positions.
+		for (int z = 0; z <= SCREEN_WIDTH / 425; z++) {
+			for (int w = 0; w <= SCREEN_HEIGHT / 150; w++) {
+				Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
+				level.setPosition(new Vector2D(z * 425, w * 150));
+				level.setFrame(0);// just set one for now.
+				levelmap.add(level);
+			}
+		}
+
 		// Control of layering
-		gameObjectLayers.add(GUI);// last forced render will draw it topmost on
-		// screen coordities.
+		// layers below black is forced render.
+		gameObjectLayers.add(levelmap);
+		gameObjectLayers.add(GUI);
+
 		gameObjectLayers.add(black);
+		
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
 		gameObjectLayers.add(front);
@@ -232,9 +246,10 @@ public class Client extends ScrollingScreenGame {
 			input.jump = false;
 			player.move(input);
 		}
-		if(keyboard.isPressed(KeyEvent.VK_B)) {
+		if (keyboard.isPressed(KeyEvent.VK_B)) {
 			Explode boomy = new Explode(SPRITES + "#Explosion");
-			boomy.setCenterPosition(this.screenToWorld(new Vector2D(mouse.getLocation().x,mouse.getLocation().y)));
+			boomy.setCenterPosition(this.screenToWorld(new Vector2D(mouse
+					.getLocation().x, mouse.getLocation().y)));
 			front.add(boomy);
 		}
 
@@ -297,8 +312,8 @@ public class Client extends ScrollingScreenGame {
 			for (NetObject n : netStateMan.getState().getNetObjects()) {
 				n.update(deltaMs);
 				GameObject a = gameSprites.spriteList.get(n.getId());
-				if( a.getType() == GameObject.PLAYER) {
-					
+				if (a.getType() == GameObject.PLAYER) {
+
 				}
 			}
 		}
@@ -307,16 +322,17 @@ public class Client extends ScrollingScreenGame {
 		// Move background to 90% of cursor world coordinate location.
 		// as seen from player view
 		GameObject p = gameSprites.spriteList.get(player.getID());
+		Vector2D bgPos = null;
 		if (p != null && p.getCenterPosition() != null) {
 
 			// Adjust background position relative to mouse cursor to create the
 			// effect of depth
 			double bg_deltaPos = 0.3;
-			Vector2D bgPos = new Vector2D(
-					(p.getCenterPosition().getX() + mousePos.getX()) / 2
-							* bg_deltaPos,
-					(p.getCenterPosition().getY() + mousePos.getY()) / 2
-							* bg_deltaPos);
+			bgPos = new Vector2D((p.getCenterPosition().getX() + mousePos
+					.getX())
+					/ 2 * bg_deltaPos, (p.getCenterPosition().getY() + mousePos
+					.getY())
+					/ 2 * bg_deltaPos);
 			background.get(0).setCenterPosition(bgPos);
 
 			centerOnPoint(
@@ -363,11 +379,42 @@ public class Client extends ScrollingScreenGame {
 			}
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
+		
+		// uncommet this if you want to see ugly level attempt...
+		//updateLevelRender(new Vector2D((int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+			//	(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+	}
+
+	private void updateLevelRender(Vector2D offset) {
+		if(offset == null)
+			return;
+		
+		// calculate offset for tiles.
+		Vector2D off = new Vector2D((int) (425- (offset.getX() % 425)), (int) (150 - (offset.getY() % 150)));
+		
+		// calculate which frame tiles should use.
+		Vector2D first = screenToWorld(off);
+		
+		// okay that was wrong way... design later so level x is increased or decreased depending on 
+		// if it moved left or right.
+		// also add bounds to inactive if <0 or >= 10.
+		int xx = (int)(first.getX()/425);
+		int yy = (int)(first.getY()/150);
+		
+		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
+			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
+				Box level = (Box)levelmap.get(w + z * SCREEN_WIDTH / 425);
+				level.setPosition(new Vector2D(z * 425 + off.getX(), w * 150 + off.getY()));
+				if(xx > 0 && yy > 0)
+					level.setFrame(xx + yy * 10);// just set one for now.
+			}
+		}
 	}
 
 	public void render(RenderingContext rc) {
 		black.render(rc);// draw at screen coordities.
 		super.render(rc);
+		levelmap.render(rc);
 		GUI.render(rc);
 		// background.render(rc);
 		fontWhite.render(gameStatusString, rc, AffineTransform
