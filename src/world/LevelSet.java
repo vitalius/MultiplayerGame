@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 
-import jig.engine.PaintableCanvas;
 import jig.engine.ResourceFactory;
-import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.util.Vector2D;
 
 /* Rolf Redford

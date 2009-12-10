@@ -14,6 +14,7 @@ public abstract class Weapon {
 	protected static int VEL_MAG = 1000;
 	protected static int WEAPON_DELAY = 1; // change this for each weapon
 	
+	protected ServerGameState gs;
 	protected PlayerObject player; // the player that this weapon belongs to
 	//public GameObject bulletType; // bullet type
 	protected ArrayList<GameObject> bullets; // reusable bullets
@@ -30,7 +31,10 @@ public abstract class Weapon {
 			b.set(MASS, FRIC, REST, ROT); 
 			b.setForce(new Vector2D(0,ANTI_GRAV)); // don't let gravity affect the bullet, change for grenades
 			bullets.add(b);
-			ServerGameState.getGameState().add(b);
+			gs = ServerGameState.getGameState();
+			if (gs != null) { // this is null on the client
+				gs.add(b);
+			}
 		}
 		delayMs = 0;
 	}
