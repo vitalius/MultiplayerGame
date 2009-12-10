@@ -25,18 +25,21 @@ public class ServerGameState {
 	// private BodyLayer<GameObject> bLayer; // bullet layer
 	// private BodyLayer<GameObject> dLayer; // dynamic layer
 	// private BodyLayer<GameObject> sLayer; // static layer
-	private CattoPhysicsEngine pe;
 	private Random generator;
+	private static ServerGameState theGameState;
+	public long totalMs;
 
-	public ServerGameState(CattoPhysicsEngine pe) {
+	public ServerGameState() {
 		netState = new NetState();
 		goTable = new Hashtable<Integer, GameObject>();
 		layer = new AbstractBodyLayer.NoUpdate<GameObject>();
 		generator = new Random();
-		this.pe = pe;
-		// bLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
-		// dLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
-		// sLayer = new AbstractBodyLayer.NoUpdate<GameObject>();
+		totalMs = 0;
+		theGameState = this;
+	}
+	
+	public static ServerGameState getGameState() {
+		return theGameState;
 	}
 
 	public int getUniqueId() {
@@ -97,7 +100,8 @@ public class ServerGameState {
 		layer.add(go);
 	}
 
-	public void update() {
+	public void update(long deltaMs) {
+		totalMs += deltaMs;
 		clampAndUpdatePlayers();
 
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
@@ -123,7 +127,7 @@ public class ServerGameState {
 		// check for bullet collisions
 		// this could be added above to speed things up but for now
 		// I want it separate for simplicity sake
-		ArrayList<Arbiter> arbiters = pe.getArbiters();
+		ArrayList<Arbiter> arbiters = CattoPhysicsEngine.getPhysicsEngine().getArbiters();
 
 		for (Arbiter arbit : arbiters) {
 			if (((GameObject) arbit.body1).getType() == GameObject.BULLET) {

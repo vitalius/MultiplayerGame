@@ -56,7 +56,6 @@ public class GameSprites {
 			break;
 		case GameObject.BULLET:
 			so = new GameObject("bullet");
-			Vector2D a = so.getVelocity();
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;

@@ -70,12 +70,15 @@ public class CattoPhysicsEngine implements PhysicsEngine<Box> {
 	protected LinkedList<BodyLayer<? extends Box>> managedLayers;
 
 	boolean drawArbiters = false;
+	
+	protected static CattoPhysicsEngine thePhysicsEngine;
 
 	/**
 	 * Creates a physics engine with the gravitational Vector (0,100).
 	 */
 	public CattoPhysicsEngine() {
 		this(new Vector2D(0, 100));
+
 	}
 
 	/**
@@ -96,6 +99,17 @@ public class CattoPhysicsEngine implements PhysicsEngine<Box> {
 		}
 		iSmooth = 0;
 		managedLayers = new LinkedList<BodyLayer<? extends Box>>();
+		
+		if (thePhysicsEngine == null) 
+		{
+			thePhysicsEngine = this;
+			return;
+		}
+		throw new IllegalArgumentException("PhysicsEngine cannot be modified.");
+	}
+	
+	public static CattoPhysicsEngine getPhysicsEngine() {
+		return thePhysicsEngine;
 	}
 
 	/**

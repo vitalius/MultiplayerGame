@@ -1,8 +1,12 @@
 package world;
 
+import java.util.ArrayList;
+
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import physics.Arbiter;
+import weapons.Rifle;
+import weapons.Weapon;
 
 public class PlayerObject extends GameObject {
 
@@ -25,10 +29,15 @@ public class PlayerObject extends GameObject {
 	private int keyJumpCrouch; // jump key
 	private boolean keyJet; // jetpack key
 	//private boolean keyCrouch; // crouch key
-	private boolean keyRun; // run toggle
+	//private boolean keyRun; // run toggle
+	private boolean keyShoot; // shoot toggle
 	
 	private int jetFuel;
 	private boolean onObject; // are we standing on an object
+	
+	// weapons
+	private Weapon activeWeapon;
+	private ArrayList<Weapon> weapons;
 	
 	// statistics
 	private int kills;
@@ -41,22 +50,27 @@ public class PlayerObject extends GameObject {
 		keyJumpCrouch = 0; // jump key
 		//keyCrouch = false; // crouch key
 		keyJet = false; // jetpack key
-		keyRun = false; // run toggle
+		//keyRun = false; // run toggle
+		keyShoot = false; // not shooting
 		jetFuel = MAXJETFUEL;
 		health = MAXHEALTH;
 		onObject = false;
 		kills = 0;
 		deaths = 0;
+		weapons = new ArrayList<Weapon>(0);
+		weapons.add(new Rifle(this));
+		activeWeapon = weapons.get(0);
 	}
 	
-	public void setKeys(int leftRight, int jumpCrouch, boolean jet, 
-					   boolean crouch, boolean run) {
+	/*public void setKeys(int leftRight, int jumpCrouch, boolean jet, 
+					   boolean crouch, boolean run, boolean shoot) {
 		keyLeftRight = leftRight;
 		keyJumpCrouch = jumpCrouch;
 		//keyCrouch = crouch;
 		keyJet = jet;
+		keyShoot = shoot;
 		if (run) keyRun = !keyRun; // toggle run
-	}
+	}*/
 	
 	// horizontal movement
 	public void leftright(int leftRight) {
@@ -109,9 +123,17 @@ public class PlayerObject extends GameObject {
 		}
 	}
 	
+	public void shoot(boolean shoot, Vector2D cursor, long deltaMs) {
+		keyShoot = shoot;
+		if (keyShoot) { // pressed button
+			// shoot the weapon
+			activeWeapon.shoot(cursor, deltaMs);
+		}
+	}
+	
 	// walking, running and floating
 	public void updatePlayer(int leftRight, int jumpCrouch, boolean jet, 
-			   boolean crouch, boolean run, BodyLayer<GameObject> layer) {
+			   boolean crouch, boolean run, boolean shoot, Vector2D cursor, BodyLayer<GameObject> layer, long deltaMs) {
 
 		// detect if on an object TODO: static only?
 		Arbiter arb;
@@ -134,6 +156,7 @@ public class PlayerObject extends GameObject {
 		if (keyLeftRight != leftRight) leftright(leftRight);
 		if (keyJumpCrouch != jumpCrouch) jumpCrouch(jumpCrouch);
 		if (keyJet != jet) jet(jet);
+		if (keyShoot != shoot) shoot(shoot, cursor, deltaMs);
 	}
 	
 	public void updatePlayerState() {
@@ -152,8 +175,8 @@ public class PlayerObject extends GameObject {
 	
 	public void clamp() {
 		// keep vertical if not dead
-		if (health > 0) 
-			setRotation(0);
+		//if (health > 0) // death animation takes care of this
+		setRotation(0);
 		velocity = velocity.clampX(-MAXVEL, MAXVEL);
 		velocity = velocity.clampY(-MAXVEL, MAXVEL);
 	}

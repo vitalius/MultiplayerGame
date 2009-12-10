@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -19,7 +18,6 @@ import world.LevelMap;
 import world.LevelSet;
 import world.PlayerObject;
 import jig.engine.PaintableCanvas;
-import jig.engine.RenderingContext;
 import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.util.Vector2D;
@@ -42,7 +40,7 @@ public class Server extends ScrollingScreenGame {
 	 * as the server runs
 	 */
 	private static int DELTA_MS = 30;
-	private int totalMS;
+	private long netMS;
 
 	private NetStateManager netState;
 	public NetworkEngine ne;
@@ -54,8 +52,6 @@ public class Server extends ScrollingScreenGame {
 	private PlayerObject playerObject;
 	private Action oldInput;
 
-	private static final int maxBullets = 10;
-
 	public LinkedBlockingQueue<String> msgQueue;
 	private int shootlimit;
 	
@@ -66,12 +62,14 @@ public class Server extends ScrollingScreenGame {
 
 		netState = new NetStateManager();
 		pe = new CattoPhysicsEngine(new Vector2D(0, 300));
-		gameState = new ServerGameState(pe);
+		gameState = new ServerGameState();
 		ne = new NetworkEngine(this);
 		// pe.setDrawArbiters(true);
 		fre.setActivation(true);
 		msgQueue = new LinkedBlockingQueue<String>();
-		totalMS = 0;
+		
+		netMS = 0;
+
 		tcpSender = new TcpSender();
 
 		// temp resources
@@ -117,7 +115,7 @@ public class Server extends ScrollingScreenGame {
 
 	// this can be removed when the server no longer needs to test player
 	// movement
-	public void keyboardMovementHandler() {
+	public void keyboardMovementHandler(long deltaMs) {
 		keyboard.poll();
 
 		// player alive/dead test code.
@@ -166,37 +164,40 @@ public class Server extends ScrollingScreenGame {
 			input.right = keyboard.isPressed(KeyEvent.VK_RIGHT)
 					|| keyboard.isPressed(KeyEvent.VK_D);
 			input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
+			input.shoot = mouse.isLeftButtonPressed();
+			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation()
+					.getX(), mouse.getLocation().getY()));
 
 			if (oldInput.equals(input))
 				return;
 			String action = new Protocol().encodeAction(input);
-			processAction(action);
+			processAction(action, deltaMs);
 			oldInput.copy(input);
 		}
 	}
 		
-	public void mouseHandler(long deltaMs) {
-		if (shootlimit < 250) {
-			shootlimit += deltaMs;
-		} else if (playerObject != null && mouse.isLeftButtonPressed()) {
-			if (playerObject.getCenterPosition() != null) {
-				shootlimit = 0;
-				// Since we know player is always generally in center of
-				// screen...
-				// Get shoot vector and normalize it.
-				Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
-						.getX(), mouse.getLocation().getY()));
-				Vector2D shot = new Vector2D(mousePos.getX()
-						- playerObject.getCenterPosition().getX(), mousePos.getY()
-						- playerObject.getCenterPosition().getY());
-				shot = shot.unitVector();
-				Action shooty = new Action(playerID, Action.SHOOT, shot);
-				String action = new Protocol().encodeAction(shooty);
-				processAction(action);
-			}
-			// System.out.println("Weapon fire keypress" + mouse.getLocation());
-		}
-	}
+//	public void mouseHandler(long deltaMs) {
+//		if (shootlimit < 250) {
+//			shootlimit += deltaMs;
+//		} else if (playerObject != null && mouse.isLeftButtonPressed()) {
+//			if (playerObject.getCenterPosition() != null) {
+//				shootlimit = 0;
+//				// Since we know player is always generally in center of
+//				// screen...
+//				// Get shoot vector and normalize it.
+//				Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
+//						.getX(), mouse.getLocation().getY()));
+//				Vector2D shot = new Vector2D(mousePos.getX()
+//						- playerObject.getCenterPosition().getX(), mousePos.getY()
+//						- playerObject.getCenterPosition().getY());
+//				shot = shot.unitVector();
+//				Action shooty = new Action(playerID, Action.SHOOT, shot);
+//				String action = new Protocol().encodeAction(shooty);
+//				processAction(action, deltaMs);
+//			}
+//			// System.out.println("Weapon fire keypress" + mouse.getLocation());
+//		}
+//	}
 
 	/**
 	 * Joining a new client to the server game
@@ -242,7 +243,7 @@ public class Server extends ScrollingScreenGame {
 	 * @param action
 	 *            = encoded action string
 	 */
-	public void processAction(String action) {
+	public void processAction(String action, long deltaMs) {
 
 		Action a = netState.prot.decodeAction(action);
 
@@ -279,7 +280,7 @@ public class Server extends ScrollingScreenGame {
 			if (a.right)
 				++x;
 
-			playerObject.updatePlayer(x, y, a.jet, false, false, gameState.getLayer());
+			playerObject.updatePlayer(x, y, a.jet, false, false, a.shoot, a.arg0, gameState.getLayer(), deltaMs);
 
 			break;
 
@@ -296,64 +297,64 @@ public class Server extends ScrollingScreenGame {
 			objectList.get(a.getID()).setPosition(a.getArg());
 			break;
 
-		case Action.SHOOT:
-			System.out.println(a.getID() + " " + a.getArg());
-
-			Vector2D shootloc = a.getArg();
-			GameObject b, obj;
-			obj = objectList.get(a.getID());
-
-			if (obj.bulletCount >= maxBullets) {// Full. reuse oldest bullet.
-				b = obj.listBullets.remove(0);// get from oldest one.
-				b.setActivation(true);
-				Vector2D place = objectList.get(a.getID()).getCenterPosition();
-				// Put bullet a
-				// little bit away from player
-				double xx = place.getX() + shootloc.getX() * 40;
-				double yy = place.getY() + shootloc.getY() * 40;
-				// set V in direction of travel 1000
-				b.setVelocity(shootloc.scale(1000));
-				b.setPosition(new Vector2D(xx, yy));
-				obj.listBullets.add(b); //add as newest object.
-			} else {// not full yet. add new bullet.
-				// set place at player.
-				b = new GameObject("bullet");
-				b.set(10, 1, 1.0, 0.0);
-				b.setForce(pe.getGravity().scale(-1)); // don't let gravity affect the bullet
-				Vector2D place = objectList.get(a.getID()).getCenterPosition();
-				// Put bullet a
-				// little bit away from player
-				double xx = place.getX() + shootloc.getX() * 40;
-				double yy = place.getY() + shootloc.getY() * 40;
-				// set V in direction of travel 1000
-				b.setVelocity(shootloc.scale(1000));
-				b.setPosition(new Vector2D(xx, yy));
-				gameState.add(b);
-
-				obj.listBullets.add(b); //add as newest object.
-				obj.bulletCount++;
-			}
-
-			break;
+//		case Action.SHOOT:
+//			System.out.println(a.getID() + " " + a.getArg());
+//
+//			Vector2D shootloc = a.getArg();
+//			GameObject b, obj;
+//			obj = objectList.get(a.getID());
+//
+//			if (obj.bulletCount >= maxBullets) {// Full. reuse oldest bullet.
+//				b = obj.listBullets.remove(0);// get from oldest one.
+//				b.setActivation(true);
+//				Vector2D place = objectList.get(a.getID()).getCenterPosition();
+//				// Put bullet a
+//				// little bit away from player
+//				double xx = place.getX() + shootloc.getX() * 40;
+//				double yy = place.getY() + shootloc.getY() * 40;
+//				// set V in direction of travel 1000
+//				b.setVelocity(shootloc.scale(1000));
+//				b.setPosition(new Vector2D(xx, yy));
+//				obj.listBullets.add(b); //add as newest object.
+//			} else {// not full yet. add new bullet.
+//				// set place at player.
+//				b = new GameObject("bullet");
+//				b.set(10, 1, 1.0, 0.0);
+//				b.setForce(pe.getGravity().scale(-1)); // don't let gravity affect the bullet
+//				Vector2D place = objectList.get(a.getID()).getCenterPosition();
+//				// Put bullet a
+//				// little bit away from player
+//				double xx = place.getX() + shootloc.getX() * 40;
+//				double yy = place.getY() + shootloc.getY() * 40;
+//				// set V in direction of travel 1000
+//				b.setVelocity(shootloc.scale(1000));
+//				b.setPosition(new Vector2D(xx, yy));
+//				gameState.add(b);
+//
+//				obj.listBullets.add(b); //add as newest object.
+//				obj.bulletCount++;
+//			}
+//
+//			break;
 		}
 	}
 
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
 		pe.applyLawsOfPhysics(deltaMs);
-		totalMS += deltaMs;
+		netMS += deltaMs;
 		
-		if (totalMS > DELTA_MS) {
+		if (netMS > DELTA_MS) {
 			ne.update();
-			totalMS = 0;
+			netMS = 0;
 		}
-		keyboardMovementHandler();
-		mouseHandler(deltaMs);
+		keyboardMovementHandler(deltaMs);
+		//mouseHandler(deltaMs);
 
 		while (msgQueue.size() > 0) {
-			this.processAction(msgQueue.poll());
+			this.processAction(msgQueue.poll(), deltaMs);
 		}
-		gameState.update();
+		gameState.update(deltaMs);
 		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(playerObject.getCenterPosition().getY()+mousePos.getY())/2); // centers on player
