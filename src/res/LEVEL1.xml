@@ -1,0 +1,19 @@
+<spriteset>
+    <author>Vitaliy</author>
+    <name>Level1</name>
+    <type>image/png</type>
+    <width>4250</width>
+    <height>1500</height>
+
+    <frameset>
+        <name>LEVEL1</name>
+        <top>0</top>
+        <left>0</left>
+	    <width>425</width>
+    	<height>150</height>
+        <columns>10</columns>
+        <rows>10</rows>
+	</frameset>
+	
+	
+	</spriteset>
