@@ -96,7 +96,7 @@ public class ServerGameState {
 
 	public void update(long deltaMs) {
 		totalMs += deltaMs;
-		updatePlayers();
+		updatePlayers(deltaMs);
 
 		//netState.clear(); // TODO: this could be done faster by just adding and removing
 		/*System.out.println("ServerGameState update: " + goTable.size());
@@ -219,12 +219,12 @@ public class ServerGameState {
 	 * 
 	 * @return
 	 */
-	public void updatePlayers() {
+	public void updatePlayers(long deltaMs) {
 		PlayerObject p = null;
 		for (GameObject go : layer)
 			if (go.type == GameObject.PLAYER) {
 				p = (PlayerObject) go;
-				p.updatePlayerState();
+				p.updatePlayerState(deltaMs);
 			}
 		return;
 	}
