@@ -390,10 +390,11 @@ public class Client extends ScrollingScreenGame {
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}*/
 
-		// uncommet this if you want to see ugly level attempt...
+		// better but still broken.
 		//updateLevelRender(new Vector2D(
-		//		(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-		//		(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		//	(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+		//(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		 
 	}
 
 	private void updateLevelRender(Vector2D offset) {

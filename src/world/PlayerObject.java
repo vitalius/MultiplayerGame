@@ -91,6 +91,13 @@ public class PlayerObject extends GameObject {
 	static final public int ROWDOWN = 36;// 36 is length of single row
 	static final public int COLORS = 6; // 6 colors.
 	
+	// Data concerning frame setting
+	private int frameX = LOC_PLAYER_STAND_X_LEFT;
+	private int frameY = LOC_PLAYER_STAND_Y_LEFT;
+	private int color = 0;
+	private int animation = 0;
+	private int aniframes = LOC_PLAYER_STAND_FRAMES;
+	private int currentframe = 0;
 
 	public PlayerObject(String rsc) {
 		super(rsc);
@@ -228,7 +235,8 @@ public class PlayerObject extends GameObject {
 			force = new Vector2D( force.getX(), NOFORCE);
 
 		clamp();
-		explodeGrenades();
+		explodeGrenades();		
+		updateFrame();
 	}
 	
 	public void clamp() {
@@ -243,6 +251,94 @@ public class PlayerObject extends GameObject {
 				((GrenadeLauncher) w).explode();
 			}
 		}
+	}
+	
+	int oldhealth = MAXHEALTH;
+	public void updateFrame() {
+		
+		Vector2D move = this.getVelocity();
+		
+		// check health first
+		// if lowered, set to first frame
+		// otherwise if dead, advance frame till last frame.
+		
+		oldhealth = health;
+		
+		// check if jetpacking
+		// iuf same as before, static frame.
+		
+		// check run/jump, priority to jump
+		// if same, advance frame
+		
+		// otherwise just stand.
+		
+		// just reference for when coding this...
+		/*
+		private int keyLeftRight; // left right key
+		private int keyJumpCrouch; // jump key
+		private boolean keyJet; // jetpack key
+		//private boolean keyCrouch; // crouch key
+		//private boolean keyRun; // run toggle
+		private boolean keyShoot; // shoot toggle
+		*/
+
+		/*
+		// Running x, y and length of animation
+		static final public int LOC_PLAYER_RUN_X_LEFT  = 0;
+		static final public int LOC_PLAYER_RUN_Y_LEFT  = 5;
+		static final public int LOC_PLAYER_RUN_X_RIGHT = 0;
+		static final public int LOC_PLAYER_RUN_Y_RIGHT = 6;
+		static final public int LOC_PLAYER_RUN_FRAMES = 4;
+		static final public int LOC_PLAYER_RUN_REPEAT = 1;
+		
+		// jump x, y, and positions
+		static final public int LOC_PLAYER_JUMP_X_LEFT  = 0;
+		static final public int LOC_PLAYER_JUMP_Y_LEFT  = 3;
+		static final public int LOC_PLAYER_JUMP_X_RIGHT = 0;
+		static final public int LOC_PLAYER_JUMP_Y_RIGHT = 4;
+		static final public int LOC_PLAYER_JUMP_FRAMES = 6;
+		static final public int LOC_PLAYER_JUMP_REPEAT = 0;
+		
+		// flying x, y, and positions
+		static final public int LOC_PLAYER_FLYING_X_LEFT  = 2;
+		static final public int LOC_PLAYER_FLYING_Y_LEFT  = 3;
+		static final public int LOC_PLAYER_FLYING_X_RIGHT = 2;
+		static final public int LOC_PLAYER_FLYING_Y_RIGHT = 4;
+		static final public int LOC_PLAYER_FLYING_FRAMES = 1;
+		static final public int LOC_PLAYER_FLYING_REPEAT = 0;
+
+		// die x, y, and positions
+		static final public int LOC_PLAYER_DIE_X_LEFT  = 0;
+		static final public int LOC_PLAYER_DIE_Y_LEFT  = 2;
+		static final public int LOC_PLAYER_DIE_X_RIGHT = 3;
+		static final public int LOC_PLAYER_DIE_Y_RIGHT = 2;
+		static final public int LOC_PLAYER_DIE_FRAMES = 3;
+		static final public int LOC_PLAYER_DIE_REPEAT = 0;
+		
+		static final public int ROWDOWN = 36;// 36 is length of single row
+		static final public int COLORS = 6; // 6 colors.
+		
+		// stand x, y, and positions
+		static final public int LOC_PLAYER_STAND_X_LEFT  = 0;
+		static final public int LOC_PLAYER_STAND_Y_LEFT  = 0;
+		static final public int LOC_PLAYER_STAND_X_RIGHT = 0;
+		static final public int LOC_PLAYER_STAND_Y_RIGHT = 1;
+		static final public int LOC_PLAYER_STAND_FRAMES = 6;
+		static final public int LOC_PLAYER_STAND_REPEAT = 1;
+
+		
+		// Data concerning frame setting
+		private int frameX = LOC_PLAYER_STAND_X_LEFT;
+		private int frameY = LOC_PLAYER_STAND_Y_LEFT;
+		private int color = 0;
+		private int animation = 0;
+		private int aniframes = LOC_PLAYER_STAND_FRAMES;
+		private int currentframe = 0;
+		*/
+
+		
+		//animation = (animation + 1) % framelimit
+		//frame data math is (action x) + (action y) * ROWDOWN + 6*(color) + animation
 	}
 	
 	public int getHealth() {
