@@ -391,9 +391,9 @@ public class Client extends ScrollingScreenGame {
 		}*/
 
 		// better but still broken.
-		updateLevelRender(new Vector2D(
-			(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-		(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		//updateLevelRender(new Vector2D(
+		//	(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+		//(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
 		 
 	}
 
