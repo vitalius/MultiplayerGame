@@ -92,12 +92,19 @@ public class PlayerObject extends GameObject {
 	static final public int COLORS = 6; // 6 colors.
 
 	// Data concerning frame setting
+	// x, y of current animation
 	private int frameX = LOC_PLAYER_STAND_X_LEFT;
 	private int frameY = LOC_PLAYER_STAND_Y_LEFT;
+	// player color
 	private int color = 0;
+	// current frame in animation ( [0-maxframe) )
 	private int animation = 0;
+	// aniframes = animation size (EX: 4 frames)
 	private int aniframes = LOC_PLAYER_STAND_FRAMES;
+	// current frame - (real frame in entire player sheet)
 	private int currentframe = 0;
+	// enable loop or not.
+	private int animationloop = LOC_PLAYER_STAND_REPEAT;
 
 	public PlayerObject(String rsc) {
 		super(rsc);
@@ -227,7 +234,7 @@ public class PlayerObject extends GameObject {
 		}
 	}
 
-	public void updatePlayerState(int deltaMs) {
+	public void updatePlayerState(long deltaMs) {
 		// System.out.println(jetFuel);
 		// Backup run out of fuel if client loses connection.
 		if (keyJet && jetFuel > 0) {
@@ -240,7 +247,7 @@ public class PlayerObject extends GameObject {
 
 		clamp();
 		explodeGrenades();
-		updateFrame();
+		updateFrame(deltaMs);
 	}
 
 	public void clamp() {
@@ -260,15 +267,16 @@ public class PlayerObject extends GameObject {
 	int oldhealth = MAXHEALTH;
 
 	int animationControl = 0;
-	public void updateFrame() {
+
+	public void updateFrame(long deltaMs) {
 
 		// store current frame, animation, etc.
 		int x = frameX;
 		int y = frameY;
 		int c = color;
-		int ani = animation;
 		int aniMax = aniframes;
 		int curF = currentframe;
+		int loopenabled = animationloop;
 
 		/*
 		 * static final public int LOC_PLAYER_DIE_REPEAT = 0;
@@ -283,10 +291,11 @@ public class PlayerObject extends GameObject {
 				y = LOC_PLAYER_DIE_Y_LEFT;
 			}
 			aniMax = LOC_PLAYER_DIE_FRAMES;
+			loopenabled = LOC_PLAYER_DIE_REPEAT;
 		}
-		
-		//jetpack on
-		else if(keyJet) {
+
+		// jetpack on
+		else if (keyJet) {
 			if (isFacingRight) {
 				x = LOC_PLAYER_FLYING_X_RIGHT;
 				y = LOC_PLAYER_FLYING_Y_RIGHT;
@@ -295,10 +304,11 @@ public class PlayerObject extends GameObject {
 				y = LOC_PLAYER_FLYING_Y_LEFT;
 			}
 			aniMax = LOC_PLAYER_FLYING_FRAMES;
+			loopenabled = LOC_PLAYER_FLYING_REPEAT;
 		}
-		
+
 		// jumping
-		else if(keyJumpCrouch < 0) {
+		else if (keyJumpCrouch < 0) {
 			if (isFacingRight) {
 				x = LOC_PLAYER_JUMP_X_RIGHT;
 				y = LOC_PLAYER_JUMP_Y_RIGHT;
@@ -307,9 +317,10 @@ public class PlayerObject extends GameObject {
 				y = LOC_PLAYER_JUMP_Y_LEFT;
 			}
 			aniMax = LOC_PLAYER_JUMP_FRAMES;
+			loopenabled = LOC_PLAYER_JUMP_REPEAT;
 		}
 		// running is key pressed
-		else if(keyLeftRight != 0) {
+		else if (keyLeftRight != 0) {
 			if (isFacingRight) {
 				x = LOC_PLAYER_RUN_X_RIGHT;
 				y = LOC_PLAYER_RUN_Y_RIGHT;
@@ -318,6 +329,7 @@ public class PlayerObject extends GameObject {
 				y = LOC_PLAYER_RUN_Y_LEFT;
 			}
 			aniMax = LOC_PLAYER_RUN_FRAMES;
+			loopenabled = LOC_PLAYER_RUN_REPEAT;
 		}
 		// Looks like standing this time.
 		else {
@@ -328,26 +340,43 @@ public class PlayerObject extends GameObject {
 				x = LOC_PLAYER_STAND_X_LEFT;
 				y = LOC_PLAYER_STAND_Y_LEFT;
 			}
-			aniMax = LOC_PLAYER_STAND_FRAMES;			
+			aniMax = LOC_PLAYER_STAND_FRAMES;
+			loopenabled = LOC_PLAYER_STAND_REPEAT;
+
 		}
-		
-		// okay now set oldhealth = health, then see what we must do in respect of frames.
+
+		// okay now set oldhealth = health, then see what we must do in respect
+		// of frames.
 		oldhealth = health;
-		
+
 		// same frame as before. advance if time is right
-		if(x == frameX) {
-			
+		if (x == frameX && y == frameY) {
+			if (animationControl < 500) {
+				animationControl += deltaMs;
+			} else {
+				// advance, if enabled. otherwise stay at last frame.
+				int newint = animation;
+				if (animationloop != 0)
+					animation = (animation + 1) % aniframes;
+				else if (animation != aniframes - 1)
+					animation++;
+			}
 		}
 		// else change to first frame of new animation
 		else {
-			
+			frameX = x;
+			frameY = y;
+			animation = 0;
+			aniframes = aniMax;
+			currentframe = 0;
+			animationloop = loopenabled;
 		}
-		
-		
 
-		// animation = (animation + 1) % framelimit
-		// frame data math is (action x) + (action y) * ROWDOWN + 6*(color) +
-		// animation
+		// Now do final frame calculation.
+		currentframe = frameX + frameY*ROWDOWN + 6*(color) + animation;
+		//System.out.println(currentframe + " " + frameX + " " + frameY + " playerobject frame");
+		if(currentframe>= 252)
+			System.out.println(currentframe + " OVERFLOW FRAME! playerobject frame");
 	}
 
 	public int getHealth() {
