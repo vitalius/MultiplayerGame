@@ -59,6 +59,11 @@ public class GameSprites {
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
+		case GameObject.GRENADE:
+			so = new GameObject("grenade");
+			spriteList.put(no.getId(), so);
+			layer.add(so);
+			break;
 		}
 	}
 	

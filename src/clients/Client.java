@@ -124,6 +124,8 @@ public class Client extends ScrollingScreenGame {
 	public void runSetup() {
 		ResourceFactory factory = ResourceFactory.getFactory();
 
+		PaintableCanvas.loadDefaultFrames("grenade", 10, 10, 1,
+				JIGSHAPE.CIRCLE, Color.GREEN);
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1,

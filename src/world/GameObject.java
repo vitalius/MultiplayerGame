@@ -14,6 +14,7 @@ public class GameObject extends Box {
 	public static final int PLAYERSPAWN = 4;
 	public static final int BULLET      = 5;
 	public static final int DRUM        = 6;
+	public static final int GRENADE		= 7;
 	
 	public Vector<GameObject> listBullets = new Vector<GameObject>();
 	public int bulletCount = 0;
@@ -27,6 +28,7 @@ public class GameObject extends Box {
 		else if (rsc.compareTo("drum") == 0) { setType(GameObject.DRUM); }
 		else if (rsc.compareTo("playerspawn") == 0) { setType(GameObject.PLAYERSPAWN); }
 		else if (rsc.compareTo("bullet") == 0) { setType(GameObject.BULLET); }
+		else if (rsc.compareTo("grenade") == 0) { setType(GameObject.GRENADE); }
 		else { setType(GameObject.STATIC); }
 	}
 	

@@ -16,13 +16,10 @@ public class Rifle extends Weapon {
 
 	@Override
 	public void shoot(Vector2D cursor, long deltaMs) {
-		//System.out.println("rifle.shoot totalMs: " + ServerGameState.getGameState().totalMs + " delayMs " + delayMs);
-		if (ServerGameState.getGameState().totalMs - delayMs < WEAPON_DELAY) {
-			//System.out.println("rifle.shoot skipped shot");
+		if (ServerGameState.getGameState().totalMs < delayMs) { 
 			return;
 		}
-			
-		delayMs = ServerGameState.getGameState().totalMs;
+		delayMs = ServerGameState.getGameState().totalMs + WEAPON_DELAY;
 		
 		// get the oldest bullet
 		GameObject bullet = bullets.remove(0);// get from oldest one.

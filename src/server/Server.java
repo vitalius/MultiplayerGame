@@ -72,6 +72,8 @@ public class Server extends ScrollingScreenGame {
 		tcpSender = new TcpSender();
 
 		// temp resources
+		PaintableCanvas.loadDefaultFrames("grenade", 10, 10, 1,
+				JIGSHAPE.CIRCLE, Color.GREEN);
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("smallbox", 64, 64, 1,
@@ -82,7 +84,7 @@ public class Server extends ScrollingScreenGame {
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
 				JIGSHAPE.RECTANGLE, Color.WHITE);
-
+		
 		// Load all levels, server mode
 		levels = new LevelSet("/res/Levelset.txt", true);
 		if (levels.getNumLevels() == 0) {

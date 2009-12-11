@@ -80,11 +80,7 @@ public class ServerGameState {
 		if (goTable.containsKey(id))
 			return id;
 
-		// goTable.put(id, go);
-
-		if (go.type == GameObject.BULLET) {
-			layer.add(go);
-		} else if (go.type == GameObject.SMALLBOX) {
+		if (go.type != GameObject.STATIC) {
 			layer.add(go);
 		} else {
 			return -1;

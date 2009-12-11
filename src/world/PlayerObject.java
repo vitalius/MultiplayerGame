@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import physics.Arbiter;
+import weapons.GrenadeLauncher;
 import weapons.Rifle;
 import weapons.Shotgun;
 import weapons.Weapon;
@@ -62,7 +63,8 @@ public class PlayerObject extends GameObject {
 		weapons = new ArrayList<Weapon>(0);
 		weapons.add(new Rifle(this));
 		weapons.add(new Shotgun(this));
-		activeWeapon = weapons.get(1);
+		weapons.add(new GrenadeLauncher(this));
+		activeWeapon = weapons.get(2);
 	}
 	
 	/*public void setKeys(int leftRight, int jumpCrouch, boolean jet, 
@@ -180,12 +182,21 @@ public class PlayerObject extends GameObject {
 			force = new Vector2D( force.getX(), NOFORCE);
 
 		clamp();
+		explodeGrenades();
 	}
 	
 	public void clamp() {
 		setRotation(0);
 		velocity = velocity.clampX(-MAXVEL, MAXVEL);
 		velocity = velocity.clampY(-MAXVEL, MAXVEL);
+	}
+	
+	public void explodeGrenades() {
+		for (Weapon w : weapons) {
+			if (w instanceof GrenadeLauncher) {
+				((GrenadeLauncher) w).explode();
+			}
+		}
 	}
 	
 	public int getHealth() {
