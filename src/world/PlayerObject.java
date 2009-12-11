@@ -88,6 +88,13 @@ public class PlayerObject extends GameObject {
 	static final public int ROWDOWN = 36;// 36 is length of single row
 	static final public int COLORS = 6; // 6 colors.
 	
+	// Data concerning frame setting
+	private int frameX = LOC_PLAYER_STAND_X_LEFT;
+	private int frameY = LOC_PLAYER_STAND_Y_LEFT;
+	private int color = 0;
+	private int animation = 0;
+	private int aniframes = LOC_PLAYER_STAND_FRAMES;
+	private int currentframe = 0;
 
 	public PlayerObject(String rsc) {
 		super(rsc);

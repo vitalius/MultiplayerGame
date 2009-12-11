@@ -180,8 +180,8 @@ public class Client extends ScrollingScreenGame {
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
 
-		// wow way ugly. need defined level limit!
-		// say, 4000x2000, and all level has postive obhect positions.
+		// still broken
+		/*
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
 			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
 				Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
@@ -189,7 +189,7 @@ public class Client extends ScrollingScreenGame {
 				level.setFrame(0);// just set one for now.
 				levelmap.add(level);
 			}
-		}
+		}*/
 
 		// Control of layering
 		// layers below black is forced render.
@@ -383,10 +383,10 @@ public class Client extends ScrollingScreenGame {
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
 
-		// uncommet this if you want to see ugly level attempt...
-		updateLevelRender(new Vector2D(
-				(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-				(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		// better but still broken.
+		//updateLevelRender(new Vector2D(
+			//	(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+				//(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
 	}
 
 	private void updateLevelRender(Vector2D offset) {
