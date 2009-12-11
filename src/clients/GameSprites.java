@@ -32,49 +32,63 @@ public class GameSprites {
 	public void init(NetObject no) {
 		if (spriteList.containsKey(no.getId()))
 			return;
-		GameObject so = null;
+		GameObject go = null;
 		switch(no.getType()) {
 		case GameObject.PLAYER:
-			so = new PlayerObject(SPRITES + "#Player");
-			spriteList.put(no.getId(), so);
-			layer.add(so);
+			go = new PlayerObject(SPRITES + "#Player");
+			spriteList.put(no.getId(), go);
+			layer.add(go);
 			break;
 		case GameObject.SMALLBOX:
-			so = new GameObject(SPRITES + "#Crate");
-			spriteList.put(no.getId(), so);
-			layer.add(so);
+			go = new GameObject(SPRITES + "#Crate");
+			spriteList.put(no.getId(), go);
+			layer.add(go);
 			break;
 		case GameObject.PLAYERSPAWN:
-			so = new GameObject("playerspawn");
-			spriteList.put(no.getId(), so);
-			layer.add(so);
+			go = new GameObject("playerspawn");
+			spriteList.put(no.getId(), go);
+			layer.add(go);
 			break;
 		case GameObject.DRUM:
-			so = new GameObject(SPRITES + "#Drum");
-			spriteList.put(no.getId(), so);
-			layer.add(so);
+			go = new GameObject(SPRITES + "#Drum");
+			spriteList.put(no.getId(), go);
+			layer.add(go);
 			break;
 		case GameObject.BULLET:
-			so = new GameObject("bullet");
-			spriteList.put(no.getId(), so);
-			layer.add(so);
+			go = new GameObject("bullet");
+			spriteList.put(no.getId(), go);
+			layer.add(go);
 			break;
 		case GameObject.GRENADE:
-			so = new GameObject("grenade");
-			spriteList.put(no.getId(), so);
-			layer.add(so);
+			go = new GameObject("grenade");
+			spriteList.put(no.getId(), go);
+			layer.add(go);
 			break;
+		}
+		go.setActivation(true);
+		go.setPosition(no.getPosition());
+		go.setVelocity(no.getVelocity());
+		go.setRotation(no.getRotation());
+		if (go.type == GameObject.PLAYER) {
+			((PlayerObject)go).setHealth(no.getHealth());
+			// set state here
 		}
 	}
 	
 	public void sync(NetStateManager gameState) {
-		for (NetObject no : gameState.getState().getNetObjects()) {
+		Hashtable<Integer, NetObject> netList = gameState.getState().objectList;
+		
+		for (GameObject go : spriteList.values()) {
+			if (!netList.containsKey(go.getID())) {
+				go.setActivation(false);
+			}
+		}
+		
+		for (NetObject no : netList.values()) {
 			if (spriteList.containsKey(no.getId())) {
-					
-				Vector2D p = no.getPosition();
 				GameObject go = spriteList.get(no.getId());
-				go.setPosition(p);
-				//System.out.println(no.getVelocity());
+				go.setActivation(true);
+				go.setPosition(no.getPosition());
 				go.setVelocity(no.getVelocity());
 				go.setRotation(no.getRotation());
 				if (go.type == GameObject.PLAYER) {
@@ -85,7 +99,6 @@ public class GameSprites {
 			} else
 				init(no);
 		}
-	
 	}
 	
 	public Collection<GameObject> getSprites() { 
