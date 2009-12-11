@@ -281,12 +281,14 @@ public class Server extends ScrollingScreenGame {
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
 		pe.applyLawsOfPhysics(deltaMs);
-		netMS += deltaMs;
 		
+		netMS += deltaMs;
 		if (netMS > NET_MS) {
+			//System.out.println("server: " + netMS);
 			ne.update();
 			netMS = 0;
 		}
+		
 		inputHandler(deltaMs);
 
 		while (msgQueue.size() > 0) {

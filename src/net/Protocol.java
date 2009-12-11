@@ -123,6 +123,7 @@ public class Protocol {
 		String output = gs.getSeqNum()+"#";
 		
 		for (NetObject p : gs.getNetObjects()) {
+			if (!p.isActive()) continue; // don't send inactives
 			output += p.getId()+"$";
 			output += p.getType()+"$";
 			output += (float)p.getPosition().getX()+"$";
@@ -135,7 +136,7 @@ public class Protocol {
 			//		+ " health: " + p.getHealth());
 			output += "%";
 		}
-		
+		//System.out.println("Protocol encode output: " + output);
 		return output;
 	}
 
@@ -149,6 +150,7 @@ public class Protocol {
 		retState.setSeqNum(seq_num);
 		
 		// Objects
+		//System.out.println("Protocol decode input: " + input);
 		String player[] = token[1].split("%");
 		for (int i=0; i<player.length; i++) {
 			String attr[] = player[i].split("\\$");

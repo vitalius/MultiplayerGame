@@ -15,6 +15,7 @@ public class NetObject {
 	private String ipAddress;
 	private int type;
 	private int health;
+	private boolean active;
 	
 	public static int MAXHEALTH = 2000;
 
@@ -96,4 +97,12 @@ public class NetObject {
 	public void setHealth(int h) { health = h; }
 	
 	public int getType() { return type; }
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 }

@@ -61,8 +61,6 @@ public class ServerGameState {
 		goTable.put(id, p);
 		netState.add(new NetObject(id, p.getPosition(), GameObject.PLAYER));
 		layer.add(p);
-		// netState.add(new NetObject(id, p.getPosition(), GameObject));
-		// }
 	}
 
 	public void add(GameObject go) {
@@ -100,6 +98,33 @@ public class ServerGameState {
 		totalMs += deltaMs;
 		updatePlayers();
 
+		//netState.clear(); // TODO: this could be done faster by just adding and removing
+		/*System.out.println("ServerGameState update: " + goTable.size());
+		for (GameObject go : goTable.values()) {
+			if (go == null) {
+				System.out.println("ServerGameState update: null");
+				return;
+			}
+			if (!go.isActive()) {
+				System.out.println("ServerGameState update: not active: " + go.getType());
+				return;
+			}
+			
+			NetObject no = null;
+			if (netState.objectList.contains(go.getID())) {
+				no = netState.objectList.get(go.getID());
+			} else {
+				no = new NetObject(go.getID(), go.getPosition(), go.type);
+				netState.add(no);
+			}
+			no.setPosition(go.getPosition());
+			no.setVelocity(go.getVelocity());
+			no.setRotation(go.getRotation());
+			if (go.getType() == GameObject.PLAYER){
+				no.setHealth(((PlayerObject)go).getHealth());
+			}
+		}*/
+		
 		Hashtable<Integer, NetObject> netList = netState.getHashtable();
 		for (Integer i : goTable.keySet()) {
 			GameObject go = goTable.get(i);
@@ -110,7 +135,7 @@ public class ServerGameState {
 			if (no == null)
 				return; // probably should add it
 
-			// null point common here...
+			no.setActive(go.isActive());
 			no.setPosition(go.getPosition());
 			// System.out.println(b.getVelocity());
 			no.setVelocity(go.getVelocity());

@@ -19,6 +19,10 @@ public class NetState {
 		objectList.put(p.getId(), p);
 	}
 	
+	public void clear() {
+		objectList.clear();
+	}
+	
 	public Hashtable<Integer, NetObject> getHashtable() {
 		return objectList;
 	}

@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import javax.swing.JOptionPane;
 
-import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import physics.Box;
 import server.NetworkEngine;
@@ -34,6 +33,8 @@ import clients.TcpSender;
  * Client
  */
 public class Client extends ScrollingScreenGame {
+	
+	long ms;
 
 	// used for testing UI elements.
 	private class uiItem extends Body {
@@ -182,8 +183,8 @@ public class Client extends ScrollingScreenGame {
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
 
-		// still broken
-		/*
+		// wow way ugly. need defined level limit!
+		// say, 4000x2000, and all level has postive obhect positions.
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
 			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
 				Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
@@ -191,7 +192,7 @@ public class Client extends ScrollingScreenGame {
 				level.setFrame(0);// just set one for now.
 				levelmap.add(level);
 			}
-		}*/
+		}
 
 		// Control of layering
 		// layers below black is forced render.
@@ -309,9 +310,13 @@ public class Client extends ScrollingScreenGame {
 
 		// get messages from the server
 		String s = state.get();
-		if (s != null)
+		//ms += deltaMs;
+		if (s != null) {
+			//System.out.println("server: " + ms);
 			netStateMan.sync(s);
-		else {
+			s = null;
+		} else {
+			//System.out.println("client");
 			// if no message from the server, update position of objects with
 			// local deltaMs
 			for (NetObject n : netStateMan.getState().getNetObjects()) {
@@ -367,7 +372,7 @@ public class Client extends ScrollingScreenGame {
 
 		keyboardMovementHandler(deltaMs);
 
-		if (shootlimit < 250) {
+		/*if (shootlimit < 250) {
 			shootlimit += deltaMs;
 		} else if (p != null
 				&& mouse.isLeftButtonPressed()
@@ -383,12 +388,13 @@ public class Client extends ScrollingScreenGame {
 				player.shoot(shot);
 			}
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
-		}
+		}*/
 
 		// better but still broken.
 		//updateLevelRender(new Vector2D(
-			//	(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-				//(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		//	(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+		//(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		 
 	}
 
 	private void updateLevelRender(Vector2D offset) {

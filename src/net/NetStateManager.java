@@ -1,7 +1,5 @@
 package net;
 
-import java.util.Hashtable;
-
 
 public class NetStateManager {
 	
@@ -27,11 +25,15 @@ public class NetStateManager {
 	
 	public void sync (String s) {
 		NetState d = prot.decode(s);
-		current.setSeqNum(d.getSeqNum());
-		Hashtable<Integer, NetObject> objectList = current.getHashtable();
 		
+		current.clear(); // TODO: this could be done faster by just adding and removing		
 		for(NetObject n : d.getNetObjects()) {
-			
+			current.objectList.put(n.getId(), n);
+		}
+		current.setSeqNum(d.getSeqNum());
+		
+		/*Hashtable<Integer, NetObject> objectList = current.getHashtable();		
+		for(NetObject n : d.getNetObjects()) {
 			if(objectList.containsKey(n.getId())) {
 				NetObject no = objectList.get(n.getId());
 				no.setPosition(n.getPosition());
@@ -40,7 +42,8 @@ public class NetStateManager {
 				no.setHealth(n.getHealth());
 			}
 			else
+				//System.out.println("Putting NetObject");
 				objectList.put(n.getId(), n);
-		}
+		}*/
 	}
 }
