@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import javax.swing.JOptionPane;
 
-import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import physics.Box;
 import server.NetworkEngine;
@@ -34,6 +33,8 @@ import clients.TcpSender;
  * Client
  */
 public class Client extends ScrollingScreenGame {
+	
+	long ms;
 
 	// used for testing UI elements.
 	private class uiItem extends Body {
@@ -309,9 +310,13 @@ public class Client extends ScrollingScreenGame {
 
 		// get messages from the server
 		String s = state.get();
-		if (s != null)
+		//ms += deltaMs;
+		if (s != null) {
+			//System.out.println("server: " + ms);
 			netStateMan.sync(s);
-		else {
+			s = null;
+		} else {
+			//System.out.println("client");
 			// if no message from the server, update position of objects with
 			// local deltaMs
 			for (NetObject n : netStateMan.getState().getNetObjects()) {
@@ -367,7 +372,7 @@ public class Client extends ScrollingScreenGame {
 
 		keyboardMovementHandler(deltaMs);
 
-		if (shootlimit < 250) {
+		/*if (shootlimit < 250) {
 			shootlimit += deltaMs;
 		} else if (p != null
 				&& mouse.isLeftButtonPressed()
@@ -383,12 +388,12 @@ public class Client extends ScrollingScreenGame {
 				player.shoot(shot);
 			}
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
-		}
+		}*/
 
 		// uncommet this if you want to see ugly level attempt...
-		updateLevelRender(new Vector2D(
-				(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-				(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		//updateLevelRender(new Vector2D(
+		//		(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+		//		(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
 	}
 
 	private void updateLevelRender(Vector2D offset) {
