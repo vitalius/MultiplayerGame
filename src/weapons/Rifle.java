@@ -16,13 +16,10 @@ public class Rifle extends Weapon {
 
 	@Override
 	public void shoot(Vector2D cursor, long deltaMs) {
-		//System.out.println("rifle.shoot totalMs: " + ServerGameState.getGameState().totalMs + " delayMs " + delayMs);
-		if (ServerGameState.getGameState().totalMs - delayMs < WEAPON_DELAY) {
-			//System.out.println("rifle.shoot skipped shot");
+		if (ServerGameState.getGameState().totalMs < delayMs) { 
 			return;
 		}
-			
-		delayMs = ServerGameState.getGameState().totalMs;
+		delayMs = ServerGameState.getGameState().totalMs + WEAPON_DELAY;
 		
 		// get the oldest bullet
 		GameObject bullet = bullets.remove(0);// get from oldest one.
@@ -30,14 +27,14 @@ public class Rifle extends Weapon {
 		
 		// set starting location
 		Vector2D shootLoc = null;
-		if (player.getCenterPosition().getX() > cursor.getX()) {
-			shootLoc = new Vector2D(player.getCenterPosition().getX()-player.getWidth()*.7, // bullet size is 5 pixels thats why .7
-					player.getCenterPosition().getY()-player.getHeight()*.25);
-			//System.out.println("rifle.shoot player: " + player.getCenterPosition().toString() + " shoot left: " + shootLoc.toString());
-		} else {
+		if (player.isFacingRight) {
 			shootLoc = new Vector2D(player.getCenterPosition().getX()+player.getWidth()*.6, // bullet size is 5 pixels that's why .6
 					player.getCenterPosition().getY()-player.getHeight()*.25);
 			//System.out.println("rifle.shoot player: " + player.getCenterPosition().toString() + " shoot right: " + shootLoc.toString());
+		} else {
+			shootLoc = new Vector2D(player.getCenterPosition().getX()-player.getWidth()*.7, // bullet size is 5 pixels thats why .7
+					player.getCenterPosition().getY()-player.getHeight()*.25);
+			//System.out.println("rifle.shoot player: " + player.getCenterPosition().toString() + " shoot left: " + shootLoc.toString());
 		}
 		bullet.setPosition(shootLoc);
 		

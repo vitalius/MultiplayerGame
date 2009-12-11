@@ -72,6 +72,8 @@ public class Server extends ScrollingScreenGame {
 		tcpSender = new TcpSender();
 
 		// temp resources
+		PaintableCanvas.loadDefaultFrames("grenade", 10, 10, 1,
+				JIGSHAPE.CIRCLE, Color.GREEN);
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("smallbox", 64, 64, 1,
@@ -82,7 +84,7 @@ public class Server extends ScrollingScreenGame {
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
 				JIGSHAPE.RECTANGLE, Color.WHITE);
-
+		
 		// Load all levels, server mode
 		levels = new LevelSet("/res/Levelset.txt", true);
 		if (levels.getNumLevels() == 0) {
@@ -258,7 +260,7 @@ public class Server extends ScrollingScreenGame {
 			if (a.right)
 				++x;
 
-			playerObject.updatePlayer(x, y, a.jet, false, false, a.shoot, a.arg0, gameState.getLayer(), deltaMs);
+			playerObject.procInput(x, y, a.jet, false, false, a.shoot, a.arg0, gameState.getLayer(), deltaMs);
 
 			break;
 
@@ -292,6 +294,7 @@ public class Server extends ScrollingScreenGame {
 		}
 		gameState.update(deltaMs);
 		
+		// just for the server player
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(playerObject.getCenterPosition().getY()+mousePos.getY())/2); // centers on player
 	}

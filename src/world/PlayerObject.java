@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import physics.Arbiter;
+import weapons.GrenadeLauncher;
 import weapons.Rifle;
+import weapons.Shotgun;
 import weapons.Weapon;
 
 public class PlayerObject extends GameObject {
@@ -24,6 +26,7 @@ public class PlayerObject extends GameObject {
 	private static final double MAXVEL = 300;
 	private static final int MAXJETFUEL = 2000;	
 	private int health;
+	public boolean isFacingRight;
 
 	private int keyLeftRight; // left right key
 	private int keyJumpCrouch; // jump key
@@ -112,7 +115,9 @@ public class PlayerObject extends GameObject {
 		deaths = 0;
 		weapons = new ArrayList<Weapon>(0);
 		weapons.add(new Rifle(this));
-		activeWeapon = weapons.get(0);
+		weapons.add(new Shotgun(this));
+		weapons.add(new GrenadeLauncher(this));
+		activeWeapon = weapons.get(2);
 	}
 	
 	/*public void setKeys(int leftRight, int jumpCrouch, boolean jet, 
@@ -185,7 +190,7 @@ public class PlayerObject extends GameObject {
 	}
 	
 	// walking, running and floating
-	public void updatePlayer(int leftRight, int jumpCrouch, boolean jet, 
+	public void procInput(int leftRight, int jumpCrouch, boolean jet, 
 			   boolean crouch, boolean run, boolean shoot, Vector2D cursor, BodyLayer<GameObject> layer, long deltaMs) {
 
 		// detect if on an object TODO: static only?
@@ -210,6 +215,12 @@ public class PlayerObject extends GameObject {
 		if (keyJumpCrouch != jumpCrouch) jumpCrouch(jumpCrouch);
 		if (keyJet != jet) jet(jet);
 		shoot(shoot, cursor, deltaMs);
+		
+		if (this.getCenterPosition().getX() > cursor.getX()) {
+			this.isFacingRight = false;
+		} else {
+			this.isFacingRight = true;
+		}
 	}
 	
 	public void updatePlayerState() {
@@ -224,12 +235,21 @@ public class PlayerObject extends GameObject {
 			force = new Vector2D( force.getX(), NOFORCE);
 
 		clamp();
+		explodeGrenades();
 	}
 	
 	public void clamp() {
 		setRotation(0);
 		velocity = velocity.clampX(-MAXVEL, MAXVEL);
 		velocity = velocity.clampY(-MAXVEL, MAXVEL);
+	}
+	
+	public void explodeGrenades() {
+		for (Weapon w : weapons) {
+			if (w instanceof GrenadeLauncher) {
+				((GrenadeLauncher) w).explode();
+			}
+		}
 	}
 	
 	public int getHealth() {

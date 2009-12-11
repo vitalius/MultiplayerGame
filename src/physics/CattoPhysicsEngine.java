@@ -17,6 +17,8 @@ package physics;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import world.GameObject;
+
 import jig.engine.PhysicsEngine;
 import jig.engine.RenderingContext;
 import jig.engine.physics.BodyLayer;
@@ -315,6 +317,10 @@ public class CattoPhysicsEngine implements PhysicsEngine<Box> {
 	 *            the other box involved in the (potential) collision
 	 */
 	protected void generateArbiter(final Box bi, final Box bj) {
+		if (((GameObject) bi).getType() == GameObject.BULLET &&
+			    ((GameObject) bj).getType() == GameObject.BULLET) {
+				return; // we don't want collisions between bullets
+		}
 		Arbiter newArb = new Arbiter(bi, bj);
 
 		if (newArb.numContacts > 0) {
