@@ -391,6 +391,7 @@ public class Client extends ScrollingScreenGame {
 		}*/
 
 		// better but still broken.
+		if(p != null)
 		updateLevelRender(new Vector2D(
 			(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
 		(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
@@ -423,8 +424,8 @@ public class Client extends ScrollingScreenGame {
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
 			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
 				Box level = (Box) levelmap.get(w + z * SCREEN_WIDTH / 425);
-				level.setPosition(new Vector2D(z * 425 , w * 150));
-				if(xx+z < 10 && yy + w < 10)
+				level.setPosition(new Vector2D(z * 425 - off.getX(), w * 150 - off.getY()));
+				if(xx+z < 10 && yy + w < 10 && xx+z >= 0 && yy+w >= 0)
 					level.setFrame((xx + z) + (yy+w) * 10);
 				else
 					level.setFrame(0);
