@@ -194,12 +194,12 @@ public class ServerGameState {
 	 * 
 	 * @return
 	 */
-	public void updatePlayers() {
+	public void updatePlayers(int deltaMs) {
 		PlayerObject p = null;
 		for (GameObject go : layer)
 			if (go.type == GameObject.PLAYER) {
 				p = (PlayerObject) go;
-				p.updatePlayerState();
+				p.updatePlayerState(deltaMs);
 			}
 		return;
 	}
