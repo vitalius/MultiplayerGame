@@ -104,7 +104,7 @@ public class Client extends ScrollingScreenGame {
 
 	private LinkedBlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();
 
-	private LinkedList<Box> levelboxes = new LinkedList<Box>();
+	// private LinkedList<Box> levelboxes = new LinkedList<Box>();
 
 	private int jetFuel = MAXJETFUEL;
 
@@ -182,8 +182,8 @@ public class Client extends ScrollingScreenGame {
 
 		// wow way ugly. need defined level limit!
 		// say, 4000x2000, and all level has postive obhect positions.
-		for (int z = 0; z <= SCREEN_WIDTH / 425; z++) {
-			for (int w = 0; w <= SCREEN_HEIGHT / 150; w++) {
+		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
+			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
 				Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
 				level.setPosition(new Vector2D(z * 425, w * 150));
 				level.setFrame(0);// just set one for now.
@@ -197,7 +197,7 @@ public class Client extends ScrollingScreenGame {
 		gameObjectLayers.add(GUI);
 
 		gameObjectLayers.add(black);
-		
+
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
 		gameObjectLayers.add(front);
@@ -238,8 +238,8 @@ public class Client extends ScrollingScreenGame {
 					|| keyboard.isPressed(KeyEvent.VK_D);
 			input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
 			input.shoot = mouse.isLeftButtonPressed();
-			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation()
-					.getX(), mouse.getLocation().getY()));
+			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
+					mouse.getLocation().getY()));
 			player.move(input);
 		} else {
 			input.crouch = false;
@@ -382,34 +382,44 @@ public class Client extends ScrollingScreenGame {
 			}
 			// System.out.println("Weapon fire keypress" + mouse.getLocation());
 		}
-		
+
 		// uncommet this if you want to see ugly level attempt...
-		//updateLevelRender(new Vector2D((int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-			//	(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		updateLevelRender(new Vector2D(
+				(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+				(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
 	}
 
 	private void updateLevelRender(Vector2D offset) {
-		if(offset == null)
+		if (offset == null)
 			return;
+
+		Vector2D wintopleft = screenToWorld(new Vector2D(0,0));		
+		int xx = (int) (wintopleft.getX() + (4250/2))/425;
+		int yy = (int) (wintopleft.getY() + (1500/2))/150;
 		
-		// calculate offset for tiles.
-		Vector2D off = new Vector2D((int) (425- (offset.getX() % 425)), (int) (150 - (offset.getY() % 150)));
 		
-		// calculate which frame tiles should use.
-		Vector2D first = screenToWorld(off);
+		Vector2D off = new Vector2D((int)(offset.getX() % 425), (int) (offset.getY() % 150));
 		
-		// okay that was wrong way... design later so level x is increased or decreased depending on 
-		// if it moved left or right.
-		// also add bounds to inactive if <0 or >= 10.
-		int xx = (int)(first.getX()/425);
-		int yy = (int)(first.getY()/150);
+		System.out.println( xx + " " + yy + " " + wintopleft.toString() + " client");
+
+		if (xx < 0)
+			xx = 0;
+		if (yy < 0)
+			yy = 0;
+		if (xx > 9)
+			xx = 9;
+		if (yy > 9)
+			yy = 9;
+		
 		
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
 			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
-				Box level = (Box)levelmap.get(w + z * SCREEN_WIDTH / 425);
-				level.setPosition(new Vector2D(z * 425 + off.getX(), w * 150 + off.getY()));
-				if(xx > 0 && yy > 0)
-					level.setFrame(xx + yy * 10);// just set one for now.
+				Box level = (Box) levelmap.get(w + z * SCREEN_WIDTH / 425);
+				level.setPosition(new Vector2D(z * 425 , w * 150));
+				if(xx+z < 10 && yy + w < 10)
+					level.setFrame((xx + z) + (yy+w) * 10);
+				else
+					level.setFrame(0);
 			}
 		}
 	}

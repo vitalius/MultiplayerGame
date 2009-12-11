@@ -42,6 +42,52 @@ public class PlayerObject extends GameObject {
 	// statistics
 	private int kills;
 	private int deaths;
+	
+	// Player gfx sprite x,y positons
+	
+	// stand x, y, and positions
+	static final public int LOC_PLAYER_STAND_X_LEFT  = 0;
+	static final public int LOC_PLAYER_STAND_Y_LEFT  = 0;
+	static final public int LOC_PLAYER_STAND_X_RIGHT = 0;
+	static final public int LOC_PLAYER_STAND_Y_RIGHT = 1;
+	static final public int LOC_PLAYER_STAND_FRAMES = 6;
+	static final public int LOC_PLAYER_STAND_REPEAT = 1;
+
+	// Running x, y and length of animation
+	static final public int LOC_PLAYER_RUN_X_LEFT  = 0;
+	static final public int LOC_PLAYER_RUN_Y_LEFT  = 5;
+	static final public int LOC_PLAYER_RUN_X_RIGHT = 0;
+	static final public int LOC_PLAYER_RUN_Y_RIGHT = 6;
+	static final public int LOC_PLAYER_RUN_FRAMES = 4;
+	static final public int LOC_PLAYER_RUN_REPEAT = 1;
+	
+	// jump x, y, and positions
+	static final public int LOC_PLAYER_JUMP_X_LEFT  = 0;
+	static final public int LOC_PLAYER_JUMP_Y_LEFT  = 3;
+	static final public int LOC_PLAYER_JUMP_X_RIGHT = 0;
+	static final public int LOC_PLAYER_JUMP_Y_RIGHT = 4;
+	static final public int LOC_PLAYER_JUMP_FRAMES = 6;
+	static final public int LOC_PLAYER_JUMP_REPEAT = 0;
+	
+	// flying x, y, and positions
+	static final public int LOC_PLAYER_FLYING_X_LEFT  = 2;
+	static final public int LOC_PLAYER_FLYING_Y_LEFT  = 3;
+	static final public int LOC_PLAYER_FLYING_X_RIGHT = 2;
+	static final public int LOC_PLAYER_FLYING_Y_RIGHT = 4;
+	static final public int LOC_PLAYER_FLYING_FRAMES = 1;
+	static final public int LOC_PLAYER_FLYING_REPEAT = 0;
+
+	// die x, y, and positions
+	static final public int LOC_PLAYER_DIE_X_LEFT  = 0;
+	static final public int LOC_PLAYER_DIE_Y_LEFT  = 2;
+	static final public int LOC_PLAYER_DIE_X_RIGHT = 3;
+	static final public int LOC_PLAYER_DIE_Y_RIGHT = 2;
+	static final public int LOC_PLAYER_DIE_FRAMES = 3;
+	static final public int LOC_PLAYER_DIE_REPEAT = 0;
+	
+	static final public int ROWDOWN = 36;// 36 is length of single row
+	static final public int COLORS = 6; // 6 colors.
+	
 
 	public PlayerObject(String rsc) {
 		super(rsc);

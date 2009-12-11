@@ -20,11 +20,6 @@ public class GameSprites {
 	
 	static final String SPRITES = "res/2Destruction-spritesheet.png";
 	
-	static final public int LOC_PLAYER_RUN = 0;
-	static final public int LOC_PLAYER_STAND = 0;
-	static final public int ROWDOWN = 36;
-	
-	
 	public GameSprites () {
 		layer = new AbstractBodyLayer.IterativeUpdate<GameObject>();
 	}
@@ -40,17 +35,22 @@ public class GameSprites {
 		GameObject so = null;
 		switch(no.getType()) {
 		case GameObject.PLAYER:
-			so = new PlayerObject("player");//SPRITES + "#Player");
+			so = new PlayerObject(SPRITES + "#Player");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
 		case GameObject.SMALLBOX:
-			so = new GameObject("smallbox");
+			so = new GameObject(SPRITES + "#Crate");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
 		case GameObject.PLAYERSPAWN:
 			so = new GameObject("playerspawn");
+			spriteList.put(no.getId(), so);
+			layer.add(so);
+			break;
+		case GameObject.DRUM:
+			so = new GameObject(SPRITES + "#Drum");
 			spriteList.put(no.getId(), so);
 			layer.add(so);
 			break;
