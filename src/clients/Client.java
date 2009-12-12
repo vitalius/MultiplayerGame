@@ -195,15 +195,10 @@ public class Client extends ScrollingScreenGame {
 		}
 
 		// Control of layering
-		// layers below black is forced render.
-		// gameObjectLayers.add(levelmap);
-		// gameObjectLayers.add(GUI);
-
-		gameObjectLayers.add(black);
-
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
 		gameObjectLayers.add(front);
+		// whatever layers not added into gameObjectLayers will be manually rendered.
 
 		gameStatusString = "Connecting to the server...";
 
