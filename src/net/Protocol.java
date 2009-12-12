@@ -41,6 +41,7 @@ public class Protocol {
 				output += (a.right ? "1" : "0") + "#";
 				output += (a.jump  ? "1" : "0") + "#";
 				output += (a.shoot ? "1" : "0") + "#";
+				output += a.weapon + "#";
 				output += a.getArg().getX() + "#";
 				output += a.getArg().getY() + "#";
 				break;
@@ -98,8 +99,9 @@ public class Protocol {
 			returnAction.right = Integer.valueOf(token[5]).intValue() == 1 ? true : false;
 			returnAction.jump  = Integer.valueOf(token[6]).intValue() == 1 ? true : false;
 			returnAction.shoot = Integer.valueOf(token[7]).intValue() == 1 ? true : false;
-			returnAction.arg0 = new Vector2D(Double.valueOf(token[8]).doubleValue(),
-					Double.valueOf(token[9]).doubleValue());
+			returnAction.weapon = Integer.valueOf(token[8]);
+			returnAction.arg0 = new Vector2D(Double.valueOf(token[9]).doubleValue(),
+					Double.valueOf(token[10]).doubleValue());
 			break;
 		case Action.SHOOT:
 			x = Double.valueOf(token[2]).doubleValue();
