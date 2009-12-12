@@ -34,7 +34,7 @@ import clients.TcpSender;
  * Client
  */
 public class Client extends ScrollingScreenGame {
-	
+
 	long ms;
 
 	// used for testing UI elements.
@@ -184,23 +184,20 @@ public class Client extends ScrollingScreenGame {
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
 
-		// wow way ugly. need defined level limit!
-		// say, 4000x2000, and all level has postive obhect positions.
-		/*
+		// still ugly...
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
-			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
+			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 2; w++) {
 				Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
 				level.setPosition(new Vector2D(z * 425, w * 150));
 				level.setFrame(0);// just set one for now.
 				levelmap.add(level);
 			}
 		}
-		*/
 
 		// Control of layering
 		// layers below black is forced render.
-		gameObjectLayers.add(levelmap);
-		gameObjectLayers.add(GUI);
+		// gameObjectLayers.add(levelmap);
+		// gameObjectLayers.add(GUI);
 
 		gameObjectLayers.add(black);
 
@@ -322,13 +319,13 @@ public class Client extends ScrollingScreenGame {
 
 		// get messages from the server
 		String s = state.get();
-		//ms += deltaMs;
+		// ms += deltaMs;
 		if (s != null) {
-			//System.out.println("server: " + ms);
+			// System.out.println("server: " + ms);
 			netStateMan.sync(s);
 			s = null;
 		} else {
-			//System.out.println("client");
+			// System.out.println("client");
 			// if no message from the server, update position of objects with
 			// local deltaMs
 			for (NetObject n : netStateMan.getState().getNetObjects()) {
@@ -363,7 +360,8 @@ public class Client extends ScrollingScreenGame {
 
 			// it is assumed that health is in range [0-2000].
 			// System.out.println(hl);'
-			int hl = netStateMan.getState().objectList.get(player.getID()).getHealth();
+			int hl = netStateMan.getState().objectList.get(player.getID())
+					.getHealth();
 			if (hl > 0) {
 				int hframe = 25 - (int) ((((double) hl) / 2000.0) * 25);
 				// System.out.println(hframe + " hframe, client");
@@ -384,24 +382,26 @@ public class Client extends ScrollingScreenGame {
 		keyboardMovementHandler(deltaMs);
 
 		// better but still broken.
-		//updateLevelRender(new Vector2D(
-		//	(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-		//(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
-		 
+		if (p != null)
+			updateLevelRender(new Vector2D(
+					(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+					(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+
 	}
 
 	private void updateLevelRender(Vector2D offset) {
 		if (offset == null)
 			return;
 
-		Vector2D wintopleft = screenToWorld(new Vector2D(0,0));		
-		int xx = (int) (wintopleft.getX() + (4250/2))/425;
-		int yy = (int) (wintopleft.getY() + (1500/2))/150;
-		
-		
-		Vector2D off = new Vector2D((int)(offset.getX() % 425), (int) (offset.getY() % 150));
-		
-		System.out.println( xx + " " + yy + " " + wintopleft.toString() + " client");
+		Vector2D off = new Vector2D(-(int) (offset.getX() % 425),
+				-(int) (offset.getY() % 150));
+
+		Vector2D wintopleft = screenToWorld(off);
+		int xx = (int) (wintopleft.getX() + (4250 / 2)) / 425;
+		int yy = (int) (wintopleft.getY() + (1500 / 2)) / 150;
+
+		System.out.println(xx + " " + yy + " " + wintopleft.toString()
+				+ " client");
 
 		if (xx < 0)
 			xx = 0;
@@ -411,17 +411,21 @@ public class Client extends ScrollingScreenGame {
 			xx = 9;
 		if (yy > 9)
 			yy = 9;
-		
-		// account for difference of position in picture vs real objects on server
-		int fudgex = -70, fudgey = -50;
+
+		// account for difference of position in picture vs real objects on
+		// server
+		int fudgex = -62, fudgey = 7;
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
-			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
+			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 2; w++) {
 				Box level = (Box) levelmap.get(w + z * SCREEN_WIDTH / 425);
-				level.setPosition(new Vector2D(z * 425 - off.getX() + fudgex, w * 150 - off.getY() + fudgey));
-				if(xx+z < 10 && yy + w < 10 && xx+z >= 0 && yy+w >= 0)
-					level.setFrame((xx + z) + (yy+w) * 10);
-				else
-					level.setFrame(0);
+				level.setPosition(new Vector2D(z * 425 + off.getX() + fudgex, w
+						* 150 + off.getY() + fudgey));
+				if (xx + z < 10 && yy + w < 10 && xx + z >= 0 && yy + w >= 0) {
+					level.setFrame((xx + z) + (yy + w) * 10);
+					level.setActivation(true);
+				} else {
+					level.setActivation(false);
+				}
 			}
 		}
 	}
@@ -451,7 +455,8 @@ public class Client extends ScrollingScreenGame {
 				int a2 = java.lang.Integer.parseInt(a[1]);
 				int a3 = java.lang.Integer.parseInt(a[2]);
 				int a4 = java.lang.Integer.parseInt(a[3]);
-				System.out.println(a1 + "." + a2 + "." + a3 + "." + a4 + " result of user input");
+				System.out.println(a1 + "." + a2 + "." + a3 + "." + a4
+						+ " result of user input");
 				// check formatting if its properly done.
 				if (a1 > 0 && a1 < 254 && a2 >= 0 && a2 <= 254 && a3 >= 0
 						&& a3 <= 254 && a4 > 0 && a4 <= 254) {
