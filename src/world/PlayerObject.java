@@ -197,9 +197,9 @@ public class PlayerObject extends GameObject {
 
 	// walking, running and floating
 	public void procInput(int leftRight, int jumpCrouch, boolean jet,
-			boolean crouch, boolean run, boolean shoot, int weapon, Vector2D cursor,
-			BodyLayer<GameObject> layer, long deltaMs) {
-		
+			boolean crouch, boolean run, boolean shoot, int weapon,
+			Vector2D cursor, BodyLayer<GameObject> layer, long deltaMs) {
+
 		if (this.getCenterPosition().getX() > cursor.getX()) {
 			this.isFacingRight = false;
 		} else {
@@ -234,7 +234,7 @@ public class PlayerObject extends GameObject {
 		shoot(shoot, cursor, deltaMs);
 
 		if (weapon >= 1 && weapon <= 3) {
-			activeWeapon = weapons.get(weapon-1);
+			activeWeapon = weapons.get(weapon - 1);
 		}
 	}
 
@@ -269,9 +269,12 @@ public class PlayerObject extends GameObject {
 	}
 
 	int oldhealth = MAXHEALTH;
+	int animationControl = 251;
 
-	int animationControl = 501;
-
+	// fixes needed:
+	// logic of stopping jump, but falling still, stands. looks weird
+	// hurt changes too quickly to be visiable.
+	// running while facing wrong way? hmmm
 	public void updateFrame(long deltaMs) {
 
 		// store current frame, animation, etc.
@@ -280,10 +283,8 @@ public class PlayerObject extends GameObject {
 		int aniMax = aniframes;
 		int loopenabled = animationloop;
 
-		/*
-		 * static final public int LOC_PLAYER_DIE_REPEAT = 0;
-		 */
 		// Check if health decreased or dead.
+		// health decrease should make player use first death frame then reset.
 		if (health < oldhealth || health == 0) {
 			if (isFacingRight) {
 				x = LOC_PLAYER_DIE_X_RIGHT;
@@ -334,6 +335,7 @@ public class PlayerObject extends GameObject {
 			loopenabled = LOC_PLAYER_RUN_REPEAT;
 		}
 		// Looks like standing this time.
+		// while falling too? hmm how fix...
 		else {
 			if (isFacingRight) {
 				x = LOC_PLAYER_STAND_X_RIGHT;
@@ -351,9 +353,10 @@ public class PlayerObject extends GameObject {
 		// of frames.
 		oldhealth = health;
 
-		// same frame as before. advance if time is right
+		// same frame as before. advance a frame if time is right
 		if (x == frameX && y == frameY) {
-			if (animationControl < 500) {
+			// is it time yet? if not wait.
+			if (animationControl < 250) {
 				animationControl += deltaMs;
 			} else {
 				// advance, if enabled. otherwise stay at last frame.
@@ -372,13 +375,16 @@ public class PlayerObject extends GameObject {
 			aniframes = aniMax;
 			currentframe = 0;
 			animationloop = loopenabled;
+			animationControl = 0;
 		}
 
 		// Now do final frame calculation.
-		currentframe = frameX + frameY*ROWDOWN + 6*(color) + animation;
-		//System.out.println(currentframe + " " + frameX + " " + frameY + " playerobject frame");
-		if(currentframe>= 252)
-			System.out.println(currentframe + " OVERFLOW FRAME! playerobject frame");
+		currentframe = frameX + frameY * ROWDOWN + 6 * (color) + animation;
+		//System.out.println(currentframe + " " + frameX + " " + frameY
+			//	+ " playerobject frame");
+		if (currentframe >= 252)
+			System.out.println(currentframe
+					+ " OVERFLOW FRAME! playerobject frame");
 	}
 
 	public int getHealth() {
@@ -412,11 +418,11 @@ public class PlayerObject extends GameObject {
 	public void clearDeaths() {
 		this.deaths = 0;
 	}
-	
+
 	public int getFrameIndex() {
 		return currentframe;
 	}
-	
+
 	public void setFrameIndex(int n) {
 		currentframe = n;
 	}

@@ -96,7 +96,7 @@ public class GameSprites {
 				if (go.type == GameObject.PLAYER) {
 					//System.out.println("sync health: " + no.getHealth());
 					((PlayerObject)go).setHealth(no.getHealth());
-					// set state here
+					((PlayerObject)go).setFrame(no.getFrameIndex());
 				}
 			} else
 				init(no);
