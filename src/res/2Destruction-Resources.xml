@@ -14,7 +14,7 @@
     </spritesheet>
     
     <spritesheet>
-    	 <imagesrc>LEVEL1.png</imagesrc>
+    	 <imagesrc>LEVEL1.gif</imagesrc>
 		 <framesrc>LEVEL1.xml</framesrc>
     </spritesheet>
     

@@ -9,8 +9,8 @@
         <name>LEVEL1</name>
         <top>0</top>
         <left>0</left>
-	    <width>425</width>
-    	<height>150</height>
+	    <width>4250</width>
+    	<height>1500</height>
         <columns>10</columns>
         <rows>10</rows>
 	</frameset>

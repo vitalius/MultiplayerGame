@@ -77,7 +77,7 @@ public class Client extends ScrollingScreenGame {
 	static final String PICTUREBACKGROUND = "res/GameBackground.png";
 	static final String UIGFX = "res/ClientUI.png";
 	static final String SPRITES = "res/2Destruction-spritesheet.png";
-	static final String LEVEL1 = "res/LEVEL1.png";
+	static final String LEVEL1 = "res/LEVEL1.gif";
 
 	public String SERVER_IP = "127.0.0.1";
 
@@ -184,6 +184,7 @@ public class Client extends ScrollingScreenGame {
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
 
+		
 		// wow way ugly. need defined level limit!
 		// say, 4000x2000, and all level has postive obhect positions.
 		/*
