@@ -71,6 +71,8 @@ public class GameSprites {
 		go.setRotation(no.getRotation());
 		if (go.type == GameObject.PLAYER) {
 			((PlayerObject)go).setHealth(no.getHealth());
+			((PlayerObject)go).setFrameIndex(no.getFrameIndex());
+			((PlayerObject)go).setFrame(no.getFrameIndex());
 			// set state here
 		}
 	}

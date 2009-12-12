@@ -16,6 +16,7 @@ public class NetObject {
 	private int type;
 	private int health;
 	private boolean active;
+	private int show_frame;
 	
 	public static int MAXHEALTH = 2000;
 
@@ -95,6 +96,9 @@ public class NetObject {
 	
 	public int getHealth() { return health; }
 	public void setHealth(int h) { health = h; }
+	
+	public int getFrameIndex() { return show_frame; }
+	public void setFrameIndex(int f) { show_frame = f; }
 	
 	public int getType() { return type; }
 
