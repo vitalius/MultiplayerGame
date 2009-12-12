@@ -197,8 +197,14 @@ public class PlayerObject extends GameObject {
 
 	// walking, running and floating
 	public void procInput(int leftRight, int jumpCrouch, boolean jet,
-			boolean crouch, boolean run, boolean shoot, Vector2D cursor,
+			boolean crouch, boolean run, boolean shoot, int weapon, Vector2D cursor,
 			BodyLayer<GameObject> layer, long deltaMs) {
+		
+		if (this.getCenterPosition().getX() > cursor.getX()) {
+			this.isFacingRight = false;
+		} else {
+			this.isFacingRight = true;
+		}
 
 		// detect if on an object TODO: static only?
 		Arbiter arb;
@@ -227,10 +233,8 @@ public class PlayerObject extends GameObject {
 			jet(jet);
 		shoot(shoot, cursor, deltaMs);
 
-		if (this.getCenterPosition().getX() > cursor.getX()) {
-			this.isFacingRight = false;
-		} else {
-			this.isFacingRight = true;
+		if (weapon >= 1 && weapon <= 3) {
+			activeWeapon = weapons.get(weapon-1);
 		}
 	}
 

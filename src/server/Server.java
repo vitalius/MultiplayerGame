@@ -151,7 +151,6 @@ public class Server extends ScrollingScreenGame {
 	        } catch (IOException ex) {
 	            ex.printStackTrace();
 	        }
-			
 	        System.exit(0);
 		}
 
@@ -168,12 +167,22 @@ public class Server extends ScrollingScreenGame {
 					|| keyboard.isPressed(KeyEvent.VK_D);
 			input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
 			input.shoot = mouse.isLeftButtonPressed();
+			if (keyboard.isPressed(KeyEvent.VK_1)) {
+				input.weapon = 1;
+			} else if (keyboard.isPressed(KeyEvent.VK_2)) {
+				input.weapon = 2;
+			} else if (keyboard.isPressed(KeyEvent.VK_3)) {
+				input.weapon = 3;
+			} else {
+				input.weapon = 0;
+			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation()
 					.getX(), mouse.getLocation().getY()));
 
 			//if (oldInput.equals(input))
 			//	return;
 			String action = new Protocol().encodeAction(input);
+			System.out.println(input.weapon);
 			processAction(action, deltaMs);
 			oldInput.copy(input);
 		}
@@ -260,7 +269,7 @@ public class Server extends ScrollingScreenGame {
 			if (a.right)
 				++x;
 
-			playerObject.procInput(x, y, a.jet, false, false, a.shoot, a.arg0, gameState.getLayer(), deltaMs);
+			playerObject.procInput(x, y, a.jet, false, false, a.shoot, a.weapon, a.arg0, gameState.getLayer(), deltaMs);
 
 			break;
 

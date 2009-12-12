@@ -241,6 +241,15 @@ public class Client extends ScrollingScreenGame {
 					|| keyboard.isPressed(KeyEvent.VK_D);
 			input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
 			input.shoot = mouse.isLeftButtonPressed();
+			if (keyboard.isPressed(KeyEvent.VK_1)) {
+				input.weapon = 1;
+			} else if (keyboard.isPressed(KeyEvent.VK_2)) {
+				input.weapon = 2;
+			} else if (keyboard.isPressed(KeyEvent.VK_3)) {
+				input.weapon = 3;
+			} else {
+				input.weapon = 0;
+			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
 					mouse.getLocation().getY()));
 			player.move(input);
@@ -371,24 +380,6 @@ public class Client extends ScrollingScreenGame {
 		}
 
 		keyboardMovementHandler(deltaMs);
-
-		/*if (shootlimit < 250) {
-			shootlimit += deltaMs;
-		} else if (p != null
-				&& mouse.isLeftButtonPressed()
-				&& netStateMan.getState().objectList.get(player.getID())
-						.getHealth() > 0) {
-			if (p.getCenterPosition() != null) {
-				shootlimit = 0;
-				// Get shoot vector and normalize it.
-				Vector2D shot = new Vector2D(mousePos.getX()
-						- p.getCenterPosition().getX(), mousePos.getY()
-						- p.getCenterPosition().getY());
-				shot = shot.unitVector();
-				player.shoot(shot);
-			}
-			// System.out.println("Weapon fire keypress" + mouse.getLocation());
-		}*/
 
 		// better but still broken.
 		//updateLevelRender(new Vector2D(
