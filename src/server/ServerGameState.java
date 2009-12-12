@@ -142,6 +142,7 @@ public class ServerGameState {
 			no.setRotation(go.getRotation());
 			if (go.getType() == GameObject.PLAYER){
 				no.setHealth(((PlayerObject)go).getHealth());
+				no.setFrameIndex(((PlayerObject)go).getFrameIndex());
 			}
 		}
 

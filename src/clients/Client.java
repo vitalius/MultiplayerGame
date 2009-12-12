@@ -77,7 +77,7 @@ public class Client extends ScrollingScreenGame {
 	static final String PICTUREBACKGROUND = "res/GameBackground.png";
 	static final String UIGFX = "res/ClientUI.png";
 	static final String SPRITES = "res/2Destruction-spritesheet.png";
-	static final String LEVEL1 = "res/LEVEL1.png";
+	static final String LEVEL1 = "res/LEVEL1.gif";
 
 	public String SERVER_IP = "127.0.0.1";
 
@@ -184,13 +184,14 @@ public class Client extends ScrollingScreenGame {
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
 
-		// still ugly...
+		// wow way ugly. need defined level limit!
+		// say, 4000x2000, and all level has postive obhect positions.
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
 			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 2; w++) {
-				Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
-				level.setPosition(new Vector2D(z * 425, w * 150));
-				level.setFrame(0);// just set one for now.
-				levelmap.add(level);
+				//Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
+				//level.setPosition(new Vector2D(z * 425, w * 150));
+				//level.setFrame(0);// just set one for now.
+				//levelmap.add(level);
 			}
 		}
 
@@ -377,10 +378,10 @@ public class Client extends ScrollingScreenGame {
 		keyboardMovementHandler(deltaMs);
 
 		// better but still broken.
-		if (p != null)
-			updateLevelRender(new Vector2D(
-					(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-					(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		//if (p != null)
+		//	updateLevelRender(new Vector2D(
+		//			(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+		//			(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
 
 	}
 

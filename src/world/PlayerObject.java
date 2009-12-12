@@ -412,4 +412,12 @@ public class PlayerObject extends GameObject {
 	public void clearDeaths() {
 		this.deaths = 0;
 	}
+	
+	public int getFrameIndex() {
+		return currentframe;
+	}
+	
+	public void setFrameIndex(int n) {
+		currentframe = n;
+	}
 }

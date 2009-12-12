@@ -17,7 +17,11 @@ package physics;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import jig.engine.ImageResource;
 import jig.engine.RenderingContext;
@@ -56,6 +60,8 @@ public class Box extends Body implements Comparable<Box> {
 	protected double invMomentOfInertia;
 
 	protected int id;
+	
+	public BufferedImage bglevel;
 
 	/**
 	 * Creates a new Box with the specified image resources.
@@ -256,6 +262,7 @@ public class Box extends Body implements Comparable<Box> {
 		g.translate(-tx, -ty);
 		
 	}
+	
 	
 	/**
 	 * This method has no effect for Box instances, and should not be called.

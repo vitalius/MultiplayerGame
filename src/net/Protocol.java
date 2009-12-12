@@ -133,9 +133,8 @@ public class Protocol {
 			output += (float)p.getVelocity().getX()+"$";
 			output += (float)p.getVelocity().getY()+"$";
 			output += (float)p.getRotation()+"$";
-			output += p.getHealth();
-			//if (p.getType() == GameObject.PLAYER) System.out.println("Protocol encode id: " + p.getId()
-			//		+ " health: " + p.getHealth());
+			output += p.getHealth()+"$";
+			output += p.getFrameIndex();
 			output += "%";
 		}
 		//System.out.println("Protocol encode output: " + output);
@@ -164,9 +163,10 @@ public class Protocol {
 			double vy = Double.valueOf(attr[5]).doubleValue();
 			double r = Double.valueOf(attr[6]).doubleValue();
 			int h = Integer.valueOf(attr[7]).intValue();
-			//if (type == GameObject.PLAYER) System.out.println("Protocol decode health: " + h);
+			int f = Integer.valueOf(attr[8]).intValue();
 			
 			NetObject n = new NetObject(id, new Vector2D(x,y), type);
+			n.setFrameIndex(f);
 			n.setVelocity(new Vector2D(vx,vy));
 			n.setRotation(r);
 			n.setHealth(h);
