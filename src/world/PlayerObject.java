@@ -266,16 +266,14 @@ public class PlayerObject extends GameObject {
 
 	int oldhealth = MAXHEALTH;
 
-	int animationControl = 0;
+	int animationControl = 501;
 
 	public void updateFrame(long deltaMs) {
 
 		// store current frame, animation, etc.
 		int x = frameX;
 		int y = frameY;
-		int c = color;
 		int aniMax = aniframes;
-		int curF = currentframe;
 		int loopenabled = animationloop;
 
 		/*
@@ -355,7 +353,7 @@ public class PlayerObject extends GameObject {
 				animationControl += deltaMs;
 			} else {
 				// advance, if enabled. otherwise stay at last frame.
-				int newint = animation;
+				animationControl = 0;
 				if (animationloop != 0)
 					animation = (animation + 1) % aniframes;
 				else if (animation != aniframes - 1)

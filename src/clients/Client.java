@@ -10,6 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import physics.Box;
 import server.NetworkEngine;
 import world.GameObject;
+import world.PlayerObject;
 import net.Action;
 import net.NetObject;
 import net.NetStateManager;
@@ -185,6 +186,7 @@ public class Client extends ScrollingScreenGame {
 
 		// wow way ugly. need defined level limit!
 		// say, 4000x2000, and all level has postive obhect positions.
+		/*
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
 			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
 				Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
@@ -193,6 +195,7 @@ public class Client extends ScrollingScreenGame {
 				levelmap.add(level);
 			}
 		}
+		*/
 
 		// Control of layering
 		// layers below black is forced render.
@@ -350,9 +353,8 @@ public class Client extends ScrollingScreenGame {
 					(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2);
 
 			// it is assumed that health is in range [0-2000].
-			// System.out.println(hl);
-			int hl = netStateMan.getState().objectList.get(player.getID())
-					.getHealth();
+			// System.out.println(hl);'
+			int hl = netStateMan.getState().objectList.get(player.getID()).getHealth();
 			if (hl > 0) {
 				int hframe = 25 - (int) ((((double) hl) / 2000.0) * 25);
 				// System.out.println(hframe + " hframe, client");
@@ -391,10 +393,9 @@ public class Client extends ScrollingScreenGame {
 		}*/
 
 		// better but still broken.
-		if(p != null)
-		updateLevelRender(new Vector2D(
-			(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-		(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		//updateLevelRender(new Vector2D(
+		//(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+		//(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
 		 
 	}
 
@@ -420,11 +421,12 @@ public class Client extends ScrollingScreenGame {
 		if (yy > 9)
 			yy = 9;
 		
-		
+		// account for difference of position in picture vs real objects on server
+		int fudgex = -70, fudgey = -50;
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
 			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 1; w++) {
 				Box level = (Box) levelmap.get(w + z * SCREEN_WIDTH / 425);
-				level.setPosition(new Vector2D(z * 425 - off.getX(), w * 150 - off.getY()));
+				level.setPosition(new Vector2D(z * 425 - off.getX() + fudgex, w * 150 - off.getY() + fudgey));
 				if(xx+z < 10 && yy + w < 10 && xx+z >= 0 && yy+w >= 0)
 					level.setFrame((xx + z) + (yy+w) * 10);
 				else
@@ -458,7 +460,7 @@ public class Client extends ScrollingScreenGame {
 				int a2 = java.lang.Integer.parseInt(a[1]);
 				int a3 = java.lang.Integer.parseInt(a[2]);
 				int a4 = java.lang.Integer.parseInt(a[3]);
-				System.out.println(a1 + "." + a2 + "." + a3 + "." + a4);
+				System.out.println(a1 + "." + a2 + "." + a3 + "." + a4 + " result of user input");
 				// check formatting if its properly done.
 				if (a1 > 0 && a1 < 254 && a2 >= 0 && a2 <= 254 && a3 >= 0
 						&& a3 <= 254 && a4 > 0 && a4 <= 254) {
