@@ -159,6 +159,7 @@ public class Client extends ScrollingScreenGame {
 		// bListen.start();
 		// debug
 		// startListenServer();
+		
 		/* Thread with TCP networking for server specific commands */
 		TcpListener tcpListen = new TcpListener(NetworkEngine.TCP_CLIENT_PORT,
 				msgQueue);
