@@ -41,7 +41,7 @@ public class PlayerObject extends GameObject {
 	// weapons
 	private Weapon activeWeapon;
 	private ArrayList<Weapon> weapons;
-	
+
 	// spawn point
 	private int spawn;
 
@@ -239,7 +239,7 @@ public class PlayerObject extends GameObject {
 		if (weapon >= 1 && weapon <= 3) {
 			activeWeapon = weapons.get(weapon - 1);
 		}
-		//System.out.println("PlayerObject procInput spawn")
+		// System.out.println("PlayerObject procInput spawn")
 		if (spawn != 0 && this.health <= 0) {
 			this.spawn = spawn;
 		}
@@ -259,7 +259,7 @@ public class PlayerObject extends GameObject {
 		clamp();
 		explodeGrenades();
 		updateFrame(deltaMs);
-		//System.out.println("PlayerObject.updatePlayerState loc: " + this.getPosition().toString());
+		//System.out.println("PlayerObject.updatePlayerState loc: " + this.getPosition().toString() + " playerobject");
 	}
 
 	public void clamp() {
@@ -346,8 +346,8 @@ public class PlayerObject extends GameObject {
 			}
 			aniMax = LOC_PLAYER_RUN_FRAMES;
 			loopenabled = LOC_PLAYER_RUN_REPEAT;
-			animationControl = Math.abs((int)(this.getVelocity().getY() / 2));
-			System.out.println(this.getVelocity().getY()/2 + " playerobject");
+			animationControl = Math.abs((int) (this.getVelocity().getY() / 2));
+			System.out.println(this.getVelocity().getY() / 2 + " playerobject");
 		}
 		// Looks like standing this time. Or last frame of jump if still
 		// changing in y axis.
@@ -382,6 +382,15 @@ public class PlayerObject extends GameObject {
 		// okay now set oldhealth = health,
 		// then see what we must do in respect of frames.
 		oldhealth = health;
+
+		// check special case - if last frame of either left or right death,
+		// exit.
+		if ((x == LOC_PLAYER_DIE_X_RIGHT && y == LOC_PLAYER_DIE_Y_RIGHT)
+				|| (x == LOC_PLAYER_DIE_X_LEFT && y == LOC_PLAYER_DIE_Y_LEFT)
+				&& animation == LOC_PLAYER_DIE_FRAMES - 1) {
+			// okay dead still. bye.
+			return;
+		}
 
 		// same frame as before. advance a frame if time is right
 		if (x == frameX && y == frameY) {
@@ -450,11 +459,11 @@ public class PlayerObject extends GameObject {
 	public void setFrameIndex(int n) {
 		currentframe = n;
 	}
-	
+
 	public void setSpawn(int spawn) {
 		this.spawn = spawn;
 	}
-	
+
 	public int getSpawn() {
 		return spawn;
 	}
