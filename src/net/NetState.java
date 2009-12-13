@@ -8,6 +8,7 @@ public class NetState {
 	private int seq_num = 0;
 	
 	public Hashtable<Integer, NetObject> objectList = new Hashtable<Integer, NetObject>();
+	public Hashtable<Integer, Action> actionList = new Hashtable<Integer, Action>();
 	
 	public NetState() { 
 	}
@@ -21,6 +22,7 @@ public class NetState {
 	
 	public void clear() {
 		objectList.clear();
+		actionList.clear();
 	}
 	
 	public Hashtable<Integer, NetObject> getHashtable() {
@@ -29,5 +31,13 @@ public class NetState {
 	
 	public Collection<NetObject> getNetObjects() { 
 		return objectList.values(); 
-	} 
+	}
+	
+	public void addAction(Action a) {
+		actionList.put(a.getID(), a);
+	}
+	
+	public Collection<Action> getActions() { 
+		return actionList.values();
+	}
 }

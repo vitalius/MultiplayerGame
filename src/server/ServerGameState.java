@@ -146,6 +146,7 @@ public class ServerGameState {
 			}
 		}
 
+		
 		// check for bullet collisions
 		// this could be added above to speed things up but for now
 		// I want it separate for simplicity sake

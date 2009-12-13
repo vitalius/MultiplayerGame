@@ -377,6 +377,15 @@ public class Client extends ScrollingScreenGame {
 
 		keyboardMovementHandler(deltaMs);
 
+		//Explosions
+		for(Action a : netStateMan.getState().getActions()) {
+			Explode boomy = new Explode(SPRITES + "#Explosion");
+			boomy.setCenterPosition(a.getArg());
+			front.add(boomy);
+			System.out.println("Boom:"+a.getArg());
+		}
+		
+		
 		// better but still broken.
 		//if (p != null)
 		//	updateLevelRender(new Vector2D(

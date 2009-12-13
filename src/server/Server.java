@@ -114,6 +114,7 @@ public class Server extends ScrollingScreenGame {
 		pe.clear();
 		gameObjectLayers.add(gameState.getLayer());
 		pe.manageViewableSet(gameState.getLayer());
+		
 	}
 
 	// this can be removed when the server no longer needs to test player
@@ -182,7 +183,7 @@ public class Server extends ScrollingScreenGame {
 			//if (oldInput.equals(input))
 			//	return;
 			String action = new Protocol().encodeAction(input);
-			System.out.println(input.weapon);
+			//System.out.println(input.weapon);
 			processAction(action, deltaMs);
 			oldInput.copy(input);
 		}

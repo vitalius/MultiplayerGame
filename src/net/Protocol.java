@@ -121,6 +121,13 @@ public class Protocol {
 		return returnAction;
 	}
 	
+	
+	/**
+	 * Encoding game state into a string
+	 * 
+	 * @param gs
+	 * @return
+	 */
 	public String encode(NetState gs) {
 		String output = gs.getSeqNum()+"#";
 		
@@ -137,11 +144,30 @@ public class Protocol {
 			output += p.getFrameIndex();
 			output += "%";
 		}
+		
+		output += "#";
+		
+		for (Action a : gs.getActions()) {
+			output += a.getID() + "$";
+			output += a.getType() + "$";
+			output += a.getArg().getX() + "$";
+			output += a.getArg().getY() + "$";
+			output += "@";
+		}
 		//System.out.println("Protocol encode output: " + output);
 		return output;
 	}
 
-
+	/**
+	 * Decoding a NetState from a string
+	 * 
+	 * FORMAT:
+	 * 			|---- this section repeats for multiple objects, delim by '%' ---| |-- Actions ------|
+	 *   SEQ_NUM#OBJ_ID$OBJ_TYPE$POS_X$POS_Y$V_X$V_Y$ROTATION$HEALTH$FRAME_INDEX$%#ACTION_ID$TYPE_ID$@
+	 * 
+	 * @param input
+	 * @return
+	 */
 	public NetState decode(String input) {
 		NetState retState = new NetState();
 		String[] token = input.split("#");
@@ -171,6 +197,24 @@ public class Protocol {
 			n.setRotation(r);
 			n.setHealth(h);
 			retState.add(n);
+		}
+		
+		/* Check if there are actions that need to be parsed */
+		if (token.length < 3)
+			return retState;
+
+		String action[] = token[2].split("@");
+		for (int i=0; i<action.length; i++) {
+			String attr[] = action[i].split("\\$");
+			
+			int id = Integer.valueOf(attr[0]).intValue();
+			int type = Integer.valueOf(attr[1]).intValue();
+			double x = Double.valueOf(attr[2]).doubleValue();
+			double y = Double.valueOf(attr[3]).doubleValue();
+			
+			Action a = new Action(id, type);
+			a.arg0 = new Vector2D(x,y);
+			retState.addAction(a);
 		}
 		
 		return retState;

@@ -41,5 +41,8 @@ public class NetworkEngine {
 	
 	public void update() {
 		bcaster.spam(prot.encode(gameserver.gameState.getNetState()));
+		
+		/* Action events such as explosions are sent only once */
+		gameserver.gameState.getNetState().actionList.clear();
 	}
 }

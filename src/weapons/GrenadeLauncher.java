@@ -1,5 +1,6 @@
 package weapons;
 
+import net.Action;
 import server.ServerGameState;
 import world.GameObject;
 import world.PlayerObject;
@@ -71,6 +72,10 @@ public class GrenadeLauncher extends Weapon {
 		grenade.setActivation(false);
 		// explode
 		Vector2D shootLoc = grenade.getCenterPosition();
+		
+		// sending explosion to clients
+		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.EXPLOSION,shootLoc)); 
+		
 		Vector2D shootVec = new Vector2D(1,0);
 		for (int i = 0; i < BULLET_NUM; i++) {
 			GameObject bullet = bullets.remove(0);// get from oldest one.

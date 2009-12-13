@@ -30,6 +30,11 @@ public class NetStateManager {
 		for(NetObject n : d.getNetObjects()) {
 			current.objectList.put(n.getId(), n);
 		}
+		
+		for(Action a : d.getActions()) {
+			current.actionList.put(a.getID(), a);
+		}
+		
 		current.setSeqNum(d.getSeqNum());
 		
 		/*Hashtable<Integer, NetObject> objectList = current.getHashtable();		

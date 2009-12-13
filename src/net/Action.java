@@ -13,6 +13,7 @@ public class Action {
 	public static final int SHOOT           = 7;
 	public static final int CHANGE_HEALTH 	= 8;
 	public static final int CHANGE_JETPACK 	= 9;
+	public static final int EXPLOSION       = 10;
 
 	public boolean jet    = false;
 	public boolean left  = false;
