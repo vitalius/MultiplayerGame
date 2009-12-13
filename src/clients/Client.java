@@ -76,7 +76,7 @@ public class Client extends ScrollingScreenGame {
 
 	public String SERVER_IP = "127.0.0.1";
 
-	public static final int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
+	public static final int SCREEN_WIDTH = 1280, SCREEN_HEIGHT = 768;
 	private static final int MAXJETFUEL = 2000;
 
 	boolean keyPressed = false;
@@ -129,7 +129,6 @@ public class Client extends ScrollingScreenGame {
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1, JIGSHAPE.CIRCLE,
 				Color.WHITE);
-		// 1280, SCREEN_HEIGHT = 1024
 		PaintableCanvas.loadDefaultFrames("blackback", SCREEN_WIDTH,
 				SCREEN_HEIGHT, 1, JIGSHAPE.RECTANGLE, Color.black);
 
@@ -177,14 +176,10 @@ public class Client extends ScrollingScreenGame {
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
 
-		// Uncommet only when set heap space higher..
-		//http://wiki.eclipse.org/FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F
-		///*
 		int fudgex = -62, fudgey = 7;
 		Box level = new Box(LEVEL1 + "#LEVEL1");
 		level.setPosition(new Vector2D(level.getWidth() /2 + fudgex, level.getHeight() /2 + fudgey ));
 		levelmap.add(level);
-		//*/
 
 		// Control of layering
 		gameObjectLayers.add(background);
