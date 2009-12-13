@@ -179,12 +179,12 @@ public class Client extends ScrollingScreenGame {
 
 		// Uncommet only when set heap space higher..
 		//http://wiki.eclipse.org/FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F
-		/*
+		///*
 		int fudgex = -62, fudgey = 7;
 		Box level = new Box(LEVEL1 + "#LEVEL1");
 		level.setPosition(new Vector2D(level.getWidth() /2 + fudgex, level.getHeight() /2 + fudgey ));
 		levelmap.add(level);
-		*/
+		//*/
 
 		// Control of layering
 		gameObjectLayers.add(background);
