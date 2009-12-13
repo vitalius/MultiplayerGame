@@ -42,10 +42,7 @@ public class DeathMatch extends Match {
 		}
 	}
 	
-	public void loadLevel(int levelNum) {
-		// clean out all the objects first
-		Server.getServer().clear();
-		
+	public void loadLevel(int levelNum) {		
 		// get the next level number
 		curLevel = levelNum;
 		
