@@ -202,11 +202,12 @@ public class Client extends ScrollingScreenGame {
 	 * Handle keyboard strokes for movement
 	 */
 	public void keyboardMovementHandler(long deltaMs) {
-		if (!netStateMan.getState().objectList.containsKey(player.getID()))
+		if (!netStateMan.getState().objectList.containsKey(player.getID())) {
+			//System.out.println("Client keyboard: no ID");
 			return;
+		}
 
 		keyboard.poll();
-
 		if (netStateMan.getState().objectList.get(player.getID()).getHealth() > 0) {
 			input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN)
 					|| keyboard.isPressed(KeyEvent.VK_S);
@@ -239,6 +240,16 @@ public class Client extends ScrollingScreenGame {
 			} else {
 				input.weapon = 0;
 			}
+			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
+					mouse.getLocation().getY()));
+			System.out.println("Client keyboard: alive" + input.spawn);
+			player.move(input);
+		} else {
+			input.crouch = false;
+			input.jet = false;
+			input.left = false;
+			input.right = false;
+			input.jump = false;
 			if (keyboard.isPressed(KeyEvent.VK_F1)) {
 				input.spawn = 1;
 			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
@@ -252,15 +263,7 @@ public class Client extends ScrollingScreenGame {
 			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
 					mouse.getLocation().getY()));
-			player.move(input);
-		} else {
-			input.crouch = false;
-			input.jet = false;
-			input.left = false;
-			input.right = false;
-			input.jump = false;
-			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
-					mouse.getLocation().getY()));
+			System.out.println("Client keyboard: dead" + input.spawn);
 			player.move(input);
 		}
 		if (keyboard.isPressed(KeyEvent.VK_B)) {
@@ -284,6 +287,7 @@ public class Client extends ScrollingScreenGame {
 			Action a = netStateMan.prot.decodeAction(msgQueue.poll());
 			if (a.getType() == Action.JOIN_ACCEPT) {
 				Integer newID = Integer.valueOf(a.getMsg()).intValue();
+				//System.out.println("Client.artWeInGame ID: " + newID);
 				player.setID(newID);
 				input.setID(newID);
 				player.state = Player.JOINED;

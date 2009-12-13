@@ -104,8 +104,6 @@ public class Server extends ScrollingScreenGame {
 
 		netStateMan.update(gameState.getNetState());
 		
-		
-		
 		match = new DeathMatch(levels);
 		match.loadLevel(1);
 		match.startMatch();
@@ -242,7 +240,7 @@ public class Server extends ScrollingScreenGame {
 		tcpSender.sendSocket(clientIP, netStateMan.prot.encodeAction(response));
 		
 		// Add clients IP to the broadcasting list 
-		ne.addPlayer(a.getID(), a.getMsg());
+		ne.addPlayer(playerID, a.getMsg());
 	}
 	
 	/**

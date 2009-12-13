@@ -88,7 +88,7 @@ public class DeathMatch extends Match {
 	@Override
 	public void addPlayer(PlayerObject p) {
 		players.add(p);
-		//p.setActivation(false);
+		p.setActivation(false);
 		p.setHealth(0); // this will be zero until we spawn
 		p.clearKills();
 		p.clearDeaths();

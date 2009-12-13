@@ -259,7 +259,7 @@ public class PlayerObject extends GameObject {
 		clamp();
 		explodeGrenades();
 		updateFrame(deltaMs);
-		System.out.println("PlayerObject.updatePlayerState loc: " + this.getPosition().toString());
+		//System.out.println("PlayerObject.updatePlayerState loc: " + this.getPosition().toString());
 	}
 
 	public void clamp() {

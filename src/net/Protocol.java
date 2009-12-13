@@ -1,5 +1,6 @@
 package net;
 
+import world.GameObject;
 import jig.engine.util.Vector2D;
 
 /**
@@ -104,7 +105,8 @@ public class Protocol {
 			returnAction.shoot = Integer.valueOf(token[7]).intValue() == 1 ? true : false;
 			returnAction.weapon = Integer.valueOf(token[8]);
 			returnAction.spawn =  Integer.valueOf(token[9]);
-			//if (returnAction.spawn > 0) System.out.println("Protocol decodeAction Spawn: " + returnAction.spawn);
+			//if (returnAction.spawn > 0) 
+			//	System.out.println("Protocol decodeAction Spawn: " + returnAction.spawn);
 			returnAction.arg0 = new Vector2D(Double.valueOf(token[10]).doubleValue(),
 					Double.valueOf(token[11]).doubleValue());
 			break;
@@ -137,7 +139,7 @@ public class Protocol {
 		String output = gs.getSeqNum()+"#";
 		
 		for (NetObject p : gs.getNetObjects()) {
-			if (!p.isActive()) continue; // don't send inactives
+			if (!p.isActive() && p.getType() != GameObject.PLAYER) continue; // don't send inactives
 			output += p.getId()+"$";
 			output += p.getType()+"$";
 			output += (float)p.getPosition().getX()+"$";
