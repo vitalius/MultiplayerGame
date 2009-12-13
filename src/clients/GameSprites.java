@@ -39,7 +39,7 @@ public class GameSprites {
 			spriteList.put(no.getId(), go);
 			layer.add(go);
 			break;
-		case GameObject.SMALLBOX:
+		case GameObject.CRATE:
 			go = new GameObject(SPRITES + "#Crate");
 			spriteList.put(no.getId(), go);
 			layer.add(go);

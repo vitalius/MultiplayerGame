@@ -31,7 +31,7 @@ public abstract class Match {
 		//}
 		levels = l;
 		curLevel = -1; // load level will inc this so level 0 will be loaded first
-		levelLen = 60000; // default is one minute
+		levelLen = 60000 * 10; // default is 10 minute
 	}
 	
 	// override to do timed stuff.
