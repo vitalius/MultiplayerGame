@@ -268,8 +268,9 @@ public class PlayerObject extends GameObject {
 		}
 	}
 
+	static int stdspeed = 250;
 	int oldhealth = MAXHEALTH;
-	int animationControl = 251;
+	int animationControl = 250;
 
 	public void updateFrame(long deltaMs) {
 
@@ -284,8 +285,6 @@ public class PlayerObject extends GameObject {
 		int aniMax = aniframes;
 		int loopenabled = animationloop;
 
-		boolean freezeframe = false;
-
 		// Check if health decreased or dead.
 		// health decrease should make player use first death frame then reset.
 		if (health < oldhealth || health == 0) {
@@ -298,7 +297,7 @@ public class PlayerObject extends GameObject {
 			}
 			aniMax = LOC_PLAYER_DIE_FRAMES;
 			loopenabled = LOC_PLAYER_DIE_REPEAT;
-			freezeframe = true;
+			animationControl = -250;
 		}
 
 		// jetpack on
@@ -312,6 +311,7 @@ public class PlayerObject extends GameObject {
 			}
 			aniMax = LOC_PLAYER_FLYING_FRAMES;
 			loopenabled = LOC_PLAYER_FLYING_REPEAT;
+			animationControl = 0;
 		}
 
 		// jumping
@@ -325,6 +325,7 @@ public class PlayerObject extends GameObject {
 			}
 			aniMax = LOC_PLAYER_JUMP_FRAMES;
 			loopenabled = LOC_PLAYER_JUMP_REPEAT;
+			animationControl = 0;
 		}
 		// running is key pressed
 		else if (keyLeftRight != 0) {
@@ -337,6 +338,8 @@ public class PlayerObject extends GameObject {
 			}
 			aniMax = LOC_PLAYER_RUN_FRAMES;
 			loopenabled = LOC_PLAYER_RUN_REPEAT;
+			animationControl = Math.abs((int)(this.getVelocity().getY() / 2));
+			System.out.println(this.getVelocity().getY()/2 + " playerobject");
 		}
 		// Looks like standing this time. Or last frame of jump if still
 		// changing in y axis.
@@ -365,7 +368,7 @@ public class PlayerObject extends GameObject {
 				loopenabled = LOC_PLAYER_JUMP_REPEAT;
 				animation = LOC_PLAYER_JUMP_FRAMES - 1;
 			}
-
+			animationControl = 0;
 		}
 
 		// okay now set oldhealth = health,
@@ -374,9 +377,7 @@ public class PlayerObject extends GameObject {
 
 		// same frame as before. advance a frame if time is right
 		if (x == frameX && y == frameY) {
-			// is it time yet? if not wait.
 			// advance, if enabled. otherwise stay at last frame.
-			animationControl = 0;
 			if (animationloop != 0)
 				animation = (animation + 1) % aniframes;
 			else if (animation != aniframes - 1)
@@ -391,10 +392,6 @@ public class PlayerObject extends GameObject {
 			currentframe = 0;
 			animationloop = loopenabled;
 			// freeze by pausing animation for extra time.
-			if (freezeframe)
-				animationControl = -250;
-			else
-				animationControl = 0;
 		}
 
 		// Now do final frame calculation.
