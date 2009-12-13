@@ -79,7 +79,7 @@ public class Server extends ScrollingScreenGame {
 				JIGSHAPE.CIRCLE, Color.GREEN);
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
-		PaintableCanvas.loadDefaultFrames("smallbox", 64, 64, 1,
+		PaintableCanvas.loadDefaultFrames("crate", 64, 64, 1,
 				JIGSHAPE.RECTANGLE, Color.blue);
 		PaintableCanvas.loadDefaultFrames("drum", 64, 64, 1,
 				JIGSHAPE.RECTANGLE, Color.cyan);
@@ -332,6 +332,7 @@ public class Server extends ScrollingScreenGame {
 		inputHandler(deltaMs);
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(playerObject.getCenterPosition().getY()+mousePos.getY())/2); // centers on player
+		System.out.println("Server update player loc: " + playerObject.getCenterPosition());
 	}
 
 	public static void main(String[] vars) {

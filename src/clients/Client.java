@@ -491,17 +491,17 @@ public class Client extends ScrollingScreenGame {
 			int z = 0;
 			for (z = 0; z < c.bListen.ips.size(); z++)
 				A[z + 1] = c.bListen.ips.get(z);
-			A[z + 1] = "<Internet Game>";
+			A[z + 1] = "<Manual IP input>";
 
 			String input = (String) JOptionPane.showInputDialog(null,
-					"Choose now...", "The Choice of a Lifetime",
+					"Servers found:", "Server ip address",
 					JOptionPane.QUESTION_MESSAGE, null, A, // Array of choices
 					A[0]); // Initial choice
 			System.out.println(input);
 			if (input == null) {
 				c.bListen.close();
 				System.exit(0);
-			} else if (input.compareTo("<Internet Game>") == 0) {
+			} else if (input.compareTo("<Manual IP input>") == 0) {
 				c.SERVER_IP = c.getIP();
 				if (c.SERVER_IP == null) {
 					c.bListen.close();
