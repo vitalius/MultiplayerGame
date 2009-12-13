@@ -192,11 +192,10 @@ public class Client extends ScrollingScreenGame {
 		// http://wiki.eclipse.org/
 		// FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F
 		// /*
-		// int fudgex = -62, fudgey = 7;
-		// Box level = new Box(LEVEL1 + "#LEVEL1");
-		// level.setPosition(new Vector2D(level.getWidth() /2 + fudgex,
-		// level.getHeight() /2 + fudgey ));
-		// levelmap.add(level);
+		 int fudgex = -40, fudgey = 5;
+		 Box level = new Box(LEVEL1 + "#LEVEL1");
+		 level.setPosition(new Vector2D(-level.getWidth()/2 + fudgex,-level.getHeight()/2 + fudgey));
+		 levelmap.add(level);
 		// */
 
 		// Control of layering
@@ -404,9 +403,6 @@ public class Client extends ScrollingScreenGame {
 		for (Action a : netStateMan.getState().getActions()) {
 			addBoom(a.getArg());
 		}
-
-		// if (p != null)
-		// updateLevelRender();
 	}
 
 	private void addBoom(Vector2D loc) {
@@ -431,37 +427,9 @@ public class Client extends ScrollingScreenGame {
 
 	}
 
-	private void updateLevelRender() {
-
-		/*
-		 * Vector2D off = new Vector2D(-(int) (offset.getX() % 425), -(int)
-		 * (offset.getY() % 150));
-		 * 
-		 * Vector2D wintopleft = screenToWorld(off); int xx = (int)
-		 * (wintopleft.getX() + (4250 / 2)) / 425; int yy = (int)
-		 * (wintopleft.getY() + (1500 / 2)) / 150;
-		 * 
-		 * System.out.println(xx + " " + yy + " " + wintopleft.toString() +
-		 * " client");
-		 * 
-		 * if (xx < 0) xx = 0; if (yy < 0) yy = 0; if (xx > 9) xx = 9; if (yy >
-		 * 9) yy = 9;
-		 * 
-		 * // account for difference of position in picture vs real objects on
-		 * // server int fudgex = -62, fudgey = 7; for (int z = 0; z <=
-		 * SCREEN_WIDTH / 425 + 1; z++) { for (int w = 0; w <= SCREEN_HEIGHT /
-		 * 150 + 2; w++) { Box level = (Box) levelmap.get(w + z SCREEN_WIDTH /
-		 * 425); level.setPosition(new Vector2D(z 425 + off.getX() + fudgex, w
-		 * 150 + off.getY() + fudgey)); if (xx + z < 10 && yy + w < 10 && xx + z
-		 * >= 0 && yy + w >= 0) { level.setFrame((xx + z) + (yy + w) 10);
-		 * level.setActivation(true); } else { level.setActivation(false); } } }
-		 */
-	}
-
 	public void render(RenderingContext rc) {
 		black.render(rc);// draw at screen coordities.
 		super.render(rc);
-		levelmap.render(rc);
 		GUI.render(rc);
 		// background.render(rc);
 		// connection status
@@ -536,7 +504,7 @@ public class Client extends ScrollingScreenGame {
 			} else if (input.compareTo("<Internet Game>") == 0) {
 				c.SERVER_IP = c.getIP();
 				if (c.SERVER_IP == null) {
-					//c.bListen.close();
+					c.bListen.close();
 					System.exit(0);
 				}
 				as = 1;
