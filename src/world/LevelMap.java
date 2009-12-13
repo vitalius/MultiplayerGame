@@ -30,7 +30,7 @@ public class LevelMap {
 	}
 	
 	// Build world from level data.
-	public void buildLevel(final ServerGameState gs) {
+	public void buildLevel() {
 		/*for (int i = 0; i < playerInitSpots.size(); i++) {
 			// GameObject not applicable due to being a place to spawn not an object.
 			GameObject go = new GameObject("playerSpawn");
@@ -38,7 +38,7 @@ public class LevelMap {
 			System.out.println(go.getPosition());
 			gs.add(go, GameObject.PLAYERSPAWN);
 		}*/
-
+		ServerGameState gs = ServerGameState.getGameState();
 		// Create objects based on object type.
 		for (int i = 0; i < Objects.size(); i++) {
 			GameObject go = Objects.get(i);

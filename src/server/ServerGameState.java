@@ -66,23 +66,18 @@ public class ServerGameState {
 	public void add(GameObject go) {
 		if (go.type == GameObject.STATIC) {
 			addStatic(go);
-			return;
-		}
-		addDynamic(go);
+		} else {
+			addDynamic(go);
+		}	
 	}
 
 	// add dynamic objects such as boxes
 	public int addDynamic(GameObject go) {
 		int id = getUniqueId();
 		go.setID(id);
-		if (goTable.containsKey(id))
-			return id;
+		if (goTable.containsKey(id)) return id;
 
-		if (go.type != GameObject.STATIC) {
-			layer.add(go);
-		} else {
-			return -1;
-		}
+		layer.add(go);
 		goTable.put(id, go);
 		netState.add(new NetObject(id, go.getPosition(), go.type));
 

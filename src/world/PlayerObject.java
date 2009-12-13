@@ -41,6 +41,9 @@ public class PlayerObject extends GameObject {
 	// weapons
 	private Weapon activeWeapon;
 	private ArrayList<Weapon> weapons;
+	
+	// spawn point
+	private int spawn;
 
 	// statistics
 	private int kills;
@@ -197,7 +200,7 @@ public class PlayerObject extends GameObject {
 
 	// walking, running and floating
 	public void procInput(int leftRight, int jumpCrouch, boolean jet,
-			boolean crouch, boolean run, boolean shoot, int weapon,
+			boolean crouch, boolean run, boolean shoot, int weapon, int spawn,
 			Vector2D cursor, BodyLayer<GameObject> layer, long deltaMs) {
 
 		if (this.getCenterPosition().getX() > cursor.getX()) {
@@ -236,6 +239,10 @@ public class PlayerObject extends GameObject {
 		if (weapon >= 1 && weapon <= 3) {
 			activeWeapon = weapons.get(weapon - 1);
 		}
+		//System.out.println("PlayerObject procInput spawn")
+		if (spawn != 0 && this.health <= 0) {
+			this.spawn = spawn;
+		}
 	}
 
 	public void updatePlayerState(long deltaMs) {
@@ -252,6 +259,7 @@ public class PlayerObject extends GameObject {
 		clamp();
 		explodeGrenades();
 		updateFrame(deltaMs);
+		System.out.println("PlayerObject.updatePlayerState loc: " + this.getPosition().toString());
 	}
 
 	public void clamp() {
@@ -444,5 +452,13 @@ public class PlayerObject extends GameObject {
 
 	public void setFrameIndex(int n) {
 		currentframe = n;
+	}
+	
+	public void setSpawn(int spawn) {
+		this.spawn = spawn;
+	}
+	
+	public int getSpawn() {
+		return spawn;
 	}
 }

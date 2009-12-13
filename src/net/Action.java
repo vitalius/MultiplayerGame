@@ -22,6 +22,7 @@ public class Action {
 	public boolean jump  = false;
 	public boolean shoot = false;
 	public int weapon = 0;
+	public int spawn = 0;
 
 	private int id;
 	private int type;
@@ -103,7 +104,7 @@ public class Action {
 	public boolean equals(Action a) {
 		if (a.jet == jet && a.left == left && a.right == right &&
 				a.crouch == crouch && a.shoot == shoot && a.jump == jump &&
-				a.weapon == weapon )
+				a.weapon == weapon && a.spawn == spawn)
 			return true;
 		return false;
 	}
@@ -121,6 +122,7 @@ public class Action {
 		jump = a.jump;
 		shoot = a.shoot;
 		weapon = a.weapon;
+		spawn = a.spawn;
 	}
 	
 	public int getType () { return type; }

@@ -239,6 +239,17 @@ public class Client extends ScrollingScreenGame {
 			} else {
 				input.weapon = 0;
 			}
+			if (keyboard.isPressed(KeyEvent.VK_F1)) {
+				input.spawn = 1;
+			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
+				input.spawn = 2;
+			} else if (keyboard.isPressed(KeyEvent.VK_F3)) {
+				input.spawn = 3;
+			} else if (keyboard.isPressed(KeyEvent.VK_F4)) {
+				input.spawn = 4;
+			} else {
+				input.spawn = 0;
+			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
 					mouse.getLocation().getY()));
 			player.move(input);
