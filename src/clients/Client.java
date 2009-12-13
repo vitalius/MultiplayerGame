@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import javax.swing.JOptionPane;
-
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import physics.Box;
@@ -26,7 +25,6 @@ import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
-
 import clients.TcpListener;
 import clients.TcpSender;
 
@@ -110,6 +108,11 @@ public class Client extends ScrollingScreenGame {
 	FontResource fontWhite = ResourceFactory.getFactory().getFontResource(
 			new Font("Sans Serif", Font.BOLD, 24), Color.white, null);
 	public String gameStatusString = "";
+	FontResource fontMsg = ResourceFactory.getFactory().getFontResource(
+			new Font("Sans Serif", Font.BOLD, 12), Color.white, null);
+	String msg = "";
+	
+	public BroadcastListener bListen;
 
 	public Client() {
 
@@ -118,6 +121,12 @@ public class Client extends ScrollingScreenGame {
 		ResourceFactory.getFactory().loadResources("res",
 				"2Destruction-Resources.xml");
 		// newgame = new Button(SPRITE_SHEET + "#Start");
+	}
+	
+	public void startListenServer() {
+		state = new SyncState();
+		bListen = new BroadcastListener(state);
+		bListen.start();
 	}
 
 	public void runSetup() {
@@ -143,11 +152,11 @@ public class Client extends ScrollingScreenGame {
 		fre.setActivation(true);
 
 		// stateQueue = new LinkedBlockingQueue<String>(1);
-		state = new SyncState();
+		//state = new SyncState();
 
 		/* Start thread to sync gameState with server */
-		BroadcastListener bListen = new BroadcastListener(state);
-		bListen.start();
+		//BroadcastListener bListen = new BroadcastListener(state);
+		//bListen.start();
 
 		/* Thread with TCP networking for server specific commands */
 		TcpListener tcpListen = new TcpListener(NetworkEngine.TCP_CLIENT_PORT,
@@ -180,10 +189,10 @@ public class Client extends ScrollingScreenGame {
 		// Uncommet only when set heap space higher..
 		//http://wiki.eclipse.org/FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F
 		///*
-		int fudgex = -62, fudgey = 7;
-		Box level = new Box(LEVEL1 + "#LEVEL1");
-		level.setPosition(new Vector2D(level.getWidth() /2 + fudgex, level.getHeight() /2 + fudgey ));
-		levelmap.add(level);
+		//int fudgex = -62, fudgey = 7;
+		//Box level = new Box(LEVEL1 + "#LEVEL1");
+		//level.setPosition(new Vector2D(level.getWidth() /2 + fudgex, level.getHeight() /2 + fudgey ));
+		//levelmap.add(level);
 		//*/
 
 		// Control of layering
@@ -366,8 +375,10 @@ public class Client extends ScrollingScreenGame {
 				int hframe = 25 - (int) ((((double) hl) / 2000.0) * 25);
 				// System.out.println(hframe + " hframe, client");
 				health.setFrame(hframe);
+				msg = "";
 			} else {
 				health.setFrame(25);
+				msg = "Dead - press f1-4 to respawn.";
 			}
 			if (jetFuel > 0) {
 				int jframe = 25 - (int) ((((double) jetFuel) / 2000.0) * 25);
@@ -460,17 +471,27 @@ public class Client extends ScrollingScreenGame {
 		levelmap.render(rc);
 		GUI.render(rc);
 		// background.render(rc);
+		// connection status
 		fontWhite.render(gameStatusString, rc, AffineTransform
 				.getTranslateInstance(180, 7));
+		// game related message.
+		fontMsg.render(msg, rc, AffineTransform
+				.getTranslateInstance(SCREEN_WIDTH/2 - fontMsg.getStringWidth(msg)/2, SCREEN_HEIGHT - 16));
 	}
 
 	public static void main(String[] vars) {
 		Client c = new Client();
 		int as = 0;
-		// unfinished yet
+		c.startListenServer();
 		while (as == 0) {
+			System.out.println(c.bListen.ips.size() + " size, client entry");
+			for(String ahh : c.bListen.ips)
+				System.out.println(ahh + " client entry");
+
 			String s = JOptionPane
 					.showInputDialog("Enter server IP address or empty if want 127.0.0.1");
+			if(s == null)
+				System.exit(0);
 			if (s.compareTo("") == 0)
 				s = "127.0.0.1";
 			String[] a = s.split("\\.");
