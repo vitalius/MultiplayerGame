@@ -7,6 +7,8 @@ import jig.engine.util.Vector2D;
  * and also decode classes from information String
  * 
  * @author vitaliy
+ * @author Josh
+ * @author Rolf
  *
  */
 public class Protocol {
@@ -42,6 +44,7 @@ public class Protocol {
 				output += (a.jump  ? "1" : "0") + "#";
 				output += (a.shoot ? "1" : "0") + "#";
 				output += a.weapon + "#";
+				output += a.spawn + "#";
 				output += a.getArg().getX() + "#";
 				output += a.getArg().getY() + "#";
 				break;
@@ -100,8 +103,10 @@ public class Protocol {
 			returnAction.jump  = Integer.valueOf(token[6]).intValue() == 1 ? true : false;
 			returnAction.shoot = Integer.valueOf(token[7]).intValue() == 1 ? true : false;
 			returnAction.weapon = Integer.valueOf(token[8]);
-			returnAction.arg0 = new Vector2D(Double.valueOf(token[9]).doubleValue(),
-					Double.valueOf(token[10]).doubleValue());
+			returnAction.spawn =  Integer.valueOf(token[9]);
+			//if (returnAction.spawn > 0) System.out.println("Protocol decodeAction Spawn: " + returnAction.spawn);
+			returnAction.arg0 = new Vector2D(Double.valueOf(token[10]).doubleValue(),
+					Double.valueOf(token[11]).doubleValue());
 			break;
 		case Action.SHOOT:
 			x = Double.valueOf(token[2]).doubleValue();

@@ -21,6 +21,8 @@ import jig.engine.PaintableCanvas;
 import jig.engine.PaintableCanvas.JIGSHAPE;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.util.Vector2D;
+import match.DeathMatch;
+import match.Match;
 import net.Action;
 import net.NetStateManager;
 import net.Protocol;
@@ -33,16 +35,14 @@ import net.Protocol;
 public class Server extends ScrollingScreenGame {
 
 	private static final int SCREEN_WIDTH = 1280;
-	private static final int SCREEN_HEIGHT = 1024;
+	private static final int SCREEN_HEIGHT = 768;
+	
+	private static Server server;
 
-	/*
-	 * This is a static, constant time between frames, all clients run as fast
-	 * as the server runs
-	 */
 	private static int NET_MS = 30;
 	private long netMS;
 
-	private NetStateManager netState;
+	private NetStateManager netStateMan;
 	public NetworkEngine ne;
 	private CattoPhysicsEngine pe;
 	public ServerGameState gameState;
@@ -51,6 +51,7 @@ public class Server extends ScrollingScreenGame {
 	private int playerID;
 	private PlayerObject playerObject;
 	private Action oldInput;
+	private Match match;
 
 	public LinkedBlockingQueue<String> msgQueue;
 	
@@ -58,8 +59,10 @@ public class Server extends ScrollingScreenGame {
 
 	public Server() {
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
+		
+		server = this;
 
-		netState = new NetStateManager();
+		netStateMan = new NetStateManager();
 		pe = new CattoPhysicsEngine(new Vector2D(0, 300));
 		gameState = new ServerGameState();
 		ne = new NetworkEngine(this);
@@ -83,7 +86,7 @@ public class Server extends ScrollingScreenGame {
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
-				JIGSHAPE.RECTANGLE, Color.WHITE);
+				JIGSHAPE.CIRCLE, Color.WHITE);
 		
 		// Load all levels, server mode
 		levels = new LevelSet("/res/Levelset.txt", true);
@@ -91,30 +94,38 @@ public class Server extends ScrollingScreenGame {
 			System.err.println("Error: Levels loading failed.\n");
 			System.exit(1);
 		}
-		// Get specified level.
-		level = levels.getThisLevel(1);
-		if (level == null) {
-			System.err.println("Error: Level wasn't correctly loaded.\n");
-			System.exit(1);
-		}
-		level.buildLevel(gameState);
 		
 		// Add a player to test movement, remove when not needed
 		playerObject = new PlayerObject("player");
 		playerObject.set(100, 1.0, 1.0, 0.0);
-		Vector2D a = level.playerInitSpots.get(0);
-		playerObject.setPosition(new Vector2D(a.getX(), a.getY()));
 		playerID = 65001; // bleh
 		gameState.addPlayer(playerID, playerObject);
 		oldInput = new Action(playerID);
 
-		netState.update(gameState.getNetState());
+		netStateMan.update(gameState.getNetState());
 		
-		gameObjectLayers.clear();
-		pe.clear();
+		
+		
+		match = new DeathMatch(levels);
+		match.loadLevel(1);
+		match.startMatch();
+		match.addPlayer(playerObject);
+		
 		gameObjectLayers.add(gameState.getLayer());
 		pe.manageViewableSet(gameState.getLayer());
-		
+	}
+	
+	public static Server getServer() {
+		return server;
+	}
+	
+	/**
+	 * clear gameobject layers and physics layers
+	 * 
+	 */
+	public void clear() {
+		gameObjectLayers.clear();
+		pe.clear();
 	}
 
 	// this can be removed when the server no longer needs to test player
@@ -135,7 +146,7 @@ public class Server extends ScrollingScreenGame {
 			playerID = 65001; // bleh
 			gameState.addPlayer(playerID, playerObject);
 			oldInput = new Action(playerID);
-			netState.update(gameState.getNetState());
+			netStateMan.update(gameState.getNetState());
 
 		}
 		
@@ -177,6 +188,17 @@ public class Server extends ScrollingScreenGame {
 			} else {
 				input.weapon = 0;
 			}
+			if (keyboard.isPressed(KeyEvent.VK_F1)) {
+				input.spawn = 1;
+			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
+				input.spawn = 2;
+			} else if (keyboard.isPressed(KeyEvent.VK_F3)) {
+				input.spawn = 3;
+			} else if (keyboard.isPressed(KeyEvent.VK_F4)) {
+				input.spawn = 4;
+			} else {
+				input.spawn = 0;
+			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation()
 					.getX(), mouse.getLocation().getY()));
 
@@ -210,13 +232,14 @@ public class Server extends ScrollingScreenGame {
 		// Initializing new player 
 		PlayerObject player = new PlayerObject("player");
 		player.set(100, 1.0, 1.0, 0.0);
-		Vector2D spawn = level.playerInitSpots.get(1);
-		player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
+		//Vector2D spawn = level.playerInitSpots.get(1);
+		//player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
+		match.addPlayer(player);
 		gameState.addPlayer(playerID, player);
 		
 		// Sending player's ID as a reply to the client 
 		response = new Action(0, Action.JOIN_ACCEPT, playerID.toString());
-		tcpSender.sendSocket(clientIP, netState.prot.encodeAction(response));
+		tcpSender.sendSocket(clientIP, netStateMan.prot.encodeAction(response));
 		
 		// Add clients IP to the broadcasting list 
 		ne.addPlayer(a.getID(), a.getMsg());
@@ -236,7 +259,7 @@ public class Server extends ScrollingScreenGame {
 	 */
 	public void processAction(String action, long deltaMs) {
 
-		Action a = netState.prot.decodeAction(action);
+		Action a = netStateMan.prot.decodeAction(action);
 
 		// Get hashtable of all physics objects currently in the game
 		Hashtable<Integer, GameObject> objectList = gameState.getHashtable();
@@ -271,7 +294,8 @@ public class Server extends ScrollingScreenGame {
 			if (a.right)
 				++x;
 
-			playerObject.procInput(x, y, a.jet, false, false, a.shoot, a.weapon, a.arg0, gameState.getLayer(), deltaMs);
+			playerObject.procInput(x, y, a.jet, false, false, a.shoot, a.weapon,
+					a.spawn, a.arg0, gameState.getLayer(), deltaMs);
 
 			break;
 
@@ -304,6 +328,7 @@ public class Server extends ScrollingScreenGame {
 			this.processAction(msgQueue.poll(), deltaMs);
 		}
 		gameState.update(deltaMs);
+		match.update();
 		
 		// just for the server player
 		inputHandler(deltaMs);
