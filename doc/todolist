@@ -31,16 +31,13 @@ Deathmatch - Josh
 	Spawn Rules - Josh
 
 Weapons 
-	Three types
-		Bullet
-		??? - Idea - mines. low impact requirement to kill player.
-		??? - grenades?
+	Three types -Josh - Done
 
 Animations and Graphics - Rolf
-	Bullet - Need graphics...
-	player - Need graphics...
+	Bullet - just use white circle?
+	player - Done. maybe need tweaking.
 	Background - done, but maybe more pictures?
-	Method to tile any size object with certain tile size - mostly done, need to load gfx to tile.
+	Any method to paint level map that works! - unstarted
 	Gui elements
 		Cursor - done, will transparentize when done with all gui elements.
 		jetpack, health bars - Rolf - Done

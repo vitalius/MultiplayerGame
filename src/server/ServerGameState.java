@@ -188,6 +188,13 @@ public class ServerGameState {
 				((PlayerObject) other).setHealth(0);
 
 			}
+		} else if (other.getType() == GameObject.DRUM) {
+			// 20% chance of going boom? hmm
+			// if boom event...
+			// remove drum
+			// 3-5 explosion events around drum
+			// X bullets from drum, random direction and initial positions from somewhere inside orginial drum location
+			System.out.println("Drum hit by bullet event - at " + other.getCenterPosition() + " servergamestate");
 		}
 	}
 
