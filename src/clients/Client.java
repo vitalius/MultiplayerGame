@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import javax.swing.JOptionPane;
 
+import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import physics.Box;
 import server.NetworkEngine;
@@ -37,21 +38,9 @@ public class Client extends ScrollingScreenGame {
 
 	long ms;
 
-	// used for testing UI elements.
-	private class uiItem extends Body {
-
-		public uiItem(String imgrsc) {
-			super(imgrsc);
-		}
-
-		@Override
-		public void update(long deltaMs) {
-		}
-	}
-
 	private class Explode extends Body {
 
-		int slowdowntest = 0;
+		int slowdown = 0;
 		int counter = 0;
 
 		public Explode(String imgrsc) {
@@ -60,10 +49,10 @@ public class Client extends ScrollingScreenGame {
 
 		@Override
 		public void update(long deltaMs) {
-			if (slowdowntest < 50) {
-				slowdowntest += deltaMs;
+			if (slowdown < 50) {
+				slowdown += deltaMs;
 			} else {
-				slowdowntest = 0;
+				slowdown = 0;
 				counter += 1;
 				// counter = counter % this.getFrameCount();
 				this.setFrame(counter);
@@ -71,6 +60,13 @@ public class Client extends ScrollingScreenGame {
 			if (counter == getFrameCount()) {
 				this.setActivation(false);
 			}
+		}
+		
+		public void reset() {
+			counter = 0;
+			slowdown = 0;
+			this.setActivation(true);
+			setFrame(0);
 		}
 	}
 
@@ -92,19 +88,21 @@ public class Client extends ScrollingScreenGame {
 	private NetStateManager netStateMan;
 	private Player player;
 
-	private uiItem jetpack, health;
+	private GameObject jetpack, health;
 
 	private BodyLayer<Body> black = new AbstractBodyLayer.NoUpdate<Body>();
 	private BodyLayer<Body> background = new AbstractBodyLayer.IterativeUpdate<Body>();
 	private BodyLayer<Body> levelmap = new AbstractBodyLayer.IterativeUpdate<Body>();
 	private BodyLayer<Body> front = new AbstractBodyLayer.IterativeUpdate<Body>();
-	private BodyLayer<uiItem> GUI = new AbstractBodyLayer.IterativeUpdate<uiItem>();
+	private BodyLayer<Body> GUI = new AbstractBodyLayer.IterativeUpdate<Body>();
 
 	GameSprites gameSprites;
 
 	private SyncState state;
 
 	private LinkedBlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();
+
+	private LinkedList<Explode> boomList = new LinkedList<Explode>();
 
 	// private LinkedList<Box> levelboxes = new LinkedList<Box>();
 
@@ -128,14 +126,10 @@ public class Client extends ScrollingScreenGame {
 
 		PaintableCanvas.loadDefaultFrames("grenade", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.GREEN);
-		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
-				JIGSHAPE.RECTANGLE, Color.red);
-		PaintableCanvas.loadDefaultFrames("smallbox", 32, 32, 1,
-				JIGSHAPE.RECTANGLE, Color.blue);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
-		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
-				JIGSHAPE.RECTANGLE, Color.WHITE);
+		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1, JIGSHAPE.CIRCLE,
+				Color.WHITE);
 		// 1280, SCREEN_HEIGHT = 1024
 		PaintableCanvas.loadDefaultFrames("blackback", SCREEN_WIDTH,
 				SCREEN_HEIGHT, 1, JIGSHAPE.RECTANGLE, Color.black);
@@ -177,21 +171,20 @@ public class Client extends ScrollingScreenGame {
 		back = new Box(PICTUREBACKGROUND + "#background");
 		background.add(back);
 		// ui elements
-		jetpack = new uiItem(UIGFX + "#JetFuel");
+		jetpack = new GameObject(UIGFX + "#JetFuel");
 		jetpack.setPosition(new Vector2D(20, 20));
 		GUI.add(jetpack);
-		health = new uiItem(UIGFX + "#Health");
+		health = new GameObject(UIGFX + "#Health");
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
 
-		// wow way ugly. need defined level limit!
-		// say, 4000x2000, and all level has postive obhect positions.
+		// dunno what do here. change something new?
 		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
 			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 2; w++) {
-				//Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
-				//level.setPosition(new Vector2D(z * 425, w * 150));
-				//level.setFrame(0);// just set one for now.
-				//levelmap.add(level);
+				// Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
+				// level.setPosition(new Vector2D(z * 425, w * 150));
+				// level.setFrame(0);// just set one for now.
+				// levelmap.add(level);
 			}
 		}
 
@@ -199,7 +192,8 @@ public class Client extends ScrollingScreenGame {
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
 		gameObjectLayers.add(front);
-		// whatever layers not added into gameObjectLayers will be manually rendered.
+		// whatever layers not added into gameObjectLayers will be manually
+		// rendered.
 
 		gameStatusString = "Connecting to the server...";
 
@@ -258,10 +252,8 @@ public class Client extends ScrollingScreenGame {
 			player.move(input);
 		}
 		if (keyboard.isPressed(KeyEvent.VK_B)) {
-			Explode boomy = new Explode(SPRITES + "#Explosion");
-			boomy.setCenterPosition(this.screenToWorld(new Vector2D(mouse
-					.getLocation().x, mouse.getLocation().y)));
-			front.add(boomy);
+			addBoom(this.screenToWorld(new Vector2D(mouse.getLocation().x,
+					mouse.getLocation().y)));
 		}
 
 	}
@@ -377,20 +369,38 @@ public class Client extends ScrollingScreenGame {
 
 		keyboardMovementHandler(deltaMs);
 
-		//Explosions
-		for(Action a : netStateMan.getState().getActions()) {
-			Explode boomy = new Explode(SPRITES + "#Explosion");
-			boomy.setCenterPosition(a.getArg());
-			front.add(boomy);
-			System.out.println("Boom:"+a.getArg());
+		// Explosions
+		for (Action a : netStateMan.getState().getActions()) {
+			addBoom(a.getArg());
 		}
-		
-		
+
 		// better but still broken.
-		//if (p != null)
-		//	updateLevelRender(new Vector2D(
-		//			(int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-		//			(int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+		// if (p != null)
+		// updateLevelRender(new Vector2D(
+		// (int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
+		// (int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
+
+	}
+
+	private void addBoom(Vector2D loc) {
+		System.out.println(boomList.size());
+		if (boomList.size() < 100) {
+			// make new one and add it.
+			Explode boomy = new Explode(SPRITES + "#Explosion");
+			boomy.setCenterPosition(loc);
+			front.add(boomy);
+			boomList.add(boomy);
+		} else {
+			// Recycle oldest one.
+			Explode boomy = boomList.pop();
+			// set new placement
+			boomy.setCenterPosition(loc);
+			// reset boomy
+			boomy.reset();
+			// add to back of list.
+			boomList.add(boomy);
+		}
+		System.out.println("Boom: " + loc + " client");
 
 	}
 

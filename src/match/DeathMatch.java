@@ -10,8 +10,6 @@ import world.PlayerObject;
 //where to spawn, etc.
 public class DeathMatch extends Match {
 	
-	// need to get list of objects so it can get players from current list in initalizion.
-	// blankrules will have code.
 	public DeathMatch(ServerGameState gs) {
 		super(gs);
 	}
@@ -21,10 +19,17 @@ public class DeathMatch extends Match {
 		// reset all non static objects
 		
 		// reset all scores
+		for(PlayerObject p: players) {
+			p.clearKills();
+			p.clearDeaths();
+		}
 		
 		// start timer
 		
-		// spawn players		
+		// spawn players
+		for(PlayerObject p: players) {
+			// need access to spawn spots somehow?
+		}
 	}
 
 	@Override
@@ -52,5 +57,6 @@ public class DeathMatch extends Match {
 	@Override
 	public void spawnPlayer(PlayerObject p, Vector2D loc) {
 		p.setCenterPosition(loc);
+		p.setHealth(PlayerObject.MAXHEALTH);
 	}
 }
