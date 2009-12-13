@@ -11,7 +11,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import physics.Box;
 import server.NetworkEngine;
 import world.GameObject;
-import world.PlayerObject;
 import net.Action;
 import net.NetObject;
 import net.NetStateManager;
@@ -73,7 +72,7 @@ public class Client extends ScrollingScreenGame {
 	static final String PICTUREBACKGROUND = "res/GameBackground.png";
 	static final String UIGFX = "res/ClientUI.png";
 	static final String SPRITES = "res/2Destruction-spritesheet.png";
-	static final String LEVEL1 = "res/LEVEL1.gif";
+	static final String LEVEL1 = "res/LEVEL1.png";
 
 	public String SERVER_IP = "127.0.0.1";
 
@@ -178,19 +177,19 @@ public class Client extends ScrollingScreenGame {
 		health.setPosition(new Vector2D(20, 31));
 		GUI.add(health);
 
-		// dunno what do here. change something new?
-		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
-			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 2; w++) {
-				// Box level = new Box(LEVEL1 + "#LEVEL1");// 4250
-				// level.setPosition(new Vector2D(z * 425, w * 150));
-				// level.setFrame(0);// just set one for now.
-				// levelmap.add(level);
-			}
-		}
+		// Uncommet only when set heap space higher..
+		//http://wiki.eclipse.org/FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F
+		/*
+		int fudgex = -62, fudgey = 7;
+		Box level = new Box(LEVEL1 + "#LEVEL1");
+		level.setPosition(new Vector2D(level.getWidth() /2 + fudgex, level.getHeight() /2 + fudgey ));
+		levelmap.add(level);
+		*/
 
 		// Control of layering
 		gameObjectLayers.add(background);
 		gameObjectLayers.add(gameSprites.getLayer());
+		gameObjectLayers.add(levelmap);
 		gameObjectLayers.add(front);
 		// whatever layers not added into gameObjectLayers will be manually
 		// rendered.
@@ -374,12 +373,8 @@ public class Client extends ScrollingScreenGame {
 			addBoom(a.getArg());
 		}
 
-		// better but still broken.
-		// if (p != null)
-		// updateLevelRender(new Vector2D(
-		// (int) (p.getCenterPosition().getX() + mousePos.getX()) / 2,
-		// (int) (p.getCenterPosition().getY() + mousePos.getY()) / 2));
-
+		 //if (p != null)
+		 //updateLevelRender();
 	}
 
 	private void addBoom(Vector2D loc) {
@@ -404,10 +399,10 @@ public class Client extends ScrollingScreenGame {
 
 	}
 
-	private void updateLevelRender(Vector2D offset) {
-		if (offset == null)
-			return;
-
+	private void updateLevelRender() {
+		
+		
+/*
 		Vector2D off = new Vector2D(-(int) (offset.getX() % 425),
 				-(int) (offset.getY() % 150));
 
@@ -443,6 +438,7 @@ public class Client extends ScrollingScreenGame {
 				}
 			}
 		}
+		*/
 	}
 
 	public void render(RenderingContext rc) {
