@@ -58,7 +58,7 @@ public class Client extends ScrollingScreenGame {
 				this.setActivation(false);
 			}
 		}
-		
+
 		public void reset() {
 			counter = 0;
 			slowdown = 0;
@@ -111,7 +111,7 @@ public class Client extends ScrollingScreenGame {
 	FontResource fontMsg = ResourceFactory.getFactory().getFontResource(
 			new Font("Sans Serif", Font.BOLD, 12), Color.white, null);
 	String msg = "";
-	
+
 	public BroadcastListener bListen;
 
 	public Client() {
@@ -122,7 +122,7 @@ public class Client extends ScrollingScreenGame {
 				"2Destruction-Resources.xml");
 		// newgame = new Button(SPRITE_SHEET + "#Start");
 	}
-	
+
 	public void startListenServer() {
 		state = new SyncState();
 		bListen = new BroadcastListener(state);
@@ -152,12 +152,13 @@ public class Client extends ScrollingScreenGame {
 		fre.setActivation(true);
 
 		// stateQueue = new LinkedBlockingQueue<String>(1);
-		//state = new SyncState();
+		// state = new SyncState();
 
 		/* Start thread to sync gameState with server */
-		//BroadcastListener bListen = new BroadcastListener(state);
-		//bListen.start();
-
+		// BroadcastListener bListen = new BroadcastListener(state);
+		// bListen.start();
+		// debug
+		// startListenServer();
 		/* Thread with TCP networking for server specific commands */
 		TcpListener tcpListen = new TcpListener(NetworkEngine.TCP_CLIENT_PORT,
 				msgQueue);
@@ -187,13 +188,15 @@ public class Client extends ScrollingScreenGame {
 		GUI.add(health);
 
 		// Uncommet only when set heap space higher..
-		//http://wiki.eclipse.org/FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F
-		///*
-		//int fudgex = -62, fudgey = 7;
-		//Box level = new Box(LEVEL1 + "#LEVEL1");
-		//level.setPosition(new Vector2D(level.getWidth() /2 + fudgex, level.getHeight() /2 + fudgey ));
-		//levelmap.add(level);
-		//*/
+		// http://wiki.eclipse.org/
+		// FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F
+		// /*
+		// int fudgex = -62, fudgey = 7;
+		// Box level = new Box(LEVEL1 + "#LEVEL1");
+		// level.setPosition(new Vector2D(level.getWidth() /2 + fudgex,
+		// level.getHeight() /2 + fudgey ));
+		// levelmap.add(level);
+		// */
 
 		// Control of layering
 		gameObjectLayers.add(background);
@@ -211,11 +214,12 @@ public class Client extends ScrollingScreenGame {
 	 * Handle keyboard strokes for movement
 	 */
 	public void keyboardMovementHandler(long deltaMs) {
-		if (!netStateMan.getState().objectList.containsKey(player.getID()))
+		if (!netStateMan.getState().objectList.containsKey(player.getID())) {
+			// System.out.println("Client keyboard: no ID");
 			return;
+		}
 
 		keyboard.poll();
-
 		if (netStateMan.getState().objectList.get(player.getID()).getHealth() > 0) {
 			input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN)
 					|| keyboard.isPressed(KeyEvent.VK_S);
@@ -248,6 +252,16 @@ public class Client extends ScrollingScreenGame {
 			} else {
 				input.weapon = 0;
 			}
+			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
+					mouse.getLocation().getY()));
+			System.out.println("Client keyboard: alive" + input.spawn);
+			player.move(input);
+		} else {
+			input.crouch = false;
+			input.jet = false;
+			input.left = false;
+			input.right = false;
+			input.jump = false;
 			if (keyboard.isPressed(KeyEvent.VK_F1)) {
 				input.spawn = 1;
 			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
@@ -261,15 +275,7 @@ public class Client extends ScrollingScreenGame {
 			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
 					mouse.getLocation().getY()));
-			player.move(input);
-		} else {
-			input.crouch = false;
-			input.jet = false;
-			input.left = false;
-			input.right = false;
-			input.jump = false;
-			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
-					mouse.getLocation().getY()));
+			System.out.println("Client keyboard: dead" + input.spawn);
 			player.move(input);
 		}
 		if (keyboard.isPressed(KeyEvent.VK_B)) {
@@ -293,6 +299,7 @@ public class Client extends ScrollingScreenGame {
 			Action a = netStateMan.prot.decodeAction(msgQueue.poll());
 			if (a.getType() == Action.JOIN_ACCEPT) {
 				Integer newID = Integer.valueOf(a.getMsg()).intValue();
+				// System.out.println("Client.artWeInGame ID: " + newID);
 				player.setID(newID);
 				input.setID(newID);
 				player.state = Player.JOINED;
@@ -397,8 +404,8 @@ public class Client extends ScrollingScreenGame {
 			addBoom(a.getArg());
 		}
 
-		 //if (p != null)
-		 //updateLevelRender();
+		// if (p != null)
+		// updateLevelRender();
 	}
 
 	private void addBoom(Vector2D loc) {
@@ -424,45 +431,30 @@ public class Client extends ScrollingScreenGame {
 	}
 
 	private void updateLevelRender() {
-		
-		
-/*
-		Vector2D off = new Vector2D(-(int) (offset.getX() % 425),
-				-(int) (offset.getY() % 150));
 
-		Vector2D wintopleft = screenToWorld(off);
-		int xx = (int) (wintopleft.getX() + (4250 / 2)) / 425;
-		int yy = (int) (wintopleft.getY() + (1500 / 2)) / 150;
-
-		System.out.println(xx + " " + yy + " " + wintopleft.toString()
-				+ " client");
-
-		if (xx < 0)
-			xx = 0;
-		if (yy < 0)
-			yy = 0;
-		if (xx > 9)
-			xx = 9;
-		if (yy > 9)
-			yy = 9;
-
-		// account for difference of position in picture vs real objects on
-		// server
-		int fudgex = -62, fudgey = 7;
-		for (int z = 0; z <= SCREEN_WIDTH / 425 + 1; z++) {
-			for (int w = 0; w <= SCREEN_HEIGHT / 150 + 2; w++) {
-				Box level = (Box) levelmap.get(w + z * SCREEN_WIDTH / 425);
-				level.setPosition(new Vector2D(z * 425 + off.getX() + fudgex, w
-						* 150 + off.getY() + fudgey));
-				if (xx + z < 10 && yy + w < 10 && xx + z >= 0 && yy + w >= 0) {
-					level.setFrame((xx + z) + (yy + w) * 10);
-					level.setActivation(true);
-				} else {
-					level.setActivation(false);
-				}
-			}
-		}
-		*/
+		/*
+		 * Vector2D off = new Vector2D(-(int) (offset.getX() % 425), -(int)
+		 * (offset.getY() % 150));
+		 * 
+		 * Vector2D wintopleft = screenToWorld(off); int xx = (int)
+		 * (wintopleft.getX() + (4250 / 2)) / 425; int yy = (int)
+		 * (wintopleft.getY() + (1500 / 2)) / 150;
+		 * 
+		 * System.out.println(xx + " " + yy + " " + wintopleft.toString() +
+		 * " client");
+		 * 
+		 * if (xx < 0) xx = 0; if (yy < 0) yy = 0; if (xx > 9) xx = 9; if (yy >
+		 * 9) yy = 9;
+		 * 
+		 * // account for difference of position in picture vs real objects on
+		 * // server int fudgex = -62, fudgey = 7; for (int z = 0; z <=
+		 * SCREEN_WIDTH / 425 + 1; z++) { for (int w = 0; w <= SCREEN_HEIGHT /
+		 * 150 + 2; w++) { Box level = (Box) levelmap.get(w + z SCREEN_WIDTH /
+		 * 425); level.setPosition(new Vector2D(z 425 + off.getX() + fudgex, w
+		 * 150 + off.getY() + fudgey)); if (xx + z < 10 && yy + w < 10 && xx + z
+		 * >= 0 && yy + w >= 0) { level.setFrame((xx + z) + (yy + w) 10);
+		 * level.setActivation(true); } else { level.setActivation(false); } } }
+		 */
 	}
 
 	public void render(RenderingContext rc) {
@@ -475,25 +467,18 @@ public class Client extends ScrollingScreenGame {
 		fontWhite.render(gameStatusString, rc, AffineTransform
 				.getTranslateInstance(180, 7));
 		// game related message.
-		fontMsg.render(msg, rc, AffineTransform
-				.getTranslateInstance(SCREEN_WIDTH/2 - fontMsg.getStringWidth(msg)/2, SCREEN_HEIGHT - 16));
+		fontMsg.render(msg, rc, AffineTransform.getTranslateInstance(
+				SCREEN_WIDTH / 2 - fontMsg.getStringWidth(msg) / 2,
+				SCREEN_HEIGHT - 16));
 	}
 
-	public static void main(String[] vars) {
-		Client c = new Client();
+	public String getIP() {
 		int as = 0;
-		c.startListenServer();
+		String res = null;
 		while (as == 0) {
-			System.out.println(c.bListen.ips.size() + " size, client entry");
-			for(String ahh : c.bListen.ips)
-				System.out.println(ahh + " client entry");
-
-			String s = JOptionPane
-					.showInputDialog("Enter server IP address or empty if want 127.0.0.1");
-			if(s == null)
-				System.exit(0);
-			if (s.compareTo("") == 0)
-				s = "127.0.0.1";
+			String s = JOptionPane.showInputDialog("Enter server IP address.");
+			if (s == null)
+				return null;
 			String[] a = s.split("\\.");
 			if (a.length == 4) {
 				int a1 = java.lang.Integer.parseInt(a[0]);
@@ -503,24 +488,69 @@ public class Client extends ScrollingScreenGame {
 				System.out.println(a1 + "." + a2 + "." + a3 + "." + a4
 						+ " result of user input");
 				// check formatting if its properly done.
-				if (a1 > 0 && a1 < 254 && a2 >= 0 && a2 <= 254 && a3 >= 0
-						&& a3 <= 254 && a4 > 0 && a4 <= 254) {
-					String res = String.valueOf(a1 + "." + a2 + "." + a3 + "."
-							+ a4);
-					c.SERVER_IP = res;// definitely correctly formatted.
+				if (a1 > 0 && a1 < 254 && a2 >= 0 && a2 < 254 && a3 >= 0
+						&& a3 < 254 && a4 > 0 && a4 < 254) {
+					res = String.valueOf(a1 + "." + a2 + "." + a3 + "." + a4);
 					as = 1;
+				} else {
+					JOptionPane
+							.showMessageDialog(
+									null,
+									"Misformatted IP address "
+											+ s
+											+ "\n\nNeed to be X.X.X.X with X in range [0-254].");
 				}
 			}
-			if (as == 0)
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"Misformatted IP address "
-										+ s
-										+ "\n\nNeed to be X.X.X.X with X in range [0-254].");
 		}
+		return res;
+	}
+
+	public static void main(String[] vars) {
+		Client c = new Client();
+		int as = 0;
+		c.startListenServer();
+		// just grab 100 states see what servers is out there.
+		// blistener stores ip addresses.
+
+		while (as == 0) {
+			for (int i = 0; i < 100; i++)
+				c.state.get();
+			
+
+			String[] A = new String[c.bListen.ips.size() + 2];
+			A[0] = "<Refresh List>";
+			int z = 0;
+			for (z = 0; z < c.bListen.ips.size(); z++)
+				A[z + 1] = c.bListen.ips.get(z);
+			A[z + 1] = "<Internet Game>";
+
+			String input = (String) JOptionPane.showInputDialog(null,
+					"Choose now...", "The Choice of a Lifetime",
+					JOptionPane.QUESTION_MESSAGE, null, A, // Array of choices
+					A[0]); // Initial choice
+			System.out.println(input);
+			if (input == null) {
+				c.bListen.close();
+				System.exit(0);
+			} else if (input.compareTo("<Internet Game>") == 0) {
+				c.SERVER_IP = c.getIP();
+				if (c.SERVER_IP == null) {
+					//c.bListen.close();
+					System.exit(0);
+				}
+				as = 1;
+			} else if (input.compareTo("<Refresh List>") != 0) {
+				c.SERVER_IP = input;
+				as = 1;
+			}
+
+		}
+		
+		System.out.println(c.SERVER_IP + " final ip chosen,  client");
+
 
 		c.runSetup();
 		c.run();
+		c.bListen.close();
 	}
 }
