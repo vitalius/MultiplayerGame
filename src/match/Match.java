@@ -1,13 +1,10 @@
 package match;
 
 import java.util.ArrayList;
-import java.util.Timer;
-
 import server.ServerGameState;
 
 import jig.engine.util.Vector2D;
 
-import world.GameObject;
 import world.LevelSet;
 import world.PlayerObject;
 

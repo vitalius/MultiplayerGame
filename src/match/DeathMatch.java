@@ -1,9 +1,7 @@
 package match;
 
-import physics.CattoPhysicsEngine;
 import server.Server;
 import server.ServerGameState;
-import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.util.Vector2D;
 import world.LevelMap;
 import world.LevelSet;
