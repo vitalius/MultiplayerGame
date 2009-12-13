@@ -183,7 +183,11 @@ public class Server extends ScrollingScreenGame {
 			//if (oldInput.equals(input))
 			//	return;
 			String action = new Protocol().encodeAction(input);
+<<<<<<< HEAD
 			//System.out.println(input.weapon);
+=======
+			//System.out.println(input.weapon + " server");
+>>>>>>> f7f1f01d68f2b67cdd9d931da84522efcd39e5da
 			processAction(action, deltaMs);
 			oldInput.copy(input);
 		}

@@ -271,17 +271,20 @@ public class PlayerObject extends GameObject {
 	int oldhealth = MAXHEALTH;
 	int animationControl = 251;
 
-	// fixes needed:
-	// logic of stopping jump, but falling still, stands. looks weird
-	// hurt changes too quickly to be visiable.
-	// running while facing wrong way? hmmm
 	public void updateFrame(long deltaMs) {
+
+		if (animationControl < 250) {
+			animationControl += deltaMs;
+			return;
+		}
 
 		// store current frame, animation, etc.
 		int x = frameX;
 		int y = frameY;
 		int aniMax = aniframes;
 		int loopenabled = animationloop;
+
+		boolean freezeframe = false;
 
 		// Check if health decreased or dead.
 		// health decrease should make player use first death frame then reset.
@@ -295,6 +298,7 @@ public class PlayerObject extends GameObject {
 			}
 			aniMax = LOC_PLAYER_DIE_FRAMES;
 			loopenabled = LOC_PLAYER_DIE_REPEAT;
+			freezeframe = true;
 		}
 
 		// jetpack on
@@ -334,38 +338,49 @@ public class PlayerObject extends GameObject {
 			aniMax = LOC_PLAYER_RUN_FRAMES;
 			loopenabled = LOC_PLAYER_RUN_REPEAT;
 		}
-		// Looks like standing this time.
-		// while falling too? hmm how fix...
+		// Looks like standing this time. Or last frame of jump if still
+		// changing in y axis.
 		else {
-			if (isFacingRight) {
-				x = LOC_PLAYER_STAND_X_RIGHT;
-				y = LOC_PLAYER_STAND_Y_RIGHT;
+			if (this.getVelocity().getY() < 0.1
+					&& this.getVelocity().getY() > -0.1) {
+				if (isFacingRight) {
+					x = LOC_PLAYER_STAND_X_RIGHT;
+					y = LOC_PLAYER_STAND_Y_RIGHT;
+				} else {
+					x = LOC_PLAYER_STAND_X_LEFT;
+					y = LOC_PLAYER_STAND_Y_LEFT;
+				}
+				aniMax = LOC_PLAYER_STAND_FRAMES;
+				loopenabled = LOC_PLAYER_STAND_REPEAT;
 			} else {
-				x = LOC_PLAYER_STAND_X_LEFT;
-				y = LOC_PLAYER_STAND_Y_LEFT;
+				// falling, force to last frame of falling...
+				if (isFacingRight) {
+					x = LOC_PLAYER_JUMP_X_RIGHT;
+					y = LOC_PLAYER_JUMP_Y_RIGHT;
+				} else {
+					x = LOC_PLAYER_JUMP_X_LEFT;
+					y = LOC_PLAYER_JUMP_Y_LEFT;
+				}
+				aniMax = LOC_PLAYER_JUMP_FRAMES;
+				loopenabled = LOC_PLAYER_JUMP_REPEAT;
+				animation = LOC_PLAYER_JUMP_FRAMES - 1;
 			}
-			aniMax = LOC_PLAYER_STAND_FRAMES;
-			loopenabled = LOC_PLAYER_STAND_REPEAT;
 
 		}
 
-		// okay now set oldhealth = health, then see what we must do in respect
-		// of frames.
+		// okay now set oldhealth = health,
+		// then see what we must do in respect of frames.
 		oldhealth = health;
 
 		// same frame as before. advance a frame if time is right
 		if (x == frameX && y == frameY) {
 			// is it time yet? if not wait.
-			if (animationControl < 250) {
-				animationControl += deltaMs;
-			} else {
-				// advance, if enabled. otherwise stay at last frame.
-				animationControl = 0;
-				if (animationloop != 0)
-					animation = (animation + 1) % aniframes;
-				else if (animation != aniframes - 1)
-					animation++;
-			}
+			// advance, if enabled. otherwise stay at last frame.
+			animationControl = 0;
+			if (animationloop != 0)
+				animation = (animation + 1) % aniframes;
+			else if (animation != aniframes - 1)
+				animation++;
 		}
 		// else change to first frame of new animation
 		else {
@@ -375,13 +390,17 @@ public class PlayerObject extends GameObject {
 			aniframes = aniMax;
 			currentframe = 0;
 			animationloop = loopenabled;
-			animationControl = 0;
+			// freeze by pausing animation for extra time.
+			if (freezeframe)
+				animationControl = -250;
+			else
+				animationControl = 0;
 		}
 
 		// Now do final frame calculation.
 		currentframe = frameX + frameY * ROWDOWN + 6 * (color) + animation;
-		//System.out.println(currentframe + " " + frameX + " " + frameY
-			//	+ " playerobject frame");
+		// System.out.println(currentframe + " " + frameX + " " + frameY
+		// + " playerobject frame");
 		if (currentframe >= 252)
 			System.out.println(currentframe
 					+ " OVERFLOW FRAME! playerobject frame");
