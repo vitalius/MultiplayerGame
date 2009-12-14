@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import physics.Arbiter;
+import server.Server;
 import server.ServerGameState;
 import weapons.GrenadeLauncher;
 import weapons.Rifle;
@@ -271,10 +272,10 @@ public class PlayerObject extends GameObject {
 	}
 
 	public void updatePlayerState(long deltaMs) {
-		if (health < 1)
+		if (isAlive && health < 1) {
 			isAlive = false;
-		else
-			isAlive = true;
+			Server.getServer().sendPrivateMessage(this.id, "You are dead, press F1-F4 to respawn.");
+		}
 		
 		// System.out.println(jetFuel);
 		// Backup run out of fuel if client loses connection.
@@ -451,6 +452,14 @@ public class PlayerObject extends GameObject {
 					+ " OVERFLOW FRAME! playerobject frame");
 	}
 
+	public void spawnAt(Vector2D pos) {
+		setActivation(true);
+		setCenterPosition(pos);
+		setHealth(MAXHEALTH);
+		setVelocity(new Vector2D(0, 0));
+		isAlive = true;
+	}
+	
 	public int getHealth() {
 		return health;
 	}

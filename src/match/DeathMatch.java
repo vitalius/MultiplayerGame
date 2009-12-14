@@ -3,16 +3,9 @@ package match;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import net.Action;
-import net.NetObject;
-import net.NetStateManager;
-import net.Protocol;
-import physics.CattoPhysicsEngine;
 import server.Server;
 import server.ServerGameState;
-import server.TcpSender;
-import jig.engine.hli.ScrollingScreenGame;
-import jig.engine.util.Vector2D;
+
 import world.LevelMap;
 import world.LevelSet;
 import world.PlayerObject;
@@ -113,7 +106,7 @@ public class DeathMatch extends Match {
 			scores
 					.add(new playerscore(p.getID(), p.getKills()
 							- p.getDeaths()));
-			p.setActivation(false);
+			//p.setActivation(false);
 			p.setHealth(0); // this will be zero until we spawn
 			p.clearKills();
 			p.clearDeaths();
@@ -160,12 +153,7 @@ public class DeathMatch extends Match {
 		if (n > this.levels.getThisLevel(this.curLevel).playerInitSpots.size())
 			return;
 
-		p.setActivation(true);
-		p
-				.setCenterPosition(this.levels.getThisLevel(this.curLevel).playerInitSpots
-						.get(n));
-		p.setHealth(PlayerObject.MAXHEALTH);
-		p.setVelocity(new Vector2D(0, 0));
+		p.spawnAt(levels.getThisLevel(this.curLevel).playerInitSpots.get(n));
 	}
 
 	@Override

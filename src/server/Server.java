@@ -249,8 +249,8 @@ public class Server extends ScrollingScreenGame {
 			ne.addPlayer(playerID, a.getMsg());
 			
 			
-			sendPublicMessage("Public msg player ID:"+playerID+ " has joined.");
-			sendPrivateMessage(playerID, "Private msg, your ID:" + playerID);
+			sendPublicMessage("New player has joined, ID:"+playerID);
+			//sendPrivateMessage(playerID, "Your ID:" + playerID);
 			
 		} else {
 			// To refuse connection to the server game
