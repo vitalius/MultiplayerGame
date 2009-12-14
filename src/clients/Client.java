@@ -396,8 +396,10 @@ public class Client extends ScrollingScreenGame {
 				int hframe = 25 - (int) ((((double) hl) / 2000.0) * 25);
 				// System.out.println(hframe + " hframe, client");
 				health.setFrame(hframe);
+				showSplash(false);
 			} else {
 				health.setFrame(25);
+				showSplash(true);
 				//msg = "Dead - press f1-4 to respawn.";
 			}
 			if (jetFuel > 0) {
