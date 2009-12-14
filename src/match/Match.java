@@ -54,11 +54,11 @@ public abstract class Match {
 	
 	public void update() {
 		// spawn players if need be
-		for (PlayerObject po : players) {
-			if(po.getSpawn() > 0) {
-				spawnPlayer(po, po.getSpawn()-1);
-			}
-		}
+		//for (PlayerObject po : players) {
+		//	if(po.getSpawn() > 0) {
+		//		spawnPlayer(po, po.getSpawn()-1);
+		//	}
+		//}
 		
 		// check timer
 		//System.out.println("Match.update countdown: " + (ServerGameState.getGameState().totalMs - startTime));

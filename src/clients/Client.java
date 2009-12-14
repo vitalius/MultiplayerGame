@@ -420,18 +420,25 @@ public class Client extends ScrollingScreenGame {
 
 		keyboardMovementHandler(deltaMs);
 
-		// Explosions
 		for (Action a : netStateMan.getState().getActions()) {
 			System.out.println(a.getType() + "client update");
-			if(a.getType() == Action.EXPLOSION)
-				addBoom(a.getArg());
-			else if( a.getType() == Action.TALK){
-				msg = a.getMsg();
-				System.out.println(msg + "client update");				
+			
+			switch(a.getType()) {
+				case Action.EXPLOSION:
+					addBoom(a.getArg());
+					break;
+				case Action.TALK:
+					showMessage(a.getMsg());
+					break;
 			}
 		}
 	}
 
+	private void showMessage(String msg) {
+		gameStatusString = msg;
+	}
+	
+	
 	private void addBoom(Vector2D loc) {
 		System.out.println(boomList.size());
 		if (boomList.size() < 100) {
@@ -461,7 +468,8 @@ public class Client extends ScrollingScreenGame {
 		// background.render(rc);
 		// connection status
 		fontWhite.render(gameStatusString, rc, AffineTransform
-				.getTranslateInstance(180, 7));
+				.getTranslateInstance(20, SCREEN_HEIGHT - 40));
+		
 		// game related message.
 		fontMsg.render(msg, rc, AffineTransform.getTranslateInstance(
 				SCREEN_WIDTH / 2 - fontMsg.getStringWidth(msg) / 2,

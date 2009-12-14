@@ -130,7 +130,6 @@ public class PlayerObject extends GameObject {
 		weapons.add(new Shotgun(this));
 		weapons.add(new GrenadeLauncher(this));
 		activeWeapon = weapons.get(2);
-		isAlive = true;
 	}
 
 	/*
@@ -203,7 +202,7 @@ public class PlayerObject extends GameObject {
 
 	// walking, running and floating
 	public void procInput(int leftRight, int jumpCrouch, boolean jet,
-			boolean crouch, boolean run, int weapon, int spawn,
+			boolean crouch, boolean run, int weapon,
 			boolean facingDir, BodyLayer<GameObject> layer, long deltaMs) {
 
 		if (facingDir) {
@@ -244,9 +243,9 @@ public class PlayerObject extends GameObject {
 			activeWeapon = weapons.get(weapon - 1);
 		}
 		// System.out.println("PlayerObject procInput spawn")
-		if (spawn != 0 && this.health <= 0) {
-			this.spawn = spawn;
-		}
+		//if (spawn != 0 && this.health <= 0) {
+		//	this.spawn = spawn;
+		//}
 	}
 
 	public void updatePlayerState(long deltaMs) {

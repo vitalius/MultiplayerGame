@@ -24,7 +24,6 @@ public class Action {
 	public boolean jump     = false;
 	public boolean faceLeft = false;
 	public int weapon = 0;
-	public int spawn = 0;
 
 	private int id;
 	private int type;
@@ -110,7 +109,6 @@ public class Action {
 				a.crouch   == crouch && 
 				a.jump     == jump &&
 				a.weapon   == weapon && 
-				a.spawn    == spawn && 
 				a.faceLeft == faceLeft     )
 			return true;
 		return false;
@@ -128,7 +126,6 @@ public class Action {
 		right    = a.right;
 		jump     = a.jump;
 		weapon   = a.weapon;
-		spawn    = a.spawn;
 		faceLeft = a.faceLeft;
 	}
 	

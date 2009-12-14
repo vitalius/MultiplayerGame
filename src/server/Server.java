@@ -98,7 +98,7 @@ public class Server extends ScrollingScreenGame {
 		// Add a player to test movement, remove when not needed
 		playerObject = new PlayerObject("player");
 		playerObject.set(100, 1.0, 1.0, 0.0);
-		playerID = 65001; // bleh
+		playerID = gameState.getUniqueId();
 		gameState.addPlayer(playerID, playerObject);
 		oldInput = new Action(playerID);
 
@@ -247,7 +247,11 @@ public class Server extends ScrollingScreenGame {
 			response = new Action(0, Action.JOIN_ACCEPT, playerID.toString());
 			tcpSender.sendSocket(clientIP, netStateMan.prot
 					.encodeAction(response));
-
+			
+			response = new Action(0, Action.TALK, "Welcome player: "+playerID.toString());
+			tcpSender.sendSocket(clientIP, netStateMan.prot
+					.encodeAction(response));
+			
 			// Add clients IP to the broadcasting list
 			ne.addPlayer(playerID, a.getMsg());
 		} else {
@@ -314,7 +318,7 @@ public class Server extends ScrollingScreenGame {
 				++x;
 
 			playerObject.procInput(x, y, a.jet, false, false,
-					a.weapon, a.spawn, a.faceLeft, gameState.getLayer(), deltaMs);
+					a.weapon, a.faceLeft, gameState.getLayer(), deltaMs);
 
 			break;
 

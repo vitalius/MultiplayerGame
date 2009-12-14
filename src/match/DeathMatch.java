@@ -165,7 +165,6 @@ public class DeathMatch extends Match {
 		if (n > this.levels.getThisLevel(this.curLevel).playerInitSpots.size())
 			return;
 		
-		p.setSpawn(n);
 		p.setActivation(true);
 		p.setCenterPosition(this.levels.getThisLevel(this.curLevel).playerInitSpots.get(n));
 		p.setHealth(PlayerObject.MAXHEALTH);
