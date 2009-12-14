@@ -1,0 +1,17 @@
+<spriteset>
+    <author>Rolf Redford</author>
+    <name>Splash</name>
+    <type>image/png</type>
+    <width>1024</width>
+    <height>768</height>
+
+    <frameset>
+        <name>Splash</name>
+        <top>0</top>
+        <left>0</left>
+	    <width>1024</width>
+    	<height>768</height>
+	</frameset>
+	
+	
+	</spriteset>
