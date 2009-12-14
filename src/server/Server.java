@@ -355,17 +355,6 @@ public class Server extends ScrollingScreenGame {
 			joinClient(a);
 			break;
 			
-		case Action.CHANGE_VELOCITY:
-			objectList.get(a.getID()).setVelocity(a.getArg());
-			break;
-		case Action.CHANGE_POSITION:
-			objectList.get(a.getID()).setPosition(a.getArg());
-			break;
-			
-		case Action.TALK:
-			System.out.println("Server got talk: " + a.getMsg());
-			break;
-			
 		///////////////////////////////////////////////////////
 		// Request to shoot
 		case Action.SHOOT:

@@ -311,7 +311,7 @@ public class Client extends ScrollingScreenGame {
 	}
 
 	public void processPrivateMsg() {
-		if (msgQueue.size() < 1)
+		if (msgQueue.isEmpty())
 			return;
 
 		// When joining the game, request for a player ID is sent and this loop
@@ -431,7 +431,7 @@ public class Client extends ScrollingScreenGame {
 	 * @param alist
 	 */
 	public void processActions(NetState state) {
-		if (state.getActions().size() < 1)
+		if (state.getActions().isEmpty())
 			return;
 		
 		for (Action a : state.getActions()) {

@@ -150,6 +150,7 @@ public class Protocol {
 			output += "@";
 		}
 		//System.out.println("Protocol encode output: " + output);
+		//System.out.println("NET MSG LEN:"+output.length());
 		return output;
 	}
 
