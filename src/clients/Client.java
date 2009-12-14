@@ -78,7 +78,7 @@ public class Client extends ScrollingScreenGame {
 	public String SERVER_IP = "127.0.0.1";
 	TcpSender control;
 
-	public static final int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
+	public static final int SCREEN_WIDTH = 1024, SCREEN_HEIGHT = 768;
 	private static final int MAXJETFUEL = 2000;
 	
 	public static final int SHOOT_THROTTLE = 250; // milliseconds
