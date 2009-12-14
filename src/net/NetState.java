@@ -40,4 +40,8 @@ public class NetState {
 	public Collection<Action> getActions() { 
 		return actionList.values();
 	}
+	
+	public void clearActions() {
+		actionList.clear();
+	}
 }

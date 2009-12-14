@@ -48,7 +48,7 @@ public class Server extends ScrollingScreenGame {
 	public ServerGameState gameState;
 	private LevelSet levels;
 	private LevelMap level;
-	private int playerID;
+	private int serverPlayerID;
 	private PlayerObject playerObject;
 	private Action oldInput;
 	private Match match;
@@ -98,9 +98,9 @@ public class Server extends ScrollingScreenGame {
 		// Add a player to test movement, remove when not needed
 		playerObject = new PlayerObject("player");
 		playerObject.set(100, 1.0, 1.0, 0.0);
-		playerID = gameState.getUniqueId();
-		gameState.addPlayer(playerID, playerObject);
-		oldInput = new Action(playerID);
+		serverPlayerID = gameState.getUniqueId();
+		gameState.addPlayer(serverPlayerID, playerObject);
+		oldInput = new Action(serverPlayerID);
 
 		netStateMan.update(gameState.getNetState());
 
@@ -134,18 +134,18 @@ public class Server extends ScrollingScreenGame {
 				new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 
 		// player alive/dead test code.
-		if (keyboard.isPressed(KeyEvent.VK_P) && playerID != -1) {
-			gameState.removeByID(playerID);
-			playerID = -1;
+		if (keyboard.isPressed(KeyEvent.VK_P) && serverPlayerID != -1) {
+			gameState.removeByID(serverPlayerID);
+			serverPlayerID = -1;
 
-		} else if (keyboard.isPressed(KeyEvent.VK_O) && playerID == -1) {
+		} else if (keyboard.isPressed(KeyEvent.VK_O) && serverPlayerID == -1) {
 			playerObject = new PlayerObject("player");
 			playerObject.set(100, 1.0, 1.0, 0.0);
 			Vector2D a = level.playerInitSpots.get(0);
 			playerObject.setPosition(new Vector2D(a.getX(), a.getY()));
-			playerID = gameState.getUniqueId();
-			gameState.addPlayer(playerID, playerObject);
-			oldInput = new Action(playerID);
+			serverPlayerID = gameState.getUniqueId();
+			gameState.addPlayer(serverPlayerID, playerObject);
+			oldInput = new Action(serverPlayerID);
 			netStateMan.update(gameState.getNetState());
 
 		}
@@ -168,8 +168,8 @@ public class Server extends ScrollingScreenGame {
 		}
 
 		// Bother with new input only when player is alive.
-		if (playerID != -1) {
-			Action input = new Action(playerID, Action.INPUT);
+		if (serverPlayerID != -1) {
+			Action input = new Action(serverPlayerID, Action.INPUT);
 			input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN)
 					|| keyboard.isPressed(KeyEvent.VK_S);
 			input.jet = keyboard.isPressed(KeyEvent.VK_UP)
@@ -182,7 +182,7 @@ public class Server extends ScrollingScreenGame {
 			
 
 			if (mouse.isLeftButtonPressed()) {
-				gameState.playerByID(playerID).shoot(true, mousePos, deltaMs);
+				gameState.playerByID(serverPlayerID).shoot(true, mousePos, deltaMs);
 			}
 			
 			
@@ -197,16 +197,16 @@ public class Server extends ScrollingScreenGame {
 			}
 			
 			if (keyboard.isPressed(KeyEvent.VK_F1)) {
-				match.spawnPlayer(gameState.playerByID(playerID), 0);
+				match.spawnPlayer(gameState.playerByID(serverPlayerID), 0);
 			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
-				match.spawnPlayer(gameState.playerByID(playerID), 1);
+				match.spawnPlayer(gameState.playerByID(serverPlayerID), 1);
 			} else if (keyboard.isPressed(KeyEvent.VK_F3)) {
-				match.spawnPlayer(gameState.playerByID(playerID), 2);
+				match.spawnPlayer(gameState.playerByID(serverPlayerID), 2);
 			} else if (keyboard.isPressed(KeyEvent.VK_F4)) {
-				match.spawnPlayer(gameState.playerByID(playerID), 3);
+				match.spawnPlayer(gameState.playerByID(serverPlayerID), 3);
 			}
 			
-			if (mousePos.getX() < gameState.playerByID(playerID).getCenterPosition().getX())
+			if (mousePos.getX() < gameState.playerByID(serverPlayerID).getCenterPosition().getX())
 				input.faceLeft = true;
 			else 
 				input.faceLeft = false;
@@ -248,14 +248,8 @@ public class Server extends ScrollingScreenGame {
 			tcpSender.sendSocket(clientIP, netStateMan.prot
 					.encodeAction(response));
 			
-			// SENDING MSG VIA BROADCASTING TO ALL CLIENTS
-			gameState.getNetState().addAction(
-					new Action(gameState.getUniqueId(),Action.TALK,
-							"Please welcome player ID:"+player.getID()));
-			
-			// SENDING MSG TO INDIVIDUAL USER
-			//tcpSender.sendSocket(ne.getIPbyID(playerID), 
-			//		netStateMan.);
+			sendPublicMessage("Public msg player ID:"+playerID+ " has joined.");
+			sendPrivateMessage(playerID, "Private msg, your ID:" + playerID);
 			
 			// Add clients IP to the broadcasting list
 			ne.addPlayer(playerID, a.getMsg());
@@ -268,7 +262,39 @@ public class Server extends ScrollingScreenGame {
 		}
 	}
 	
+	/**
+	 * Sends a private message to a player
+	 * 
+	 * @param pID - players ID
+	 * @param msg - message string, it can't have special delimiters used in protocol
+	 * such as * @ # $ %
+	 */
+	public void sendPrivateMessage(int pID, String msg) {
+		if (ne.getIPbyID(pID) == null) {
+			System.out.println("No IP for this player (ID:"+pID+")");
+			return;
+		}
+		
+		String ip = ne.getIPbyID(pID);
+		Action a = new Action(gameState.getUniqueId(), Action.TALK, msg);
 
+		tcpSender.sendSocket(ip, netStateMan.prot.encodeAction(a));
+	}
+	
+	/**
+	 * Sends a public message via Broadcaster
+	 * 
+	 * This message will be seen by all clients connected to the server
+	 * 
+	 * @param msg - message string, it can't have special delimiters used in protocol
+	 * such as * @ # $ %
+	 */
+	public void sendPublicMessage(String msg) {
+		gameState.getNetState().addAction(
+				new Action(gameState.getUniqueId(),Action.TALK,msg));		
+	}
+	
+	
 	/**
 	 * Just like client has a "keyboardHandler" method that capture key strokes
 	 * and acts on them, this method gets action request from clients and
