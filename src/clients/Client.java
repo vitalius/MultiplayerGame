@@ -429,18 +429,18 @@ public class Client extends ScrollingScreenGame {
 				case Action.EXPLOSION:
 					addBoom(a.getArg());
 					dist = a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition());
-					grenadeSfx.play(Math.min(40000/dist, 1));
+					grenadeSfx.play(Math.min(50000/dist, 1)*.1);
 					break;
 				case Action.TALK:
 					showPublicMessage(a.getMsg());
 					break;
 				case Action.RIFLESFX:
 					dist = a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition());
-					rifleSfx.play(Math.min(40000/dist, 1));
+					rifleSfx.play(Math.min(50000/dist, 1)*.1);
 					break;
 				case Action.SHOTGUNSFX:
 					dist = a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition());
-					shotgunSfx.play(Math.min(40000/dist, 1));
+					shotgunSfx.play(Math.min(50000/dist, 1)*.1);
 					break;
 				case Action.TIMER:
 					//timerString = "Time: "+a.getMsg().charAt(0) + a.getMsg().charAt(1);

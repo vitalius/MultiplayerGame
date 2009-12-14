@@ -178,7 +178,7 @@ public class ServerGameState {
 		
 		if (other.getType() == GameObject.PLAYER) {
 			PlayerObject player = (PlayerObject)other;
-			if (player.isAlive) 
+			if (player.getHealth() > 0) 
 				player.woundBy(bullet);
 			
 		} else if (other.getType() == GameObject.DRUM) {

@@ -50,8 +50,6 @@ public class PlayerObject extends GameObject {
 	// statistics
 	private int kills;
 	private int deaths;
-	
-	public boolean isAlive = false;
 
 	// Player gfx sprite x,y positons
 
@@ -272,8 +270,7 @@ public class PlayerObject extends GameObject {
 	}
 
 	public void updatePlayerState(long deltaMs) {
-		if (isAlive && health < 1) {
-			isAlive = false;
+		if (health < 1) {
 			Server.getServer().sendPrivateMessage(this.id, "You are dead, press F1-F4 to respawn.");
 		}
 		
@@ -457,12 +454,11 @@ public class PlayerObject extends GameObject {
 		setCenterPosition(pos);
 		setHealth(MAXHEALTH);
 		setVelocity(new Vector2D(0, 0));
-		isAlive = true;
 	}
 	
 	
 	public void woundBy(GameObject b) {
-		if (!isAlive || getHealth() < 1)
+		if ( getHealth() < 1)
 			return;
 		
 		setHealth(getHealth()-200);
