@@ -130,6 +130,8 @@ public class Server extends ScrollingScreenGame {
 	// movement
 	public void inputHandler(long deltaMs) {
 		keyboard.poll();
+		Vector2D mousePos = screenToWorld(
+				new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 
 		// player alive/dead test code.
 		if (keyboard.isPressed(KeyEvent.VK_P) && playerID != -1) {
@@ -180,8 +182,6 @@ public class Server extends ScrollingScreenGame {
 			
 
 			if (mouse.isLeftButtonPressed()) {
-				Vector2D mousePos = screenToWorld(
-						new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
 				gameState.playerByID(playerID).shoot(true, mousePos, deltaMs);
 			}
 			
@@ -206,12 +206,11 @@ public class Server extends ScrollingScreenGame {
 				match.spawnPlayer(gameState.playerByID(playerID), 3);
 			}
 			
-			input.faceLeft = true;
-			//input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
-			//		mouse.getLocation().getY()));
-
-			// if (oldInput.equals(input))
-			// return;
+			if (mousePos.getX() < gameState.playerByID(playerID).getCenterPosition().getX())
+				input.faceLeft = true;
+			else 
+				input.faceLeft = false;
+			
 			String action = new Protocol().encodeAction(input);
 
 			// System.out.println(input.weapon + " server");
