@@ -35,7 +35,7 @@ public class TcpListener extends Thread {
 				in.read(buf, 0, NetworkEngine.TCP_BUF_SIZE);
 		
 				msg = new String(buf);
-				//System.out.println(msg + " len:"+msg.length());
+				//System.out.println(msg + " len:"+msg.length() + " client tcplistener");
 				synchronized(msgQueue) {
 					msgQueue.add(msg);
 				}

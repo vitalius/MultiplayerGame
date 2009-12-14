@@ -57,6 +57,9 @@ public class Protocol {
 			case Action.CHANGE_JETPACK:
 				output += a.getDouble() + "#";
 				break;
+			case Action.TALK:
+				output += a.getMsg() + "#";
+				break;
 			default:
 				break;
 		}
@@ -120,6 +123,9 @@ public class Protocol {
 			dou = Double.valueOf(token[2]).doubleValue();
 			returnAction = new Action(id, type, dou);
 			break;			
+		case Action.TALK:
+			returnAction = new Action(id, type, token[3]);
+			break;
 		default:
 			returnAction = new Action(0, Action.DO_NOTHING);
 			break;

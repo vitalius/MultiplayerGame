@@ -36,13 +36,13 @@ public class Server extends ScrollingScreenGame {
 
 	private static final int SCREEN_WIDTH = 1280;
 	private static final int SCREEN_HEIGHT = 768;
-	
+
 	private static Server server;
 
 	private static int NET_MS = 30;
 	private long netMS;
 
-	private NetStateManager netStateMan;
+	public NetStateManager netStateMan;
 	public NetworkEngine ne;
 	private CattoPhysicsEngine pe;
 	public ServerGameState gameState;
@@ -54,12 +54,12 @@ public class Server extends ScrollingScreenGame {
 	private Match match;
 
 	public LinkedBlockingQueue<String> msgQueue;
-	
-	private TcpSender tcpSender;
+
+	public TcpSender tcpSender;
 
 	public Server() {
 		super(SCREEN_WIDTH, SCREEN_HEIGHT, false);
-		
+
 		server = this;
 
 		netStateMan = new NetStateManager();
@@ -69,7 +69,7 @@ public class Server extends ScrollingScreenGame {
 		// pe.setDrawArbiters(true);
 		fre.setActivation(true);
 		msgQueue = new LinkedBlockingQueue<String>();
-		
+
 		netMS = 0;
 
 		tcpSender = new TcpSender();
@@ -85,16 +85,16 @@ public class Server extends ScrollingScreenGame {
 				JIGSHAPE.RECTANGLE, Color.cyan);
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
-		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1,
-				JIGSHAPE.CIRCLE, Color.WHITE);
-		
+		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1, JIGSHAPE.CIRCLE,
+				Color.WHITE);
+
 		// Load all levels, server mode
 		levels = new LevelSet("/res/Levelset.txt", true);
 		if (levels.getNumLevels() == 0) {
 			System.err.println("Error: Levels loading failed.\n");
 			System.exit(1);
 		}
-		
+
 		// Add a player to test movement, remove when not needed
 		playerObject = new PlayerObject("player");
 		playerObject.set(100, 1.0, 1.0, 0.0);
@@ -103,20 +103,20 @@ public class Server extends ScrollingScreenGame {
 		oldInput = new Action(playerID);
 
 		netStateMan.update(gameState.getNetState());
-		
+
 		match = new DeathMatch(levels);
 		match.loadLevel(1);
 		match.startMatch();
 		match.addPlayer(playerObject);
-		
+
 		gameObjectLayers.add(gameState.getLayer());
 		pe.manageViewableSet(gameState.getLayer());
 	}
-	
+
 	public static Server getServer() {
 		return server;
 	}
-	
+
 	/**
 	 * clear gameobject layers and physics layers
 	 * 
@@ -147,21 +147,22 @@ public class Server extends ScrollingScreenGame {
 			netStateMan.update(gameState.getNetState());
 
 		}
-		
+
 		if (keyboard.isPressed(KeyEvent.VK_R)) {
 
-	        File f = new File("image.png");
-	        BufferedImage bi = new BufferedImage(4250, 1500, BufferedImage.TYPE_INT_RGB);
-	        gameframe.getRenderingContext();
-	        Graphics2D g2 = bi.createGraphics();
-	        for(Box b : gameState.getLayer())
-	        	b.renderImg(g2);
-	        try {
-	                ImageIO.write(bi, "png", f);
-	        } catch (IOException ex) {
-	            ex.printStackTrace();
-	        }
-	        System.exit(0);
+			File f = new File("image.png");
+			BufferedImage bi = new BufferedImage(4250, 1500,
+					BufferedImage.TYPE_INT_RGB);
+			gameframe.getRenderingContext();
+			Graphics2D g2 = bi.createGraphics();
+			for (Box b : gameState.getLayer())
+				b.renderImg(g2);
+			try {
+				ImageIO.write(bi, "png", f);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			System.exit(0);
 		}
 
 		// Bother with new input only when player is alive.
@@ -197,60 +198,66 @@ public class Server extends ScrollingScreenGame {
 			} else {
 				input.spawn = 0;
 			}
-			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation()
-					.getX(), mouse.getLocation().getY()));
+			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
+					mouse.getLocation().getY()));
 
-			//if (oldInput.equals(input))
-			//	return;
+			// if (oldInput.equals(input))
+			// return;
 			String action = new Protocol().encodeAction(input);
 
-			//System.out.println(input.weapon + " server");
+			// System.out.println(input.weapon + " server");
 			processAction(action, deltaMs);
 			oldInput.copy(input);
 		}
-	} 
+	}
 
 	/**
 	 * Joining a new client to the server game
 	 * 
-	 * @param a Action type of JOIN_REQUEST
+	 * @param a
+	 *            Action type of JOIN_REQUEST
 	 */
 	public void joinClient(Action a) {
 		Action response;
 		String clientIP = a.getMsg();
-		Integer playerID = gameState.getUniqueId(); // Generating a unique ID for a new player
-		
-		// To refuse connection to the server game
-		//response = new Action(0, Action.LEAVE_SERVER, "a");
-		//tcpSender.sendSocket(clientIP, netState.prot.encodeAction(response));
-		//return;
-		
-		System.out.println("Adding player ip:" + clientIP + " id:" + playerID);
-		
-		// Initializing new player 
-		PlayerObject player = new PlayerObject("player");
-		player.set(100, 1.0, 1.0, 0.0);
-		//Vector2D spawn = level.playerInitSpots.get(1);
-		//player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
-		match.addPlayer(player);
-		gameState.addPlayer(playerID, player);
-		
-		// Sending player's ID as a reply to the client 
-		response = new Action(0, Action.JOIN_ACCEPT, playerID.toString());
-		tcpSender.sendSocket(clientIP, netStateMan.prot.encodeAction(response));
-		
-		// Add clients IP to the broadcasting list 
-		ne.addPlayer(playerID, a.getMsg());
+		if (match.acceptPlayer()) {
+			// Generating a unique ID for a new player
+			Integer playerID = gameState.getUniqueId(); 
+
+			System.out.println("Adding player ip:" + clientIP + " id:"
+					+ playerID);
+
+			// Initializing new player
+			PlayerObject player = new PlayerObject("player");
+			player.set(100, 1.0, 1.0, 0.0);
+			// Vector2D spawn = level.playerInitSpots.get(1);
+			// player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
+			match.addPlayer(player);
+			gameState.addPlayer(playerID, player);
+
+			// Sending player's ID as a reply to the client
+			response = new Action(0, Action.JOIN_ACCEPT, playerID.toString());
+			tcpSender.sendSocket(clientIP, netStateMan.prot
+					.encodeAction(response));
+
+			// Add clients IP to the broadcasting list
+			ne.addPlayer(playerID, a.getMsg());
+		} else {
+			// To refuse connection to the server game
+			response = new Action(0, Action.LEAVE_SERVER, "a");
+			tcpSender
+					.sendSocket(clientIP, netStateMan.prot.encodeAction(response));
+		}
 	}
-	
+
 	/**
 	 * Just like client has a "keyboardHandler" method that capture key strokes
 	 * and acts on them, this method gets action request from clients and
 	 * updates the game server state.
 	 * 
-	 * TcpServer listens on client requests and stores all the requests into a 
-	 * Concurrent safe queue. Then, update() method reads queue content and calls this
-	 * method on every message in the queue.
+	 * TcpServer listens on client requests and stores all the requests into a
+	 * Concurrent safe queue. Then, update() method reads queue content and
+	 * calls this method on every message in the queue.
 	 * 
 	 * @param action
 	 *            = encoded action string
@@ -265,14 +272,15 @@ public class Server extends ScrollingScreenGame {
 		// If there is no such object ID on the server, simply return and do
 		// nothing
 
-		if (!objectList.containsKey(a.getID()) && a.getType() != Action.JOIN_REQUEST)
+		if (!objectList.containsKey(a.getID())
+				&& a.getType() != Action.JOIN_REQUEST)
 			return;
 
 		switch (a.getType()) {
 		// ////////////////////////////////////////////
 		// Handling players input, keystrokes
 		case Action.INPUT:
-			
+
 			// System.out.println("up:"+a.up+" down:"+a.down+" left:"+a.left+
 			// " right:"+a.right+" jump:"+a.jump);
 
@@ -292,8 +300,8 @@ public class Server extends ScrollingScreenGame {
 			if (a.right)
 				++x;
 
-			playerObject.procInput(x, y, a.jet, false, false, a.shoot, a.weapon,
-					a.spawn, a.arg0, gameState.getLayer(), deltaMs);
+			playerObject.procInput(x, y, a.jet, false, false, a.shoot,
+					a.weapon, a.spawn, a.arg0, gameState.getLayer(), deltaMs);
 
 			break;
 
@@ -308,16 +316,19 @@ public class Server extends ScrollingScreenGame {
 		case Action.CHANGE_POSITION:
 			objectList.get(a.getID()).setPosition(a.getArg());
 			break;
+		case Action.TALK:
+			System.out.println("Server got talk: " + a.getMsg());
+			break;
 		}
 	}
 
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
 		pe.applyLawsOfPhysics(deltaMs);
-		
+
 		netMS += deltaMs;
 		if (netMS > NET_MS) {
-			//System.out.println("server: " + netMS);
+			// System.out.println("server: " + netMS);
 			ne.update();
 			netMS = 0;
 		}
@@ -327,12 +338,17 @@ public class Server extends ScrollingScreenGame {
 		}
 		gameState.update(deltaMs);
 		match.update();
-		
+
 		// just for the server player
 		inputHandler(deltaMs);
-		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
-		centerOnPoint((int)(playerObject.getCenterPosition().getX()+mousePos.getX())/2, (int)(playerObject.getCenterPosition().getY()+mousePos.getY())/2); // centers on player
-		System.out.println("Server update player loc: " + playerObject.getCenterPosition());
+		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
+				.getX(), mouse.getLocation().getY()));
+		centerOnPoint((int) (playerObject.getCenterPosition().getX() + mousePos
+				.getX()) / 2,
+				(int) (playerObject.getCenterPosition().getY() + mousePos
+						.getY()) / 2); // centers on player
+		//System.out.println("Server update player loc: "
+			//	+ playerObject.getCenterPosition());
 	}
 
 	public static void main(String[] vars) {

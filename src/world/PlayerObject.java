@@ -259,7 +259,8 @@ public class PlayerObject extends GameObject {
 		clamp();
 		explodeGrenades();
 		updateFrame(deltaMs);
-		//System.out.println("PlayerObject.updatePlayerState loc: " + this.getPosition().toString() + " playerobject");
+		// System.out.println("PlayerObject.updatePlayerState loc: " +
+		// this.getPosition().toString() + " playerobject");
 	}
 
 	public void clamp() {
@@ -347,7 +348,7 @@ public class PlayerObject extends GameObject {
 			aniMax = LOC_PLAYER_RUN_FRAMES;
 			loopenabled = LOC_PLAYER_RUN_REPEAT;
 			animationControl = Math.abs((int) (this.getVelocity().getY() / 2));
-			System.out.println(this.getVelocity().getY() / 2 + " playerobject");
+			//System.out.println(this.getVelocity().getY() / 2 + " playerobject");
 		}
 		// Looks like standing this time. Or last frame of jump if still
 		// changing in y axis.
@@ -466,5 +467,13 @@ public class PlayerObject extends GameObject {
 
 	public int getSpawn() {
 		return spawn;
+	}
+
+	public void setTeam(int teamColor) {
+		color = teamColor % 6;
+	}
+
+	public int getTeam() {
+		return color;
 	}
 }

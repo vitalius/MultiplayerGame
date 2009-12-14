@@ -254,7 +254,7 @@ public class Client extends ScrollingScreenGame {
 			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
 					mouse.getLocation().getY()));
-			System.out.println("Client keyboard: alive" + input.spawn);
+			//System.out.println("Client keyboard: alive" + input.spawn);
 			player.move(input);
 		} else {
 			input.crouch = false;
@@ -275,7 +275,7 @@ public class Client extends ScrollingScreenGame {
 			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
 					mouse.getLocation().getY()));
-			System.out.println("Client keyboard: dead" + input.spawn);
+			//System.out.println("Client keyboard: dead" + input.spawn);
 			player.move(input);
 		}
 		if (keyboard.isPressed(KeyEvent.VK_B)) {
@@ -385,7 +385,7 @@ public class Client extends ScrollingScreenGame {
 				msg = "";
 			} else {
 				health.setFrame(25);
-				msg = "Dead - press f1-4 to respawn.";
+				//msg = "Dead - press f1-4 to respawn.";
 			}
 			if (jetFuel > 0) {
 				int jframe = 25 - (int) ((((double) jetFuel) / 2000.0) * 25);
@@ -401,7 +401,12 @@ public class Client extends ScrollingScreenGame {
 
 		// Explosions
 		for (Action a : netStateMan.getState().getActions()) {
-			addBoom(a.getArg());
+			System.out.println(a.getType() + "client update");
+			if(a.getType() == Action.EXPLOSION)
+				addBoom(a.getArg());
+			else {
+				System.out.println(a.getType() + "client update");				
+			}
 		}
 	}
 
