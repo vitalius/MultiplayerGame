@@ -244,4 +244,8 @@ public class ServerGameState {
 		netState.objectList.remove(ID);
 		// return ret;
 	}
+	
+	public PlayerObject playerByID(int id) {
+		return (PlayerObject) goTable.get(id);
+	}
 }

@@ -48,6 +48,8 @@ public class PlayerObject extends GameObject {
 	// statistics
 	private int kills;
 	private int deaths;
+	
+	public boolean isAlive = false;
 
 	// Player gfx sprite x,y positons
 
@@ -128,6 +130,7 @@ public class PlayerObject extends GameObject {
 		weapons.add(new Shotgun(this));
 		weapons.add(new GrenadeLauncher(this));
 		activeWeapon = weapons.get(2);
+		isAlive = true;
 	}
 
 	/*
@@ -200,10 +203,10 @@ public class PlayerObject extends GameObject {
 
 	// walking, running and floating
 	public void procInput(int leftRight, int jumpCrouch, boolean jet,
-			boolean crouch, boolean run, boolean shoot, int weapon, int spawn,
-			Vector2D cursor, BodyLayer<GameObject> layer, long deltaMs) {
+			boolean crouch, boolean run, int weapon, int spawn,
+			boolean facingDir, BodyLayer<GameObject> layer, long deltaMs) {
 
-		if (this.getCenterPosition().getX() > cursor.getX()) {
+		if (facingDir) {
 			this.isFacingRight = false;
 		} else {
 			this.isFacingRight = true;
@@ -234,7 +237,8 @@ public class PlayerObject extends GameObject {
 			jumpCrouch(jumpCrouch);
 		if (keyJet != jet)
 			jet(jet);
-		shoot(shoot, cursor, deltaMs);
+		
+		//shoot(shoot, cursor, deltaMs);
 
 		if (weapon >= 1 && weapon <= 3) {
 			activeWeapon = weapons.get(weapon - 1);
@@ -246,6 +250,11 @@ public class PlayerObject extends GameObject {
 	}
 
 	public void updatePlayerState(long deltaMs) {
+		if (health < 1)
+			isAlive = false;
+		else
+			isAlive = true;
+		
 		// System.out.println(jetFuel);
 		// Backup run out of fuel if client loses connection.
 		if (keyJet && jetFuel > 0) {

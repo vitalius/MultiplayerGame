@@ -141,7 +141,7 @@ public class Server extends ScrollingScreenGame {
 			playerObject.set(100, 1.0, 1.0, 0.0);
 			Vector2D a = level.playerInitSpots.get(0);
 			playerObject.setPosition(new Vector2D(a.getX(), a.getY()));
-			playerID = 65001; // bleh
+			playerID = gameState.getUniqueId();
 			gameState.addPlayer(playerID, playerObject);
 			oldInput = new Action(playerID);
 			netStateMan.update(gameState.getNetState());
@@ -177,7 +177,15 @@ public class Server extends ScrollingScreenGame {
 			input.right = keyboard.isPressed(KeyEvent.VK_RIGHT)
 					|| keyboard.isPressed(KeyEvent.VK_D);
 			input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
-			input.shoot = mouse.isLeftButtonPressed();
+			
+
+			if (mouse.isLeftButtonPressed()) {
+				Vector2D mousePos = screenToWorld(
+						new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
+				gameState.playerByID(playerID).shoot(true, mousePos, deltaMs);
+			}
+			
+			
 			if (keyboard.isPressed(KeyEvent.VK_1)) {
 				input.weapon = 1;
 			} else if (keyboard.isPressed(KeyEvent.VK_2)) {
@@ -187,19 +195,20 @@ public class Server extends ScrollingScreenGame {
 			} else {
 				input.weapon = 0;
 			}
+			
 			if (keyboard.isPressed(KeyEvent.VK_F1)) {
-				input.spawn = 1;
+				match.spawnPlayer(gameState.playerByID(playerID), 0);
 			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
-				input.spawn = 2;
+				match.spawnPlayer(gameState.playerByID(playerID), 1);
 			} else if (keyboard.isPressed(KeyEvent.VK_F3)) {
-				input.spawn = 3;
+				match.spawnPlayer(gameState.playerByID(playerID), 2);
 			} else if (keyboard.isPressed(KeyEvent.VK_F4)) {
-				input.spawn = 4;
-			} else {
-				input.spawn = 0;
+				match.spawnPlayer(gameState.playerByID(playerID), 3);
 			}
-			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
-					mouse.getLocation().getY()));
+			
+			input.faceLeft = true;
+			//input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
+			//		mouse.getLocation().getY()));
 
 			// if (oldInput.equals(input))
 			// return;
@@ -300,16 +309,17 @@ public class Server extends ScrollingScreenGame {
 			if (a.right)
 				++x;
 
-			playerObject.procInput(x, y, a.jet, false, false, a.shoot,
-					a.weapon, a.spawn, a.arg0, gameState.getLayer(), deltaMs);
+			playerObject.procInput(x, y, a.jet, false, false,
+					a.weapon, a.spawn, a.faceLeft, gameState.getLayer(), deltaMs);
 
 			break;
 
-		// ///////////////////////////////////////////
+		////////////////////////////////////////////////
 		// Adding a player
 		case Action.JOIN_REQUEST:
 			joinClient(a);
 			break;
+			
 		case Action.CHANGE_VELOCITY:
 			objectList.get(a.getID()).setVelocity(a.getArg());
 			break;
@@ -318,6 +328,20 @@ public class Server extends ScrollingScreenGame {
 			break;
 		case Action.TALK:
 			System.out.println("Server got talk: " + a.getMsg());
+			break;
+			
+		///////////////////////////////////////////////////////
+		// Request to shoot
+		case Action.SHOOT:
+			gameState.playerByID(a.getID()).shoot(true, a.getArg(), deltaMs);
+			break;
+			
+		//////////////////////////////////////////////////////////////////////
+		// Spawning a dead player
+		case Action.SPAWN:
+			int spawnSpot = Integer.valueOf(a.getMsg()).intValue();
+			match.spawnPlayer(gameState.playerByID(a.getID()), spawnSpot);
+			//System.out.println("Server recieved spawn request for Player ID:"+playerID+" loc:"+spawnSpot);
 			break;
 		}
 	}

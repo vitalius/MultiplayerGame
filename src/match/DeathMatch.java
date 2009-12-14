@@ -159,10 +159,13 @@ public class DeathMatch extends Match {
 	}
 	
 	@Override
-	public void spawnPlayer(PlayerObject p, Vector2D loc) {
-		p.setSpawn(0);
+	public void spawnPlayer(PlayerObject p, int n) {
+		if (n > this.levels.getThisLevel(this.curLevel).playerInitSpots.size())
+			return;
+		
+		p.setSpawn(n);
 		p.setActivation(true);
-		p.setCenterPosition(loc);
+		p.setCenterPosition(this.levels.getThisLevel(this.curLevel).playerInitSpots.get(n));
 		p.setHealth(PlayerObject.MAXHEALTH);
 	}
 
