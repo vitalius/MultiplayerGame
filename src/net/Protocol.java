@@ -23,11 +23,6 @@ public class Protocol {
 		output += a.getType() + "#";
 		
 		switch(a.getType()) {
-			case Action.CHANGE_VELOCITY:
-			case Action.CHANGE_POSITION:
-				output += a.getArg().getX() + "#";
-				output += a.getArg().getY() + "#";
-				break;
 			case Action.JOIN_ACCEPT:
 			case Action.JOIN_REQUEST:
 			case Action.LEAVE_SERVER:
@@ -43,7 +38,12 @@ public class Protocol {
 				output += (a.faceLeft ? "1" : "0") + "#";
 				output += a.weapon + "#";
 				break;
+			case Action.CHANGE_VELOCITY:
+			case Action.CHANGE_POSITION:
 			case Action.SHOOT:
+			case Action.EXPLOSION:
+			case Action.SHOTGUNSFX:
+			case Action.RIFLESFX:
 				output += a.getArg().getX() + "#";
 				output += a.getArg().getY() + "#";
 				break;
@@ -77,12 +77,6 @@ public class Protocol {
 		double x, y, dou;
 		
 		switch (type) {
-		case Action.CHANGE_VELOCITY:
-		case Action.CHANGE_POSITION:
-			x = Double.valueOf(token[2]).doubleValue();
-			y = Double.valueOf(token[3]).doubleValue();
-			returnAction = new Action(id, type, new Vector2D(x,y));
-			break;
 		case Action.JOIN_ACCEPT:
 		case Action.JOIN_REQUEST:
 		case Action.LEAVE_SERVER:
@@ -99,7 +93,12 @@ public class Protocol {
 			returnAction.faceLeft = Integer.valueOf(token[7]).intValue() == 1 ? true : false;
 			returnAction.weapon = Integer.valueOf(token[8]);
 			break;
+		case Action.CHANGE_VELOCITY:
+		case Action.CHANGE_POSITION:
 		case Action.SHOOT:
+		case Action.EXPLOSION:
+		case Action.SHOTGUNSFX:
+		case Action.RIFLESFX:
 			x = Double.valueOf(token[2]).doubleValue();
 			y = Double.valueOf(token[3]).doubleValue();
 			returnAction = new Action(id, type, new Vector2D(x,y));
@@ -110,7 +109,7 @@ public class Protocol {
 			returnAction = new Action(id, type, dou);
 			break;			
 		case Action.TALK:
-			returnAction = new Action(id, type, token[3]);
+			returnAction = new Action(id, type, token[2]);
 			break;
 		default:
 			returnAction = new Action(0, Action.DO_NOTHING);
@@ -128,7 +127,7 @@ public class Protocol {
 	 * @return
 	 */
 	public String encode(NetState gs) {
-		String output = gs.getSeqNum()+"#";
+		String output = gs.getSeqNum()+"*";
 		
 		for (NetObject p : gs.getNetObjects()) {
 			if (!p.isActive() && p.getType() != GameObject.PLAYER) continue; // don't send inactives
@@ -144,13 +143,10 @@ public class Protocol {
 			output += "%";
 		}
 		
-		output += "#";
+		output += "*";
 		
 		for (Action a : gs.getActions()) {
-			output += a.getID() + "$";
-			output += a.getType() + "$";
-			output += a.getArg().getX() + "$";
-			output += a.getArg().getY() + "$";
+			output += encodeAction(a);
 			output += "@";
 		}
 		//System.out.println("Protocol encode output: " + output);
@@ -169,7 +165,7 @@ public class Protocol {
 	 */
 	public NetState decode(String input) {
 		NetState retState = new NetState();
-		String[] token = input.split("#");
+		String[] token = input.split("\\*");
 		
 		// Sequence number
 		int seq_num = Integer.valueOf(token[0]).intValue();
@@ -203,18 +199,8 @@ public class Protocol {
 			return retState;
 
 		String action[] = token[2].split("@");
-		for (int i=0; i<action.length; i++) {
-			String attr[] = action[i].split("\\$");
-			
-			int id = Integer.valueOf(attr[0]).intValue();
-			int type = Integer.valueOf(attr[1]).intValue();
-			double x = Double.valueOf(attr[2]).doubleValue();
-			double y = Double.valueOf(attr[3]).doubleValue();
-			
-			Action a = new Action(id, type);
-			a.arg0 = new Vector2D(x,y);
-			retState.addAction(a);
-		}
+		for (int i=0; i<action.length; i++)
+			retState.addAction(decodeAction(action[i]));
 		
 		return retState;
 	}

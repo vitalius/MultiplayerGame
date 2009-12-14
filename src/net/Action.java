@@ -16,6 +16,8 @@ public class Action {
 	public static final int EXPLOSION       = 10;
 	public static final int TALK            = 11;
 	public static final int SPAWN           = 12;
+	public static final int RIFLESFX		= 13;
+	public static final int SHOTGUNSFX      = 14;
 
 	public boolean jet      = false;
 	public boolean left     = false;

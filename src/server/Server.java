@@ -248,24 +248,26 @@ public class Server extends ScrollingScreenGame {
 			tcpSender.sendSocket(clientIP, netStateMan.prot
 					.encodeAction(response));
 			
-			response = new Action(0, Action.TALK, "Welcome player: "+playerID.toString());
-			tcpSender.sendSocket(clientIP, netStateMan.prot
-					.encodeAction(response));
+			// SENDING MSG VIA BROADCASTING TO ALL CLIENTS
+			gameState.getNetState().addAction(
+					new Action(gameState.getUniqueId(),Action.TALK,
+							"Please welcome player ID:"+player.getID()));
+			
+			// SENDING MSG TO INDIVIDUAL USER
+			//tcpSender.sendSocket(ne.getIPbyID(playerID), 
+			//		netStateMan.);
 			
 			// Add clients IP to the broadcasting list
 			ne.addPlayer(playerID, a.getMsg());
 		} else {
 			// To refuse connection to the server game
 			response = new Action(0, Action.LEAVE_SERVER, "a");
-			sendMsg(clientIP, netStateMan.prot.encodeAction(response));
+			//sendMsg(clientIP, netStateMan.prot.encodeAction(response));
 			//tcpSender
 				//	.sendSocket(clientIP, netStateMan.prot.encodeAction(response));
 		}
 	}
 	
-	public void sendMsg(String ip, String ah) {
-		tcpSender.sendSocket(ip, ah);
-	}
 
 	/**
 	 * Just like client has a "keyboardHandler" method that capture key strokes
@@ -334,6 +336,7 @@ public class Server extends ScrollingScreenGame {
 		case Action.CHANGE_POSITION:
 			objectList.get(a.getID()).setPosition(a.getArg());
 			break;
+			
 		case Action.TALK:
 			System.out.println("Server got talk: " + a.getMsg());
 			break;

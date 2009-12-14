@@ -91,7 +91,7 @@ public class DeathMatch extends Match {
 			NetObject nplay = Server.getServer().gameState.getNetState().objectList.get(play.getID());
 			// get ip
 			String ip = nplay.getIp();
-			Server.getServer().sendMsg(ip,msg);
+			//Server.getServer().sendMsg(ip,msg);
 			// use server tcpsender to send action a. 
 			//Server.getServer().tcpSender.sendSocket(ip, Server.getServer().netStateMan.prot.encodeAction(a));
 			//System.out.println("Deathmatch Sent to " + ip + "this message: " + Server.getServer().netStateMan.prot.encodeAction(a) + "message: " + msg);
