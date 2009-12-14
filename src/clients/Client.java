@@ -22,6 +22,7 @@ import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
 import jig.engine.PaintableCanvas.JIGSHAPE;
+import jig.engine.audio.jsound.AudioClip;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
@@ -75,6 +76,7 @@ public class Client extends ScrollingScreenGame {
 	static final String LEVEL1 = "res/LEVEL1.png";
 
 	public String SERVER_IP = "127.0.0.1";
+	TcpSender control;
 
 	public static final int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 	private static final int MAXJETFUEL = 2000;
@@ -118,6 +120,12 @@ public class Client extends ScrollingScreenGame {
 	
 
 	public BroadcastListener bListen;
+	
+	// sounds
+	// sounds
+	public static AudioClip rifleSfx;
+	public static AudioClip shotgunSfx ;
+	public static AudioClip grenadeSfx ;
 
 	public Client() {
 
@@ -126,6 +134,13 @@ public class Client extends ScrollingScreenGame {
 		ResourceFactory.getFactory().loadResources("res",
 				"2Destruction-Resources.xml");
 		// newgame = new Button(SPRITE_SHEET + "#Start");
+		// sounds
+		rifleSfx = ResourceFactory.getFactory()
+				.getAudioClip("res/rifle.wav");
+		shotgunSfx = ResourceFactory.getFactory()
+				.getAudioClip("res/shotgun.wav");
+		grenadeSfx = ResourceFactory.getFactory()
+				.getAudioClip("res/grenade.wav");
 	}
 
 	public void startListenServer() {
@@ -171,7 +186,7 @@ public class Client extends ScrollingScreenGame {
 		tcpListen.start();
 
 		/* Send TCP data via this object */
-		TcpSender control = new TcpSender(SERVER_IP, NetworkEngine.TCP_PORT);
+		control = new TcpSender(SERVER_IP, NetworkEngine.TCP_PORT);
 
 		player = new Player(0, control);
 		input = new Action(0, Action.INPUT);
@@ -310,10 +325,13 @@ public class Client extends ScrollingScreenGame {
 
 	}
 
-	public void processPrivateMsg() {
-		if (msgQueue.size() < 1)
-			return;
-
+	/**
+	 * This method checks player's state and returns True if player has joined a
+	 * server game and false otherwise
+	 * 
+	 * @return - boolean
+	 */
+	public boolean areWeInGame() {
 		// When joining the game, request for a player ID is sent and this loop
 		// awaits Server's response
 		while (msgQueue.size() > 0) {
@@ -342,19 +360,17 @@ public class Client extends ScrollingScreenGame {
 		// response
 		if (player.state != Player.JOINED) {
 			showPrivateMessage("Conecting to the server...");
+			return false;
 		}
+		return true;
 	}
-	
+
 	public void update(long deltaMs) {
+		if (areWeInGame() == false)
+			return;
 
 		super.update(deltaMs);
-		
-		processPrivateMsg();
-		processActions(netStateMan.getState());
 
-		if (player.state != Player.JOINED)
-			return;
-		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
 				.getX(), mouse.getLocation().getY()));
 
@@ -421,6 +437,7 @@ public class Client extends ScrollingScreenGame {
 			}
 		}
 
+		processActions(netStateMan.getState());
 		keyboardMovementHandler(deltaMs);
 	}
 	
@@ -433,14 +450,24 @@ public class Client extends ScrollingScreenGame {
 	public void processActions(NetState state) {
 		if (state.getActions().size() < 1)
 			return;
-		
+		double dist;
 		for (Action a : state.getActions()) {
 			switch(a.getType()) {
 				case Action.EXPLOSION:
 					addBoom(a.getArg());
+					dist = Math.sqrt(a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition()));
+					grenadeSfx.play(Math.min(200/dist, 1));
 					break;
 				case Action.TALK:
 					showPublicMessage(a.getMsg());
+					break;
+				case Action.RIFLESFX:
+					dist = Math.sqrt(a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition()));
+					rifleSfx.play(Math.min(200/dist, 1));
+					break;
+				case Action.SHOTGUNSFX:
+					dist = Math.sqrt(a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition()));
+					shotgunSfx.play(Math.min(200/dist, 1));
 					break;
 			}
 		}
@@ -449,10 +476,6 @@ public class Client extends ScrollingScreenGame {
 		state.clearActions();
 	}
 
-	/**
-	 * This should probably be displayed on some timer, 2-3 secs
-	 * @param msg
-	 */
 	public void showPublicMessage(String msg) {
 		publicMsg = msg;
 	}

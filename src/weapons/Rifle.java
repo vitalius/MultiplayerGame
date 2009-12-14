@@ -1,5 +1,6 @@
 package weapons;
 
+import net.Action;
 import server.ServerGameState;
 import world.GameObject;
 import world.PlayerObject;
@@ -8,7 +9,7 @@ import jig.engine.util.Vector2D;
 public class Rifle extends Weapon {
 	
 	protected static int VEL_MAG = 1000;
-	protected static int WEAPON_DELAY = 250;
+	protected static int WEAPON_DELAY = 150;
 	
 	public Rifle(PlayerObject p) {
 		super(p);
@@ -46,5 +47,8 @@ public class Rifle extends Weapon {
 		
 		// add it to the start of the list
 		bullets.add(bullet);
+		
+		// add the sound
+		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.RIFLESFX,shootLoc));
 	}
 }

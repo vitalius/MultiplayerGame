@@ -1,5 +1,6 @@
 package weapons;
 
+import net.Action;
 import server.ServerGameState;
 import world.GameObject;
 import world.PlayerObject;
@@ -8,9 +9,9 @@ import jig.engine.util.Vector2D;
 public class Shotgun extends Weapon {
 
 	protected static int VEL_MAG = 1000;
-	protected static int WEAPON_DELAY = 1000;
-	protected static int BULLET_NUM = 4;
-	protected static int SPREAD = 8; // angle between bullets
+	protected static int WEAPON_DELAY = 750;
+	protected static int BULLET_NUM = 8;
+	protected static int SPREAD = 4; // angle between bullets
 
 	public Shotgun(PlayerObject p) {
 		super(p);
@@ -61,5 +62,8 @@ public class Shotgun extends Weapon {
 			bullets.add(bullet); // add it to the start of the list
 			shootVec = shootVec.rotate(Math.toRadians(SPREAD));
 		}
+		
+		// add the sound
+		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.SHOTGUNSFX,shootLoc));
 	}
 }

@@ -3,16 +3,9 @@ package match;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import net.Action;
 import net.NetObject;
-import net.NetStateManager;
-import net.Protocol;
-import physics.CattoPhysicsEngine;
 import server.Server;
 import server.ServerGameState;
-import server.TcpSender;
-import jig.engine.hli.ScrollingScreenGame;
-import jig.engine.util.Vector2D;
 import world.LevelMap;
 import world.LevelSet;
 import world.PlayerObject;
@@ -84,13 +77,12 @@ public class DeathMatch extends Match {
 		// start timer
 		startTime = ServerGameState.getGameState().totalMs;
 		// notify players to spawn
-		String msg = "Game have started! Press f1-4 to spawn.";
-		Action a = new Action(0, Action.TALK, msg);
+		String msg = "Game have started! Press F1-F4 to spawn.";
 		for(PlayerObject play: players) {
 			// get netobject of player
 			NetObject nplay = Server.getServer().gameState.getNetState().objectList.get(play.getID());
 			// get ip
-			String ip = nplay.getIp();
+			//String ip = nplay.getIp();
 			//Server.getServer().sendMsg(ip,msg);
 			// use server tcpsender to send action a. 
 			//Server.getServer().tcpSender.sendSocket(ip, Server.getServer().netStateMan.prot.encodeAction(a));

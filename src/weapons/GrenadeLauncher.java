@@ -10,10 +10,9 @@ public class GrenadeLauncher extends Weapon {
 
 	protected static int VEL_MAG = 600;
 	protected static int BUL_VEL_MAG = 1000;
-	protected static int WEAPON_DELAY = 3000;
+	protected static int WEAPON_DELAY = 2000;
 	//protected static int EXPLODE_DELAY = 3000; // use weapon delay for this 
-	protected static int BULLET_NUM = 10;
-	protected static int SPREAD = 36; // angle between bullets
+	protected static int BULLET_NUM = 20;
 	protected GameObject grenade;
 
 	public GrenadeLauncher(PlayerObject p) {
@@ -74,16 +73,18 @@ public class GrenadeLauncher extends Weapon {
 		Vector2D shootLoc = grenade.getCenterPosition();
 		
 		// sending explosion to clients
+		//System.out.println("GrenadeLauncher.Explode");
 		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.EXPLOSION,shootLoc)); 
 		
 		Vector2D shootVec = new Vector2D(1,0);
 		for (int i = 0; i < BULLET_NUM; i++) {
+			//System.out.println("GL.explode spread: " + (360/BULLET_NUM));
 			GameObject bullet = bullets.remove(0);// get from oldest one.
 			bullet.setActivation(true);
 			bullet.setPosition(shootLoc);
 			bullet.setVelocity(shootVec.scale(BUL_VEL_MAG));
 			bullets.add(bullet); // add it to the start of the list
-			shootVec = shootVec.rotate(Math.toRadians(SPREAD));
+			shootVec = shootVec.rotate(Math.toRadians(360/BULLET_NUM));
 		}
 	}
 }
