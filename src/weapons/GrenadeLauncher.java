@@ -60,6 +60,7 @@ public class GrenadeLauncher extends Weapon {
 		grenade.setActivation(true);
 		grenade.setPosition(shootLoc);
 		grenade.setVelocity(shootVec.scale(VEL_MAG));
+		grenade.setRotation((2.0 * Math.random())-1.0);
 		//System.out.println("Shot Grenade");
 	}
 	
