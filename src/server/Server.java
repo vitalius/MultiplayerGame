@@ -52,7 +52,8 @@ public class Server extends ScrollingScreenGame {
 	private PlayerObject playerObject;
 	private Action oldInput;
 	private Match match;
-
+	private boolean paused;
+	
 	public LinkedBlockingQueue<String> msgQueue;
 
 	public TcpSender tcpSender;
@@ -111,6 +112,8 @@ public class Server extends ScrollingScreenGame {
 
 		gameObjectLayers.add(gameState.getLayer());
 		pe.manageViewableSet(gameState.getLayer());
+		
+		paused = false;
 	}
 
 	public static Server getServer() {
@@ -132,6 +135,10 @@ public class Server extends ScrollingScreenGame {
 		keyboard.poll();
 		Vector2D mousePos = screenToWorld(
 				new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
+		
+		// pause and unpause the game
+		if (keyboard.isPressed(KeyEvent.VK_OPEN_BRACKET)) paused = true;
+		if (keyboard.isPressed(KeyEvent.VK_CLOSE_BRACKET)) paused = false;
 
 		// player alive/dead test code.
 		if (keyboard.isPressed(KeyEvent.VK_P) && serverPlayerID != -1) {
@@ -237,8 +244,8 @@ public class Server extends ScrollingScreenGame {
 			player.set(100, 1.0, 1.0, 0.0);
 			// Vector2D spawn = level.playerInitSpots.get(1);
 			// player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
-			match.addPlayer(player);
 			gameState.addPlayer(playerID, player);
+			match.addPlayer(player);
 
 			// Sending player's ID as a reply to the client
 			response = new Action(0, Action.JOIN_ACCEPT, playerID.toString());
@@ -373,7 +380,7 @@ public class Server extends ScrollingScreenGame {
 
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
-		pe.applyLawsOfPhysics(deltaMs);
+		if (!paused) pe.applyLawsOfPhysics(deltaMs);
 
 		netMS += deltaMs;
 		if (netMS > NET_MS) {
@@ -398,6 +405,14 @@ public class Server extends ScrollingScreenGame {
 						.getY()) / 2); // centers on player
 		//System.out.println("Server update player loc: "
 			//	+ playerObject.getCenterPosition());
+	}
+	
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
 	}
 
 	public static void main(String[] vars) {

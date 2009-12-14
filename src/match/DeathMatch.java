@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import server.Server;
 import server.ServerGameState;
-
+import jig.engine.util.Vector2D;
 import world.LevelMap;
 import world.LevelSet;
 import world.PlayerObject;
@@ -63,6 +63,9 @@ public class DeathMatch extends Match {
 
 	@Override
 	public void startMatch() {
+		gameState = Match.RUNNING;
+		Server.getServer().setPaused(false);
+		
 		// load the level
 		// loadNextLevel(); //TODO: fix if time
 
@@ -77,7 +80,7 @@ public class DeathMatch extends Match {
 		// start timer
 		startTime = ServerGameState.getGameState().totalMs;
 		// notify players to spawn
-		String msg = "Game have started! Press f1-4 to spawn.";
+		String msg = "Game have started! Press F1-F4 to spawn.";
 		Server.getServer().sendPublicMessage(msg);
 	}
 
@@ -97,20 +100,11 @@ public class DeathMatch extends Match {
 
 	@Override
 	public void endMatch() {
+		gameState = Match.RESULTS;
+		Server.getServer().setPaused(true);
 		System.out.println("Deathmatch end match event");
 
 		LinkedList<playerscore> scores = new LinkedList<playerscore>();
-
-		// reset all scores
-		for (PlayerObject p : players) {
-			scores
-					.add(new playerscore(p.getID(), p.getKills()
-							- p.getDeaths()));
-			//p.setActivation(false);
-			p.setHealth(0); // this will be zero until we spawn
-			p.clearKills();
-			p.clearDeaths();
-		}
 
 		Collections.sort(scores);
 
@@ -119,17 +113,7 @@ public class DeathMatch extends Match {
 					+ ps.score);
 		}
 
-		// Server.getServer().clear();
-		// loadLevel(1);
-
-		// FOR ow force exit
-		// System.exit(0);
-
-		// disable input?
-
 		// display scores
-
-		// start timer
 
 	}
 
@@ -138,6 +122,7 @@ public class DeathMatch extends Match {
 		players.add(p);
 		p.setActivation(false);
 		p.setHealth(0); // this will be zero until we spawn
+		p.setPosition(new Vector2D(5000,5000)); // add the player in the middle of nowher
 		p.clearKills();
 		p.clearDeaths();
 		p.setTeam(players.size() - 1);
@@ -153,7 +138,12 @@ public class DeathMatch extends Match {
 		if (n > this.levels.getThisLevel(this.curLevel).playerInitSpots.size())
 			return;
 
-		p.spawnAt(levels.getThisLevel(this.curLevel).playerInitSpots.get(n));
+		p.setActivation(true);
+		p
+				.setCenterPosition(this.levels.getThisLevel(this.curLevel).playerInitSpots
+						.get(n));
+		p.setHealth(PlayerObject.MAXHEALTH);
+		p.setVelocity(new Vector2D(0, 0));
 	}
 
 	@Override

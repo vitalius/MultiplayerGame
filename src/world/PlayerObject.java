@@ -138,7 +138,7 @@ public class PlayerObject extends GameObject {
 		weapons.add(new Rifle(this));
 		weapons.add(new Shotgun(this));
 		weapons.add(new GrenadeLauncher(this));
-		activeWeapon = weapons.get(2);
+		activeWeapon = weapons.get(0);
 		
 		// initialize bullets
 		GameObject b = null;
