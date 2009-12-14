@@ -64,7 +64,7 @@ public class Action {
 	 * And the input where String is a coded input like this: "1#0#0#1" - UP and RIGHT are pressed
 	 * 
 	 * @param requesterId
-	 * @param t - JOIN, INPUT
+	 * @param t - JOIN, INPUT, TALK, see Protocol.java for more details
 	 * @param ip - IP address of a client
 	 */
 	public Action(int requesterId, int t, String s) {

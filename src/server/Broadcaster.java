@@ -39,12 +39,9 @@ public class Broadcaster {
 	 */
 	public void addIP(int id, String ip) {
 		System.out.println("Adding "+id+" at "+ip+" to broadcasting list.");
-		if (!ipList.contains(ip))
+		if (!ipList.containsKey(id))
 			ipList.put(id, ip);
-	}
-	
-	public void clearIPs() {
-		ipList.clear();
+
 	}
 	
 	/**

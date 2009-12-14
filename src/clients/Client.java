@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import javax.swing.JOptionPane;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 import physics.Box;
@@ -14,6 +13,7 @@ import server.NetworkEngine;
 import world.GameObject;
 import net.Action;
 import net.NetObject;
+import net.NetState;
 import net.NetStateManager;
 import net.SyncState;
 import jig.engine.CursorResource;
@@ -226,7 +226,7 @@ public class Client extends ScrollingScreenGame {
 		// whatever layers not added into gameObjectLayers will be manually
 		// rendered.
 
-		privateMsg = "Connecting to the server...";
+		showPrivateMessage("Connecting to the server...");
 
 	}
 
@@ -344,10 +344,10 @@ public class Client extends ScrollingScreenGame {
 					player.setID(newID);
 					input.setID(newID);
 					player.state = Player.JOINED;
-					showPrivateMessage("Connected.");
+					//showPrivateMessage("Connected.");
 					break;
 				case Action.LEAVE_SERVER:
-					showPrivateMessage("Connection to the server lost.");
+					//showPrivateMessage("Connection to the server lost.");
 					player.state = Player.WAITING;	
 					break;
 				case Action.TALK:
@@ -423,7 +423,6 @@ public class Client extends ScrollingScreenGame {
 				int hframe = 25 - (int) ((((double) hl) / 2000.0) * 25);
 				// System.out.println(hframe + " hframe, client");
 				health.setFrame(hframe);
-				publicMsg = "";
 			} else {
 				health.setFrame(25);
 				//msg = "Dead - press f1-4 to respawn.";
@@ -438,7 +437,7 @@ public class Client extends ScrollingScreenGame {
 			}
 		}
 
-		processActions(netStateMan.getState().getActions());
+		processActions(netStateMan.getState());
 		keyboardMovementHandler(deltaMs);
 	}
 	
@@ -448,8 +447,9 @@ public class Client extends ScrollingScreenGame {
 	 * 
 	 * @param alist
 	 */
-	public void processActions(Collection<Action> alist) {
-		for (Action a : alist) {
+	public void processActions(NetState state) {
+		
+		for (Action a : state.getActions()) {
 			switch(a.getType()) {
 				case Action.EXPLOSION:
 					addBoom(a.getArg());
@@ -458,11 +458,14 @@ public class Client extends ScrollingScreenGame {
 					showPublicMessage(a.getMsg());
 					break;
 			}
-		}		
+		}
+		
+		// We process actions only once
+		state.clearActions();
 	}
 
 	public void showPublicMessage(String msg) {
-		privateMsg = msg;
+		publicMsg = msg;
 	}
 	
 	public void showPrivateMessage(String msg) {
