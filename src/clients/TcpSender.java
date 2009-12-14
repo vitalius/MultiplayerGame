@@ -28,15 +28,15 @@ public class TcpSender {
 
 	public void sendSocket(String sendString) {
 		try {
-			System.out.println(sendString);
+			//System.out.println(sendString);
 			socket = new Socket(serverIP, port);
 			OutputStream out = socket.getOutputStream();
 			out.write(sendString.getBytes());
 			socket.close();
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	
