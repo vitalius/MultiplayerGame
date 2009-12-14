@@ -445,7 +445,8 @@ public class Client extends ScrollingScreenGame {
 					shotgunSfx.play(Math.min(50000/dist, 1)*.1);
 					break;
 				case Action.TIMER:
-					//timerString = "Time: "+a.getMsg().charAt(0) + a.getMsg().charAt(1);
+					long timeLeft = Integer.valueOf(a.getMsg()).intValue();
+					timerString = "Time: "+timeLeft/1000;
 					break;
 			}
 		}

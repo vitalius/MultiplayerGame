@@ -117,6 +117,7 @@ public class PlayerObject extends GameObject {
 	
 	// moved from weapon to increase frame rate
 	public ArrayList<GameObject> bullets; // reusable bullets
+	public boolean isAlive;
 
 	public PlayerObject(String rsc) {
 		super(rsc);
@@ -270,8 +271,9 @@ public class PlayerObject extends GameObject {
 	}
 
 	public void updatePlayerState(long deltaMs) {
-		if (health < 1) {
+		if (health < 1 && isAlive) {
 			Server.getServer().sendPrivateMessage(this.id, "You are dead, press F1-F4 to respawn.");
+			isAlive = false;
 		}
 		
 		// System.out.println(jetFuel);
