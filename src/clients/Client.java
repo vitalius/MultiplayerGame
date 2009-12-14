@@ -448,14 +448,24 @@ public class Client extends ScrollingScreenGame {
 	 * @param alist
 	 */
 	public void processActions(NetState state) {
-		
+		double dist;
 		for (Action a : state.getActions()) {
 			switch(a.getType()) {
 				case Action.EXPLOSION:
 					addBoom(a.getArg());
+					dist = Math.sqrt(a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition()));
+					grenadeSfx.play(Math.min(200/dist, 1));
 					break;
 				case Action.TALK:
 					showPublicMessage(a.getMsg());
+					break;
+				case Action.RIFLESFX:
+					dist = Math.sqrt(a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition()));
+					rifleSfx.play(Math.min(200/dist, 1));
+					break;
+				case Action.SHOTGUNSFX:
+					dist = Math.sqrt(a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition()));
+					shotgunSfx.play(Math.min(200/dist, 1));
 					break;
 			}
 		}
@@ -478,9 +488,6 @@ public class Client extends ScrollingScreenGame {
 		if (boomList.size() < 100) {
 			// make new one and add it.
 			Explode boomy = new Explode(SPRITES + "#Explosion");
-			double dist = Math.sqrt(loc.distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition()));
-			//System.out.println("Client.addBoom explosion dist: " + dist);
-			grenadeSfx.play(50/dist);
 			boomy.setCenterPosition(loc);
 			front.add(boomy);
 			boomList.add(boomy);

@@ -1,5 +1,6 @@
 package weapons;
 
+import net.Action;
 import server.ServerGameState;
 import world.GameObject;
 import world.PlayerObject;
@@ -46,5 +47,8 @@ public class Rifle extends Weapon {
 		
 		// add it to the start of the list
 		bullets.add(bullet);
+		
+		// add the sound
+		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.RIFLESFX,shootLoc));
 	}
 }

@@ -1,5 +1,6 @@
 package weapons;
 
+import net.Action;
 import server.ServerGameState;
 import world.GameObject;
 import world.PlayerObject;
@@ -61,5 +62,8 @@ public class Shotgun extends Weapon {
 			bullets.add(bullet); // add it to the start of the list
 			shootVec = shootVec.rotate(Math.toRadians(SPREAD));
 		}
+		
+		// add the sound
+		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.SHOTGUNSFX,shootLoc));
 	}
 }

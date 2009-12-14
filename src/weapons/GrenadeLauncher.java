@@ -73,7 +73,7 @@ public class GrenadeLauncher extends Weapon {
 		Vector2D shootLoc = grenade.getCenterPosition();
 		
 		// sending explosion to clients
-		System.out.println("GrenadeLauncher.Explode");
+		//System.out.println("GrenadeLauncher.Explode");
 		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.EXPLOSION,shootLoc)); 
 		
 		Vector2D shootVec = new Vector2D(1,0);
