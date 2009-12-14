@@ -88,7 +88,7 @@ public class DeathMatch extends Match {
 		public int playerID = 0;
 		public int score = 0;
 
-		playerscore(int playid, int sco) {
+		public playerscore(int playid, int sco) {
 			playerID = playid;
 			score = sco;
 		}
@@ -100,12 +100,17 @@ public class DeathMatch extends Match {
 
 	@Override
 	public void endMatch() {
-		System.exit(0);
 		
+		Server.getServer().setPaused(true);
+
 		gameState = Match.RESULTS;
 		System.out.println("Deathmatch end match event");
 
 		LinkedList<playerscore> scores = new LinkedList<playerscore>();
+		
+		for(PlayerObject play: players) {
+			scores.add(new playerscore(play.getID(), play.getKills() - play.getDeaths()));
+		}
 
 		Collections.sort(scores);
 
@@ -115,7 +120,6 @@ public class DeathMatch extends Match {
 			System.out.println(msg);
 			Server.getServer().sendPublicMessage(msg);
 		}
-		Server.getServer().setPaused(true);
 		
 
 		// display scores
