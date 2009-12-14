@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import physics.Arbiter;
+import server.ServerGameState;
 import weapons.GrenadeLauncher;
 import weapons.Rifle;
 import weapons.Shotgun;
@@ -95,6 +96,10 @@ public class PlayerObject extends GameObject {
 
 	static final public int ROWDOWN = 36;// 36 is length of single row
 	static final public int COLORS = 6; // 6 colors.
+	
+	// bullet vars
+	protected static int MASS = 10, FRIC = 1, REST = 1, ROT = 0;
+	protected static int ANTI_GRAV = -300;
 
 	// Data concerning frame setting
 	// x, y of current animation
@@ -110,6 +115,9 @@ public class PlayerObject extends GameObject {
 	private int currentframe = 0;
 	// enable loop or not.
 	private int animationloop = LOC_PLAYER_STAND_REPEAT;
+	
+	// moved from weapon to increase frame rate
+	public ArrayList<GameObject> bullets; // reusable bullets
 
 	public PlayerObject(String rsc) {
 		super(rsc);
@@ -130,6 +138,20 @@ public class PlayerObject extends GameObject {
 		weapons.add(new Shotgun(this));
 		weapons.add(new GrenadeLauncher(this));
 		activeWeapon = weapons.get(2);
+		
+		// initialize bullets
+		GameObject b = null;
+		bullets = new ArrayList<GameObject>(10);
+		for (int i = 0; i < 20; i++) {
+			b = new GameObject("bullet");
+			b.setActivation(false);
+			b.set(MASS, FRIC, REST, ROT); 
+			b.setForce(new Vector2D(0,ANTI_GRAV)); // don't let gravity affect the bullet, change for grenades
+			bullets.add(b);
+			if (ServerGameState.getGameState() != null) { // this is null on the client
+				ServerGameState.getGameState().add(b);
+			}
+		}
 	}
 
 	/*

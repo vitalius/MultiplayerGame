@@ -55,15 +55,15 @@ public class Shotgun extends Weapon {
 		// set the spread
 		shootVec = shootVec.rotate(-Math.toRadians(SPREAD*(BULLET_NUM-1)/2));
 		for (int i = 0; i < BULLET_NUM; i++) {
-			GameObject bullet = bullets.remove(0);// get from oldest one.
+			GameObject bullet = player.bullets.remove(0);// get from oldest one.
 			bullet.setActivation(true);
 			bullet.setPosition(shootLoc);
 			bullet.setVelocity(shootVec.scale(VEL_MAG));
-			bullets.add(bullet); // add it to the start of the list
+			player.bullets.add(bullet); // add it to the start of the list
 			shootVec = shootVec.rotate(Math.toRadians(SPREAD));
 		}
 		
 		// add the sound
-		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.SHOTGUNSFX,shootLoc));
+		ServerGameState.getGameState().getNetState().addAction(new Action(ServerGameState.getGameState().getUniqueId(),Action.SHOTGUNSFX,shootLoc));
 	}
 }
