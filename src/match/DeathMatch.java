@@ -144,6 +144,7 @@ public class DeathMatch extends Match {
 
 	@Override
 	public void spawnPlayer(PlayerObject p, int n) {
+		p.isAlive = true;
 		if (n > this.levels.getThisLevel(this.curLevel).playerInitSpots.size())
 			return;
 
