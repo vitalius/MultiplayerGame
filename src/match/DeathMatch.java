@@ -122,7 +122,7 @@ public class DeathMatch extends Match {
 		Collections.sort(scores);
 
 		for (playerscore ps : scores) {
-			String msg = "Deathmatch score: " + ps.playerID + " scored:"
+			String msg = "Deathmatch Player : " + ps.playerID + " Score: "
 			+ ps.score + "Kills: " + ps.kills + "Deaths: " + ps.deaths;
 			System.out.println(msg);
 			Server.getServer().sendPublicMessage(msg);
