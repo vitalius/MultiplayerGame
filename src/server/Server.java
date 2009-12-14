@@ -98,7 +98,7 @@ public class Server extends ScrollingScreenGame {
 		// Add a player to test movement, remove when not needed
 		playerObject = new PlayerObject("player");
 		playerObject.set(100, 1.0, 1.0, 0.0);
-		playerID = 65001; // bleh
+		playerID = gameState.getUniqueId();
 		gameState.addPlayer(playerID, playerObject);
 		oldInput = new Action(playerID);
 
@@ -247,21 +247,27 @@ public class Server extends ScrollingScreenGame {
 			response = new Action(0, Action.JOIN_ACCEPT, playerID.toString());
 			tcpSender.sendSocket(clientIP, netStateMan.prot
 					.encodeAction(response));
-
+			
+			// SENDING MSG VIA BROADCASTING TO ALL CLIENTS
+			gameState.getNetState().addAction(
+					new Action(gameState.getUniqueId(),Action.TALK,
+							"Please welcome player ID:"+player.getID()));
+			
+			// SENDING MSG TO INDIVIDUAL USER
+			//tcpSender.sendSocket(ne.getIPbyID(playerID), 
+			//		netStateMan.);
+			
 			// Add clients IP to the broadcasting list
 			ne.addPlayer(playerID, a.getMsg());
 		} else {
 			// To refuse connection to the server game
 			response = new Action(0, Action.LEAVE_SERVER, "a");
-			sendMsg(clientIP, netStateMan.prot.encodeAction(response));
+			//sendMsg(clientIP, netStateMan.prot.encodeAction(response));
 			//tcpSender
 				//	.sendSocket(clientIP, netStateMan.prot.encodeAction(response));
 		}
 	}
 	
-	public void sendMsg(String ip, String ah) {
-		tcpSender.sendSocket(ip, ah);
-	}
 
 	/**
 	 * Just like client has a "keyboardHandler" method that capture key strokes
@@ -314,7 +320,7 @@ public class Server extends ScrollingScreenGame {
 				++x;
 
 			playerObject.procInput(x, y, a.jet, false, false,
-					a.weapon, a.spawn, a.faceLeft, gameState.getLayer(), deltaMs);
+					a.weapon, a.faceLeft, gameState.getLayer(), deltaMs);
 
 			break;
 
@@ -330,6 +336,7 @@ public class Server extends ScrollingScreenGame {
 		case Action.CHANGE_POSITION:
 			objectList.get(a.getID()).setPosition(a.getArg());
 			break;
+			
 		case Action.TALK:
 			System.out.println("Server got talk: " + a.getMsg());
 			break;

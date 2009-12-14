@@ -16,6 +16,8 @@ public class Action {
 	public static final int EXPLOSION       = 10;
 	public static final int TALK            = 11;
 	public static final int SPAWN           = 12;
+	public static final int RIFLESFX		= 13;
+	public static final int SHOTGUNSFX      = 14;
 
 	public boolean jet      = false;
 	public boolean left     = false;
@@ -24,7 +26,6 @@ public class Action {
 	public boolean jump     = false;
 	public boolean faceLeft = false;
 	public int weapon = 0;
-	public int spawn = 0;
 
 	private int id;
 	private int type;
@@ -110,7 +111,6 @@ public class Action {
 				a.crouch   == crouch && 
 				a.jump     == jump &&
 				a.weapon   == weapon && 
-				a.spawn    == spawn && 
 				a.faceLeft == faceLeft     )
 			return true;
 		return false;
@@ -128,7 +128,6 @@ public class Action {
 		right    = a.right;
 		jump     = a.jump;
 		weapon   = a.weapon;
-		spawn    = a.spawn;
 		faceLeft = a.faceLeft;
 	}
 	
