@@ -20,6 +20,7 @@ import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
 import jig.engine.PaintableCanvas.JIGSHAPE;
+import jig.engine.audio.jsound.AudioClip;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
@@ -73,6 +74,7 @@ public class Client extends ScrollingScreenGame {
 	static final String LEVEL1 = "res/LEVEL1.png";
 
 	public String SERVER_IP = "127.0.0.1";
+	TcpSender control;
 
 	public static final int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 	private static final int MAXJETFUEL = 2000;
@@ -113,6 +115,12 @@ public class Client extends ScrollingScreenGame {
 	String msg = "";
 
 	public BroadcastListener bListen;
+	
+	// sounds
+	// sounds
+	public static AudioClip rifleSfx;
+	public static AudioClip shotgunSfx ;
+	public static AudioClip grenadeSfx ;
 
 	public Client() {
 
@@ -121,6 +129,13 @@ public class Client extends ScrollingScreenGame {
 		ResourceFactory.getFactory().loadResources("res",
 				"2Destruction-Resources.xml");
 		// newgame = new Button(SPRITE_SHEET + "#Start");
+		// sounds
+		rifleSfx = ResourceFactory.getFactory()
+				.getAudioClip("res/rifle.wav");
+		shotgunSfx = ResourceFactory.getFactory()
+				.getAudioClip("res/shotgun.wav");
+		grenadeSfx = ResourceFactory.getFactory()
+				.getAudioClip("res/grenade.wav");
 	}
 
 	public void startListenServer() {
@@ -166,7 +181,7 @@ public class Client extends ScrollingScreenGame {
 		tcpListen.start();
 
 		/* Send TCP data via this object */
-		TcpSender control = new TcpSender(SERVER_IP, NetworkEngine.TCP_PORT);
+		control = new TcpSender(SERVER_IP, NetworkEngine.TCP_PORT);
 
 		player = new Player(0, control);
 		input = new Action(0, Action.INPUT);
@@ -254,7 +269,7 @@ public class Client extends ScrollingScreenGame {
 			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
 					mouse.getLocation().getY()));
-			System.out.println("Client keyboard: alive" + input.spawn);
+			//System.out.println("Client keyboard: alive" + input.spawn);
 			player.move(input);
 		} else {
 			input.crouch = false;
@@ -275,7 +290,7 @@ public class Client extends ScrollingScreenGame {
 			}
 			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
 					mouse.getLocation().getY()));
-			System.out.println("Client keyboard: dead" + input.spawn);
+			//System.out.println("Client keyboard: dead" + input.spawn);
 			player.move(input);
 		}
 		if (keyboard.isPressed(KeyEvent.VK_B)) {
@@ -410,6 +425,7 @@ public class Client extends ScrollingScreenGame {
 		if (boomList.size() < 100) {
 			// make new one and add it.
 			Explode boomy = new Explode(SPRITES + "#Explosion");
+			grenadeSfx.play();
 			boomy.setCenterPosition(loc);
 			front.add(boomy);
 			boomList.add(boomy);

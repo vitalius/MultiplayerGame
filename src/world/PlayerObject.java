@@ -2,6 +2,8 @@ package world;
 
 import java.util.ArrayList;
 
+import jig.engine.ResourceFactory;
+import jig.engine.audio.jsound.AudioClip;
 import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import physics.Arbiter;

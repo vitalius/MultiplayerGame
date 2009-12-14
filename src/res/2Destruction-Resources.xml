@@ -1,5 +1,17 @@
 <resources>
 
+	<audioclip>
+    	<src>rifle.wav</src>
+  	</audioclip>
+  	<audioclip>
+    	<src>shotgun.wav</src>
+  	</audioclip>
+  	<audioclip>
+    	<src>grenade.wav</src>
+ 	</audioclip>
+ 	<audioclip>
+    	<src>death.wav</src>
+ 	</audioclip>
     <spritesheet>
         <imagesrc>GameBackground.png</imagesrc>
         <framesrc>GameBackground.xml</framesrc>
@@ -16,8 +28,5 @@
     	 <imagesrc>LEVEL1.png</imagesrc>
 		 <framesrc>LEVEL1.xml</framesrc>
     </spritesheet>
-    
- 
-    
 
 </resources>
