@@ -404,8 +404,9 @@ public class Client extends ScrollingScreenGame {
 			System.out.println(a.getType() + "client update");
 			if(a.getType() == Action.EXPLOSION)
 				addBoom(a.getArg());
-			else {
-				System.out.println(a.getType() + "client update");				
+			else if( a.getType() == Action.TALK){
+				msg = a.getMsg();
+				System.out.println(msg + "client update");				
 			}
 		}
 	}
