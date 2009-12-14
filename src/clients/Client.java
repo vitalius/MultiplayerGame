@@ -201,12 +201,12 @@ public class Client extends ScrollingScreenGame {
 		back = new Box(PICTUREBACKGROUND + "#background");
 		background.add(back);
 		// ui elements
-		jetpack = new GameObject(UIGFX + "#JetFuel");
-		jetpack.setPosition(new Vector2D(20, 20));
-		GUI.add(jetpack);
 		health = new GameObject(UIGFX + "#Health");
-		health.setPosition(new Vector2D(20, 31));
+		health.setPosition(new Vector2D(20, 20));
 		GUI.add(health);
+		jetpack = new GameObject(UIGFX + "#JetFuel");
+		jetpack.setPosition(new Vector2D(20, 31));
+		GUI.add(jetpack);
 
 		// Uncommet only when set heap space higher..
 		// http://wiki.eclipse.org/
