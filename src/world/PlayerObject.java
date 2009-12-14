@@ -273,7 +273,7 @@ public class PlayerObject extends GameObject {
 	public void updatePlayerState(long deltaMs) {
 		if (health < 1 && isAlive) {
 			Server.getServer().sendPrivateMessage(this.id, "You are dead, press F1-F4 to respawn.");
-			isAlive = false;
+			this.isAlive = false;
 		}
 		
 		// System.out.println(jetFuel);
@@ -465,8 +465,17 @@ public class PlayerObject extends GameObject {
 		
 		setHealth(getHealth()-200);
 		
-		if (getHealth() < 1)
-			Server.getServer().sendPublicMessage("Player ID:"+getID()+" was killed by ID:"+b.owner.getID());
+		if (getHealth() < 1) {
+			this.incDeaths();
+			if (this.getID() != b.getID()) {
+				b.owner.incKills();
+				Server.getServer().sendPublicMessage("Player ID: "+getID()+" was killed by Player ID: "+b.owner.getID());
+			} else {
+				b.owner.incDeaths(); // punish for suicide
+				Server.getServer().sendPublicMessage("Player ID: "+getID()+" kills herself.");
+			}
+			
+		}
 	}
 	
 	public int getHealth() {
