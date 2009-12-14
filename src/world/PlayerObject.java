@@ -460,12 +460,24 @@ public class PlayerObject extends GameObject {
 		isAlive = true;
 	}
 	
+	
+	public void woundBy(GameObject b) {
+		if (!isAlive || getHealth() < 1)
+			return;
+		
+		setHealth(getHealth()-200);
+		
+		if (getHealth() < 1)
+			Server.getServer().sendPublicMessage("Player ID:"+getID()+" was killed by ID:"+b.owner.getID());
+	}
+	
 	public int getHealth() {
 		return health;
 	}
 
 	public void setHealth(int health) {
 		this.health = health;
+		if (this.health < 0) this.health = 0;
 	}
 
 	public int getKills() {

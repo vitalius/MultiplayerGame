@@ -538,7 +538,7 @@ public class Client extends ScrollingScreenGame {
 		
 		for(int i=consoleSize-n; i<consoleText.size();i++) {
 			fontWhite.render(consoleText.get(i), rc, AffineTransform
-					.getTranslateInstance(20, 30+((i-(consoleSize-n))*20)));				
+					.getTranslateInstance(20, 40+((i-(consoleSize-n))*15)));				
 		}
 	}
 	
