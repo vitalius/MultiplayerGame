@@ -448,6 +448,8 @@ public class Client extends ScrollingScreenGame {
 	 * @param alist
 	 */
 	public void processActions(NetState state) {
+		if (state.getActions().size() < 1)
+			return;
 		double dist;
 		for (Action a : state.getActions()) {
 			switch(a.getType()) {
