@@ -1,5 +1,6 @@
 package weapons;
 
+import net.Action;
 import server.ServerGameState;
 import world.GameObject;
 import world.PlayerObject;
@@ -8,7 +9,7 @@ import jig.engine.util.Vector2D;
 public class Rifle extends Weapon {
 	
 	protected static int VEL_MAG = 1000;
-	protected static int WEAPON_DELAY = 250;
+	protected static int WEAPON_DELAY = 150;
 	
 	public Rifle(PlayerObject p) {
 		super(p);
@@ -22,7 +23,7 @@ public class Rifle extends Weapon {
 		delayMs = ServerGameState.getGameState().totalMs + WEAPON_DELAY;
 		
 		// get the oldest bullet
-		GameObject bullet = bullets.remove(0);// get from oldest one.
+		GameObject bullet = player.bullets.remove(0);// get from oldest one.
 		bullet.setActivation(true);
 		
 		// set starting location
@@ -45,6 +46,9 @@ public class Rifle extends Weapon {
 		bullet.setVelocity(shootVec.scale(VEL_MAG));
 		
 		// add it to the start of the list
-		bullets.add(bullet);
+		player.bullets.add(bullet);
+		
+		// add the sound
+		ServerGameState.getGameState().getNetState().addAction(new Action(ServerGameState.getGameState().getUniqueId(),Action.RIFLESFX,shootLoc));
 	}
 }

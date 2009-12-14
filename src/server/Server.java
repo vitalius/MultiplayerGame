@@ -196,13 +196,13 @@ public class Server extends ScrollingScreenGame {
 				input.weapon = 0;
 			}
 			
-			if (keyboard.isPressed(KeyEvent.VK_F1)) {
+			if (keyboard.isPressed(KeyEvent.VK_F1) || keyboard.isPressed(KeyEvent.VK_7)) {
 				match.spawnPlayer(gameState.playerByID(serverPlayerID), 0);
-			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
+			} else if (keyboard.isPressed(KeyEvent.VK_F2) || keyboard.isPressed(KeyEvent.VK_8)) {
 				match.spawnPlayer(gameState.playerByID(serverPlayerID), 1);
-			} else if (keyboard.isPressed(KeyEvent.VK_F3)) {
+			} else if (keyboard.isPressed(KeyEvent.VK_F3) || keyboard.isPressed(KeyEvent.VK_9)) {
 				match.spawnPlayer(gameState.playerByID(serverPlayerID), 2);
-			} else if (keyboard.isPressed(KeyEvent.VK_F4)) {
+			} else if (keyboard.isPressed(KeyEvent.VK_F4) || keyboard.isPressed(KeyEvent.VK_0)) {
 				match.spawnPlayer(gameState.playerByID(serverPlayerID), 3);
 			}
 			

@@ -22,6 +22,7 @@ import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
 import jig.engine.ResourceFactory;
 import jig.engine.PaintableCanvas.JIGSHAPE;
+import jig.engine.audio.jsound.AudioClip;
 import jig.engine.hli.ScrollingScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.Body;
@@ -75,6 +76,7 @@ public class Client extends ScrollingScreenGame {
 	static final String LEVEL1 = "res/LEVEL1.png";
 
 	public String SERVER_IP = "127.0.0.1";
+	TcpSender control;
 
 	public static final int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 	private static final int MAXJETFUEL = 2000;
@@ -118,6 +120,12 @@ public class Client extends ScrollingScreenGame {
 	
 
 	public BroadcastListener bListen;
+	
+	// sounds
+	// sounds
+	public static AudioClip rifleSfx;
+	public static AudioClip shotgunSfx ;
+	public static AudioClip grenadeSfx ;
 
 	public Client() {
 
@@ -126,6 +134,13 @@ public class Client extends ScrollingScreenGame {
 		ResourceFactory.getFactory().loadResources("res",
 				"2Destruction-Resources.xml");
 		// newgame = new Button(SPRITE_SHEET + "#Start");
+		// sounds
+		rifleSfx = ResourceFactory.getFactory()
+				.getAudioClip("res/rifle.wav");
+		shotgunSfx = ResourceFactory.getFactory()
+				.getAudioClip("res/shotgun.wav");
+		grenadeSfx = ResourceFactory.getFactory()
+				.getAudioClip("res/grenade.wav");
 	}
 
 	public void startListenServer() {
@@ -171,7 +186,7 @@ public class Client extends ScrollingScreenGame {
 		tcpListen.start();
 
 		/* Send TCP data via this object */
-		TcpSender control = new TcpSender(SERVER_IP, NetworkEngine.TCP_PORT);
+		control = new TcpSender(SERVER_IP, NetworkEngine.TCP_PORT);
 
 		player = new Player(0, control);
 		input = new Action(0, Action.INPUT);
@@ -186,12 +201,12 @@ public class Client extends ScrollingScreenGame {
 		back = new Box(PICTUREBACKGROUND + "#background");
 		background.add(back);
 		// ui elements
-		jetpack = new GameObject(UIGFX + "#JetFuel");
-		jetpack.setPosition(new Vector2D(20, 20));
-		GUI.add(jetpack);
 		health = new GameObject(UIGFX + "#Health");
-		health.setPosition(new Vector2D(20, 31));
+		health.setPosition(new Vector2D(20, 20));
 		GUI.add(health);
+		jetpack = new GameObject(UIGFX + "#JetFuel");
+		jetpack.setPosition(new Vector2D(20, 31));
+		GUI.add(jetpack);
 
 		// Uncommet only when set heap space higher..
 		// http://wiki.eclipse.org/
@@ -289,13 +304,13 @@ public class Client extends ScrollingScreenGame {
 			input.left = false;
 			input.right = false;
 			input.jump = false;
-			if (keyboard.isPressed(KeyEvent.VK_F1)) {
+			if (keyboard.isPressed(KeyEvent.VK_F1)|| keyboard.isPressed(KeyEvent.VK_7)) {
 				player.spawn(0);
-			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
+			} else if (keyboard.isPressed(KeyEvent.VK_F2)|| keyboard.isPressed(KeyEvent.VK_8)) {
 				player.spawn(1);
-			} else if (keyboard.isPressed(KeyEvent.VK_F3)) {
+			} else if (keyboard.isPressed(KeyEvent.VK_F3)|| keyboard.isPressed(KeyEvent.VK_9)) {
 				player.spawn(2);
-			} else if (keyboard.isPressed(KeyEvent.VK_F4)) {
+			} else if (keyboard.isPressed(KeyEvent.VK_F4)|| keyboard.isPressed(KeyEvent.VK_0)) {
 				player.spawn(3);
 			} else {
 				player.spawn(-1);
@@ -309,6 +324,7 @@ public class Client extends ScrollingScreenGame {
 		}
 
 	}
+
 
 	public void processPrivateMsg() {
 		if (msgQueue.isEmpty())
@@ -343,18 +359,18 @@ public class Client extends ScrollingScreenGame {
 		if (player.state != Player.JOINED) {
 			showPrivateMessage("Conecting to the server...");
 		}
-	}
-	
-	public void update(long deltaMs) {
 
-		super.update(deltaMs);
-		
+	}
+
+	public void update(long deltaMs) {
 		processPrivateMsg();
 		processActions(netStateMan.getState());
-
+		
 		if (player.state != Player.JOINED)
 			return;
-		
+
+		super.update(deltaMs);
+
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
 				.getX(), mouse.getLocation().getY()));
 
@@ -421,6 +437,7 @@ public class Client extends ScrollingScreenGame {
 			}
 		}
 
+		processActions(netStateMan.getState());
 		keyboardMovementHandler(deltaMs);
 	}
 	
@@ -433,14 +450,24 @@ public class Client extends ScrollingScreenGame {
 	public void processActions(NetState state) {
 		if (state.getActions().isEmpty())
 			return;
-		
+		double dist;
 		for (Action a : state.getActions()) {
 			switch(a.getType()) {
 				case Action.EXPLOSION:
 					addBoom(a.getArg());
+					dist = a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition());
+					grenadeSfx.play(Math.min(40000/dist, 1));
 					break;
 				case Action.TALK:
 					showPublicMessage(a.getMsg());
+					break;
+				case Action.RIFLESFX:
+					dist = a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition());
+					rifleSfx.play(Math.min(40000/dist, 1));
+					break;
+				case Action.SHOTGUNSFX:
+					dist = a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition());
+					shotgunSfx.play(Math.min(40000/dist, 1));
 					break;
 			}
 		}
@@ -449,10 +476,6 @@ public class Client extends ScrollingScreenGame {
 		state.clearActions();
 	}
 
-	/**
-	 * This should probably be displayed on some timer, 2-3 secs
-	 * @param msg
-	 */
 	public void showPublicMessage(String msg) {
 		publicMsg = msg;
 	}
