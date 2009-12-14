@@ -19,11 +19,12 @@ public class Broadcaster {
 	private DatagramSocket socket;
 	private int port;
 	
-	public Hashtable<Integer, String> ipList = new Hashtable<Integer, String>();
+	public Hashtable<Integer, String> ipList;
 	
 	public Broadcaster (int p) {	
 	   port = p;
-
+	   ipList = new Hashtable<Integer, String>();
+	   
 	   try {
 		   socket = new DatagramSocket();
 	   } catch (IOException e) {

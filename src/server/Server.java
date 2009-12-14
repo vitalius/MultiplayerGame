@@ -232,9 +232,6 @@ public class Server extends ScrollingScreenGame {
 			// Generating a unique ID for a new player
 			Integer playerID = gameState.getUniqueId(); 
 
-			System.out.println("Adding player ip:" + clientIP + " id:"
-					+ playerID);
-
 			// Initializing new player
 			PlayerObject player = new PlayerObject("player");
 			player.set(100, 1.0, 1.0, 0.0);
@@ -248,11 +245,13 @@ public class Server extends ScrollingScreenGame {
 			tcpSender.sendSocket(clientIP, netStateMan.prot
 					.encodeAction(response));
 			
+			// Add clients IP to the broadcasting list
+			ne.addPlayer(playerID, a.getMsg());
+			
+			
 			sendPublicMessage("Public msg player ID:"+playerID+ " has joined.");
 			sendPrivateMessage(playerID, "Private msg, your ID:" + playerID);
 			
-			// Add clients IP to the broadcasting list
-			ne.addPlayer(playerID, a.getMsg());
 		} else {
 			// To refuse connection to the server game
 			response = new Action(0, Action.LEAVE_SERVER, "a");
@@ -271,7 +270,7 @@ public class Server extends ScrollingScreenGame {
 	 */
 	public void sendPrivateMessage(int pID, String msg) {
 		if (ne.getIPbyID(pID) == null) {
-			System.out.println("No IP for this player (ID:"+pID+")");
+			//System.out.println("No IP for this player (ID:"+pID+")");
 			return;
 		}
 		
