@@ -289,13 +289,13 @@ public class Client extends ScrollingScreenGame {
 			input.left = false;
 			input.right = false;
 			input.jump = false;
-			if (keyboard.isPressed(KeyEvent.VK_F1)) {
+			if (keyboard.isPressed(KeyEvent.VK_F1)|| keyboard.isPressed(KeyEvent.VK_7)) {
 				player.spawn(0);
-			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
+			} else if (keyboard.isPressed(KeyEvent.VK_F2)|| keyboard.isPressed(KeyEvent.VK_8)) {
 				player.spawn(1);
-			} else if (keyboard.isPressed(KeyEvent.VK_F3)) {
+			} else if (keyboard.isPressed(KeyEvent.VK_F3)|| keyboard.isPressed(KeyEvent.VK_9)) {
 				player.spawn(2);
-			} else if (keyboard.isPressed(KeyEvent.VK_F4)) {
+			} else if (keyboard.isPressed(KeyEvent.VK_F4)|| keyboard.isPressed(KeyEvent.VK_0)) {
 				player.spawn(3);
 			} else {
 				player.spawn(-1);
