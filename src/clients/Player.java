@@ -35,11 +35,15 @@ public class Player {
 	public void move(Action a) {	
 		if (input.equals(a)) // if performance is still good leave this commented
 			return;
+<<<<<<< HEAD
 		// This is not a performance issue, this is an issue when someone presses a key
 		// and holds it, since it's the same "input", we only send it once to the server
 		// and not every frame at 90fps, which tcp sender can't handle anyway.
 		
 		
+=======
+	
+>>>>>>> b0c8711781909a17ebcebae1e1ca09f790ce9dbb
 		tcp.sendSocket(prot.encodeAction(a));
 		input.copy(a);
 	}

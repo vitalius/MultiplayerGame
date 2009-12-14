@@ -254,9 +254,14 @@ public class Server extends ScrollingScreenGame {
 		} else {
 			// To refuse connection to the server game
 			response = new Action(0, Action.LEAVE_SERVER, "a");
-			tcpSender
-					.sendSocket(clientIP, netStateMan.prot.encodeAction(response));
+			sendMsg(clientIP, netStateMan.prot.encodeAction(response));
+			//tcpSender
+				//	.sendSocket(clientIP, netStateMan.prot.encodeAction(response));
 		}
+	}
+	
+	public void sendMsg(String ip, String ah) {
+		tcpSender.sendSocket(ip, ah);
 	}
 
 	/**
