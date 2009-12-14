@@ -443,7 +443,7 @@ public class Client extends ScrollingScreenGame {
 					shotgunSfx.play(Math.min(40000/dist, 1));
 					break;
 				case Action.TIMER:
-					timerString = "Time: "+a.getMsg().charAt(0) + a.getMsg().charAt(1);
+					//timerString = "Time: "+a.getMsg().charAt(0) + a.getMsg().charAt(1);
 					break;
 			}
 		}
@@ -471,7 +471,6 @@ public class Client extends ScrollingScreenGame {
 	
 	
 	private void addBoom(Vector2D loc) {
-		System.out.println(boomList.size());
 		if (boomList.size() < 100) {
 			// make new one and add it.
 			Explode boomy = new Explode(SPRITES + "#Explosion");
@@ -488,7 +487,7 @@ public class Client extends ScrollingScreenGame {
 			// add to back of list.
 			boomList.add(boomy);
 		}
-		System.out.println("Boom: " + loc + " client");
+		//System.out.println("Boom: Loc: " + loc + " boom size: " + boomList.size() + " client");
 
 	}
 
