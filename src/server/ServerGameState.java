@@ -5,8 +5,6 @@ import java.util.Hashtable;
 import java.util.Random;
 import java.util.Set;
 
-import old.Bullet;
-
 import physics.Arbiter;
 import physics.CattoPhysicsEngine;
 
