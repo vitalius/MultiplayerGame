@@ -110,6 +110,7 @@ public class DeathMatch extends Match {
 		
 		for(PlayerObject play: players) {
 			scores.add(new playerscore(play.getID(), play.getKills() - play.getDeaths()));
+			play.setHealth(0);
 		}
 
 		Collections.sort(scores);
