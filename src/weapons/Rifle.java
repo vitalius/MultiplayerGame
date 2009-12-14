@@ -23,7 +23,7 @@ public class Rifle extends Weapon {
 		delayMs = ServerGameState.getGameState().totalMs + WEAPON_DELAY;
 		
 		// get the oldest bullet
-		GameObject bullet = bullets.remove(0);// get from oldest one.
+		GameObject bullet = player.bullets.remove(0);// get from oldest one.
 		bullet.setActivation(true);
 		
 		// set starting location
@@ -46,9 +46,9 @@ public class Rifle extends Weapon {
 		bullet.setVelocity(shootVec.scale(VEL_MAG));
 		
 		// add it to the start of the list
-		bullets.add(bullet);
+		player.bullets.add(bullet);
 		
 		// add the sound
-		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.RIFLESFX,shootLoc));
+		ServerGameState.getGameState().getNetState().addAction(new Action(ServerGameState.getGameState().getUniqueId(),Action.RIFLESFX,shootLoc));
 	}
 }

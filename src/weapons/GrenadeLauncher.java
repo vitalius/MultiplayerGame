@@ -74,16 +74,16 @@ public class GrenadeLauncher extends Weapon {
 		
 		// sending explosion to clients
 		//System.out.println("GrenadeLauncher.Explode");
-		gs.getNetState().addAction(new Action(gs.getUniqueId(),Action.EXPLOSION,shootLoc)); 
+		ServerGameState.getGameState().getNetState().addAction(new Action(ServerGameState.getGameState().getUniqueId(),Action.EXPLOSION,shootLoc)); 
 		
 		Vector2D shootVec = new Vector2D(1,0);
 		for (int i = 0; i < BULLET_NUM; i++) {
 			//System.out.println("GL.explode spread: " + (360/BULLET_NUM));
-			GameObject bullet = bullets.remove(0);// get from oldest one.
+			GameObject bullet = player.bullets.remove(0);// get from oldest one.
 			bullet.setActivation(true);
 			bullet.setPosition(shootLoc);
 			bullet.setVelocity(shootVec.scale(BUL_VEL_MAG));
-			bullets.add(bullet); // add it to the start of the list
+			player.bullets.add(bullet); // add it to the start of the list
 			shootVec = shootVec.rotate(Math.toRadians(360/BULLET_NUM));
 		}
 	}
