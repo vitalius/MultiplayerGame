@@ -105,13 +105,15 @@ public class Client extends ScrollingScreenGame {
 	private LinkedBlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();
 
 	private LinkedList<Explode> boomList = new LinkedList<Explode>();
+	
+	private LinkedList<String> consoleText = new LinkedList<String>(); 
 
 	// private LinkedList<Box> levelboxes = new LinkedList<Box>();
 
 	private int jetFuel = MAXJETFUEL;
 
 	FontResource fontWhite = ResourceFactory.getFactory().getFontResource(
-			new Font("Sans Serif", Font.BOLD, 24), Color.white, null);
+			new Font("Sans Serif", Font.BOLD, 12), Color.white, null);
 	public String publicMsg = "";
 	
 	FontResource fontMsg = ResourceFactory.getFactory().getFontResource(
@@ -226,7 +228,7 @@ public class Client extends ScrollingScreenGame {
 		// whatever layers not added into gameObjectLayers will be manually
 		// rendered.
 
-		showPrivateMessage("Connecting to the server...");
+		showPrivateMessage("No connection to server");
 
 	}
 
@@ -338,14 +340,13 @@ public class Client extends ScrollingScreenGame {
 			switch (a.getType()) {
 				case Action.JOIN_ACCEPT:
 					Integer newID = Integer.valueOf(a.getMsg()).intValue();
-					// System.out.println("Client.artWeInGame ID: " + newID);
 					player.setID(newID);
 					input.setID(newID);
 					player.state = Player.JOINED;
-					//showPrivateMessage("Connected.");
+					showPrivateMessage("Connected.");
 					break;
 				case Action.LEAVE_SERVER:
-					//showPrivateMessage("Connection to the server lost.");
+					showPrivateMessage("Connection to the server lost.");
 					player.state = Player.WAITING;	
 					break;
 				case Action.TALK:
@@ -476,12 +477,21 @@ public class Client extends ScrollingScreenGame {
 		state.clearActions();
 	}
 
+	/**
+	 * Add a public message to the console
+	 * 
+	 * @param msg
+	 */
 	public void showPublicMessage(String msg) {
-		publicMsg = msg;
+		consoleText.add("PUB:"+msg);
 	}
 	
+	/**
+	 * Add a private message to the console
+	 * @param msg
+	 */
 	public void showPrivateMessage(String msg) {
-		privateMsg = msg;
+		consoleText.add("PRIV:"+msg);
 	}
 	
 	
@@ -511,20 +521,27 @@ public class Client extends ScrollingScreenGame {
 		black.render(rc);// draw at screen coordities.
 		super.render(rc);
 		GUI.render(rc);
-		// background.render(rc);
-		
-		// connection status
-		fontWhite.render(publicMsg, rc, AffineTransform
-				.getTranslateInstance(20, SCREEN_HEIGHT - 40));
-		
-		fontWhite.render(privateMsg, rc, AffineTransform
-				.getTranslateInstance(20, 40));
-		// game related message.
-		//fontMsg.render(publicMsg, rc, AffineTransform.getTranslateInstance(
-		//		SCREEN_WIDTH / 2 - fontMsg.getStringWidth(publicMsg) / 2,
-		//		SCREEN_HEIGHT - 16));
+		showConsoleLines(5, rc);
 	}
 
+	/**
+	 * This prints console text on top of client screen
+	 * 
+	 * @param n - number of lines to display
+	 * @param rc
+	 */
+	public void showConsoleLines(int n, RenderingContext rc) {
+		int consoleSize = consoleText.size();
+		
+		if (consoleSize < n)
+			n = consoleSize;
+		
+		for(int i=consoleSize-n; i<consoleText.size();i++) {
+			fontWhite.render(consoleText.get(i), rc, AffineTransform
+					.getTranslateInstance(20, 30+((i-(consoleSize-n))*20)));				
+		}
+	}
+	
 	public String getIP() {
 		int as = 0;
 		String res = null;
