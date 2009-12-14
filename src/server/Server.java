@@ -76,7 +76,7 @@ public class Server extends ScrollingScreenGame {
 		tcpSender = new TcpSender();
 
 		// temp resources
-		PaintableCanvas.loadDefaultFrames("grenade", 10, 10, 1,
+		PaintableCanvas.loadDefaultFrames("grenade", 6, 10, 1,
 				JIGSHAPE.CIRCLE, Color.GREEN);
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);

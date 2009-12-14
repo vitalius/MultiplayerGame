@@ -2,8 +2,11 @@ package clients;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+
 import javax.swing.JOptionPane;
 
 import java.util.LinkedList;
@@ -30,6 +33,7 @@ import jig.engine.physics.BodyLayer;
 import jig.engine.util.Vector2D;
 import clients.TcpListener;
 import clients.TcpSender;
+import clients.Explode;
 
 /**
  * Client
@@ -38,42 +42,11 @@ public class Client extends ScrollingScreenGame {
 
 	long ms;
 
-	private class Explode extends Body {
-
-		int slowdown = 0;
-		int counter = 0;
-
-		public Explode(String imgrsc) {
-			super(imgrsc);
-		}
-
-		@Override
-		public void update(long deltaMs) {
-			if (slowdown < 50) {
-				slowdown += deltaMs;
-			} else {
-				slowdown = 0;
-				counter += 1;
-				// counter = counter % this.getFrameCount();
-				this.setFrame(counter);
-			}
-			if (counter == getFrameCount()) {
-				this.setActivation(false);
-			}
-		}
-
-		public void reset() {
-			counter = 0;
-			slowdown = 0;
-			this.setActivation(true);
-			setFrame(0);
-		}
-	}
-
 	static final String PICTUREBACKGROUND = "res/GameBackground.png";
 	static final String UIGFX = "res/ClientUI.png";
 	static final String SPRITES = "res/2Destruction-spritesheet.png";
 	static final String LEVEL1 = "res/LEVEL1.png";
+	static final String Splash = "res/Splash.png";
 
 	public String SERVER_IP = "127.0.0.1";
 	TcpSender control;
@@ -90,7 +63,7 @@ public class Client extends ScrollingScreenGame {
 	private NetStateManager netStateMan;
 	private Player player;
 
-	private GameObject jetpack, health;
+	private GameObject jetpack, health, splash;
 
 	private BodyLayer<Body> black = new AbstractBodyLayer.NoUpdate<Body>();
 	private BodyLayer<Body> background = new AbstractBodyLayer.IterativeUpdate<Body>();
@@ -114,12 +87,8 @@ public class Client extends ScrollingScreenGame {
 
 	FontResource fontWhite = ResourceFactory.getFactory().getFontResource(
 			new Font("Sans Serif", Font.BOLD, 12), Color.white, null);
-	public String publicMsg = "";
 	
-	FontResource fontMsg = ResourceFactory.getFactory().getFontResource(
-			new Font("Sans Serif", Font.BOLD, 12), Color.white, null);
-	public String privateMsg = "";
-	
+	public String timerString = "";
 
 	public BroadcastListener bListen;
 	
@@ -153,9 +122,16 @@ public class Client extends ScrollingScreenGame {
 
 	public void runSetup() {
 		ResourceFactory factory = ResourceFactory.getFactory();
-
-		PaintableCanvas.loadDefaultFrames("grenade", 10, 10, 1,
-				JIGSHAPE.CIRCLE, Color.GREEN);
+		
+		BufferedImage[] b = new BufferedImage[1];
+		BufferedImage grenade = new BufferedImage(6, 10,
+				BufferedImage.TYPE_INT_RGB);
+		b[0] = grenade;
+		Graphics2D g = b[0].createGraphics();
+		g.setColor(Color.getHSBColor((float)0.3216, (float)0.8627,(float)0.5));
+		g.fillOval(0, 0, 6, 10);
+		factory.putFrames("grenade", b);
+		
 		PaintableCanvas.loadDefaultFrames("playerSpawn", 10, 10, 1,
 				JIGSHAPE.CIRCLE, Color.red);
 		PaintableCanvas.loadDefaultFrames("bullet", 5, 5, 1, JIGSHAPE.CIRCLE,
@@ -172,15 +148,6 @@ public class Client extends ScrollingScreenGame {
 		netStateMan = new NetStateManager();
 		gameSprites = new GameSprites();
 		fre.setActivation(true);
-
-		// stateQueue = new LinkedBlockingQueue<String>(1);
-		// state = new SyncState();
-
-		/* Start thread to sync gameState with server */
-		// BroadcastListener bListen = new BroadcastListener(state);
-		// bListen.start();
-		// debug
-		// startListenServer();
 		
 		/* Thread with TCP networking for server specific commands */
 		TcpListener tcpListen = new TcpListener(NetworkEngine.TCP_CLIENT_PORT,
@@ -209,16 +176,17 @@ public class Client extends ScrollingScreenGame {
 		jetpack = new GameObject(UIGFX + "#JetFuel");
 		jetpack.setPosition(new Vector2D(20, 31));
 		GUI.add(jetpack);
+		splash = new GameObject(Splash + "#Splash");
+		splash.setPosition(new Vector2D(0, 0));
+		GUI.add(splash);
+		splash.setActivation(false);		
 
-		// Uncommet only when set heap space higher..
-		// http://wiki.eclipse.org/
-		// FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F
-		// /*
-		 int fudgex = -40, fudgey = 5;
+		// Warning heap increased needed for this sprite.
+		int fudgex = -40, fudgey = 5;
 		 Box level = new Box(LEVEL1 + "#LEVEL1");
 		 level.setPosition(new Vector2D(-level.getWidth()/2 + fudgex,-level.getHeight()/2 + fudgey));
 		 levelmap.add(level);
-		// */
+		// end warning
 
 		// Control of layering
 		gameObjectLayers.add(background);
@@ -230,6 +198,10 @@ public class Client extends ScrollingScreenGame {
 
 		showPrivateMessage("No connection to server");
 
+	}
+	
+	public void showSplash(boolean show) {
+		splash.setActivation(show);
 	}
 
 	/**
@@ -470,6 +442,9 @@ public class Client extends ScrollingScreenGame {
 					dist = a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition());
 					shotgunSfx.play(Math.min(40000/dist, 1));
 					break;
+				case Action.TIMER:
+					timerString = "Time: "+a.getMsg().charAt(0) + a.getMsg().charAt(1);
+					break;
 			}
 		}
 		
@@ -522,6 +497,9 @@ public class Client extends ScrollingScreenGame {
 		super.render(rc);
 		GUI.render(rc);
 		showConsoleLines(5, rc);
+		
+		fontWhite.render(timerString, rc, AffineTransform
+				.getTranslateInstance(SCREEN_WIDTH - 100, 5));	
 	}
 
 	/**
@@ -538,7 +516,7 @@ public class Client extends ScrollingScreenGame {
 		
 		for(int i=consoleSize-n; i<consoleText.size();i++) {
 			fontWhite.render(consoleText.get(i), rc, AffineTransform
-					.getTranslateInstance(20, 40+((i-(consoleSize-n))*15)));				
+					.getTranslateInstance(20, 45+((i-(consoleSize-n))*15)));				
 		}
 	}
 	
