@@ -1,6 +1,10 @@
 package match;
 
 import java.util.ArrayList;
+
+import net.Action;
+
+import server.Server;
 import server.ServerGameState;
 
 import world.LevelSet;
@@ -81,5 +85,11 @@ public abstract class Match {
 			// start a new match
 			startMatch();
 		}
+		
+		// Sending clients time left in the death match
+		Server.getServer().gameState.getNetState().addAction(
+				new Action(Server.getServer().gameState.getUniqueId(),
+						Action.TIMER, 
+						""+(MATCH_LEN - (ServerGameState.getGameState().totalMs - startTime))));
 	}
 }

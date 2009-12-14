@@ -114,12 +114,8 @@ public class Client extends ScrollingScreenGame {
 
 	FontResource fontWhite = ResourceFactory.getFactory().getFontResource(
 			new Font("Sans Serif", Font.BOLD, 12), Color.white, null);
-	public String publicMsg = "";
 	
-	FontResource fontMsg = ResourceFactory.getFactory().getFontResource(
-			new Font("Sans Serif", Font.BOLD, 12), Color.white, null);
-	public String privateMsg = "";
-	
+	public String timerString = "";
 
 	public BroadcastListener bListen;
 	
@@ -470,6 +466,9 @@ public class Client extends ScrollingScreenGame {
 					dist = a.getArg().distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition());
 					shotgunSfx.play(Math.min(40000/dist, 1));
 					break;
+				case Action.TIMER:
+					timerString = "Time: "+a.getMsg().charAt(0) + a.getMsg().charAt(1);
+					break;
 			}
 		}
 		
@@ -522,6 +521,9 @@ public class Client extends ScrollingScreenGame {
 		super.render(rc);
 		GUI.render(rc);
 		showConsoleLines(5, rc);
+		
+		fontWhite.render(timerString, rc, AffineTransform
+				.getTranslateInstance(SCREEN_WIDTH - 100, 5));	
 	}
 
 	/**
@@ -538,7 +540,7 @@ public class Client extends ScrollingScreenGame {
 		
 		for(int i=consoleSize-n; i<consoleText.size();i++) {
 			fontWhite.render(consoleText.get(i), rc, AffineTransform
-					.getTranslateInstance(20, 40+((i-(consoleSize-n))*15)));				
+					.getTranslateInstance(20, 45+((i-(consoleSize-n))*15)));				
 		}
 	}
 	
