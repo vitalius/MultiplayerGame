@@ -271,7 +271,7 @@ public class PlayerObject extends GameObject {
 
 	public void updatePlayerState(long deltaMs) {
 		if (health < 1) {
-			Server.getServer().sendPrivateMessage(this.id, "You are dead, press F1-F4 to respawn.");
+			//Server.getServer().sendPrivateMessage(this.id, "You are dead, press F1-F4 to respawn.");
 		}
 		
 		// System.out.println(jetFuel);

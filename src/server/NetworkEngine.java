@@ -34,7 +34,7 @@ public class NetworkEngine {
 	 * @return
 	 */
 	public String getIPbyID(int id) {
-		System.out.println(bcaster.ipList.values());
+		//System.out.println(bcaster.ipList.values());
 		if (bcaster.ipList.containsKey(id))
 			return bcaster.ipList.get(id);
 		return null;
