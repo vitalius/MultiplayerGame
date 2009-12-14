@@ -52,7 +52,8 @@ public class Server extends ScrollingScreenGame {
 	private PlayerObject playerObject;
 	private Action oldInput;
 	private Match match;
-
+	private boolean paused;
+	
 	public LinkedBlockingQueue<String> msgQueue;
 
 	public TcpSender tcpSender;
@@ -75,7 +76,7 @@ public class Server extends ScrollingScreenGame {
 		tcpSender = new TcpSender();
 
 		// temp resources
-		PaintableCanvas.loadDefaultFrames("grenade", 10, 10, 1,
+		PaintableCanvas.loadDefaultFrames("grenade", 6, 10, 1,
 				JIGSHAPE.CIRCLE, Color.GREEN);
 		PaintableCanvas.loadDefaultFrames("player", 32, 48, 1,
 				JIGSHAPE.RECTANGLE, Color.red);
@@ -111,6 +112,8 @@ public class Server extends ScrollingScreenGame {
 
 		gameObjectLayers.add(gameState.getLayer());
 		pe.manageViewableSet(gameState.getLayer());
+		
+		paused = false;
 	}
 
 	public static Server getServer() {
@@ -132,6 +135,10 @@ public class Server extends ScrollingScreenGame {
 		keyboard.poll();
 		Vector2D mousePos = screenToWorld(
 				new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
+		
+		// pause and unpause the game
+		if (keyboard.isPressed(KeyEvent.VK_OPEN_BRACKET)) paused = true;
+		if (keyboard.isPressed(KeyEvent.VK_CLOSE_BRACKET)) paused = false;
 
 		// player alive/dead test code.
 		if (keyboard.isPressed(KeyEvent.VK_P) && serverPlayerID != -1) {
@@ -237,8 +244,8 @@ public class Server extends ScrollingScreenGame {
 			player.set(100, 1.0, 1.0, 0.0);
 			// Vector2D spawn = level.playerInitSpots.get(1);
 			// player.setPosition(new Vector2D(spawn.getX(), spawn.getY()));
-			match.addPlayer(player);
 			gameState.addPlayer(playerID, player);
+			match.addPlayer(player);
 
 			// Sending player's ID as a reply to the client
 			response = new Action(0, Action.JOIN_ACCEPT, playerID.toString());
@@ -249,8 +256,8 @@ public class Server extends ScrollingScreenGame {
 			ne.addPlayer(playerID, a.getMsg());
 			
 			
-			sendPublicMessage("Public msg player ID:"+playerID+ " has joined.");
-			sendPrivateMessage(playerID, "Private msg, your ID:" + playerID);
+			sendPublicMessage("New player has joined, ID:"+playerID);
+			//sendPrivateMessage(playerID, "Your ID:" + playerID);
 			
 		} else {
 			// To refuse connection to the server game
@@ -355,17 +362,6 @@ public class Server extends ScrollingScreenGame {
 			joinClient(a);
 			break;
 			
-		case Action.CHANGE_VELOCITY:
-			objectList.get(a.getID()).setVelocity(a.getArg());
-			break;
-		case Action.CHANGE_POSITION:
-			objectList.get(a.getID()).setPosition(a.getArg());
-			break;
-			
-		case Action.TALK:
-			System.out.println("Server got talk: " + a.getMsg());
-			break;
-			
 		///////////////////////////////////////////////////////
 		// Request to shoot
 		case Action.SHOOT:
@@ -384,7 +380,7 @@ public class Server extends ScrollingScreenGame {
 
 	public void update(final long deltaMs) {
 		super.update(deltaMs);
-		pe.applyLawsOfPhysics(deltaMs);
+		if (!paused) pe.applyLawsOfPhysics(deltaMs);
 
 		netMS += deltaMs;
 		if (netMS > NET_MS) {
@@ -409,6 +405,14 @@ public class Server extends ScrollingScreenGame {
 						.getY()) / 2); // centers on player
 		//System.out.println("Server update player loc: "
 			//	+ playerObject.getCenterPosition());
+	}
+	
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
 	}
 
 	public static void main(String[] vars) {

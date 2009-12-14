@@ -3,7 +3,7 @@ package server;
 import net.Protocol;
 
 public class NetworkEngine {
-	public static final int BCAST_BUF_SIZE = 8192;
+	public static final int BCAST_BUF_SIZE = 16384;
 	public static final int TCP_BUF_SIZE   = 1024;
 	
 	public static final int BCAST_PORT        = 49725;
@@ -44,6 +44,6 @@ public class NetworkEngine {
 		bcaster.spam(prot.encode(gameserver.gameState.getNetState()));
 		
 		/* Action events such as explosions are sent only once */
-		gameserver.gameState.getNetState().actionList.clear();
+		gameserver.gameState.getNetState().clearActions();
 	}
 }

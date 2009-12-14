@@ -18,6 +18,9 @@ public class Action {
 	public static final int SPAWN           = 12;
 	public static final int RIFLESFX		= 13;
 	public static final int SHOTGUNSFX      = 14;
+	public static final int PING            = 15;
+	public static final int PONG            = 16;
+	public static final int TIMER           = 17;
 
 	public boolean jet      = false;
 	public boolean left     = false;

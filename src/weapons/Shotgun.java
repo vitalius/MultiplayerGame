@@ -59,6 +59,7 @@ public class Shotgun extends Weapon {
 			bullet.setActivation(true);
 			bullet.setPosition(shootLoc);
 			bullet.setVelocity(shootVec.scale(VEL_MAG));
+			bullet.owner = player;
 			player.bullets.add(bullet); // add it to the start of the list
 			shootVec = shootVec.rotate(Math.toRadians(SPREAD));
 		}

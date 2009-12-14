@@ -27,6 +27,7 @@ public class Protocol {
 			case Action.JOIN_REQUEST:
 			case Action.LEAVE_SERVER:
 			case Action.SPAWN:
+			case Action.TIMER:
 				output += a.getMsg() + "#";
 				break;
 			case Action.INPUT:
@@ -81,6 +82,7 @@ public class Protocol {
 		case Action.JOIN_REQUEST:
 		case Action.LEAVE_SERVER:
 		case Action.SPAWN:
+		case Action.TIMER:
 			returnAction = new Action(id, type, token[2]);
 			break;
 		case Action.INPUT:
@@ -150,6 +152,7 @@ public class Protocol {
 			output += "@";
 		}
 		//System.out.println("Protocol encode output: " + output);
+		//System.out.println("NET MSG LEN:"+output.length());
 		return output;
 	}
 

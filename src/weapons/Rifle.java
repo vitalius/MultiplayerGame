@@ -46,6 +46,7 @@ public class Rifle extends Weapon {
 		bullet.setVelocity(shootVec.scale(VEL_MAG));
 		
 		// add it to the start of the list
+		bullet.owner = player;
 		player.bullets.add(bullet);
 		
 		// add the sound

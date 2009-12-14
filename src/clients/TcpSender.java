@@ -34,9 +34,9 @@ public class TcpSender {
 			out.write(sendString.getBytes());
 			socket.close();
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	

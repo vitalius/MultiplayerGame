@@ -165,24 +165,22 @@ public class ServerGameState {
 		}
 	}
 
+	/**
+	 * Handle bullet collision
+	 * 
+	 * @param bullet
+	 * @param other
+	 */
 	private void handleBullet(GameObject bullet, GameObject other) {
 		bullet.setActivation(false);
 		bullet.setVelocity(new Vector2D(0, 0));
 		bullet.setPosition(new Vector2D(-10000, -10000));
+		
 		if (other.getType() == GameObject.PLAYER) {
-			if (((PlayerObject) other).getHealth() > 0) {
-				// lower player health
-				((PlayerObject) other).setHealth(((PlayerObject) other)
-						.getHealth() - 200); // TODO: no hardcoding
-				if (((PlayerObject) other).getHealth() < 0)
-					((PlayerObject) other).setHealth(0);
-
-				// System.out.println("Player Health: " +
-				// ((PlayerObject)arbit.body1).getHealth());
-			} else {
-				((PlayerObject) other).setHealth(0);
-
-			}
+			PlayerObject player = (PlayerObject)other;
+			if (player.isAlive) 
+				player.woundBy(bullet);
+			
 		} else if (other.getType() == GameObject.DRUM) {
 			// 20% chance of going boom? hmm
 			// if boom event...
