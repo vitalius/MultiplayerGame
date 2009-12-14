@@ -87,10 +87,15 @@ public class DeathMatch extends Match {
 	private class playerscore implements Comparable<playerscore> {
 		public int playerID = 0;
 		public int score = 0;
+		public int kills = 0;
+		public int deaths = 0;
+		
 
-		public playerscore(int playid, int sco) {
+		public playerscore(int playid, int sco, int kil, int dea) {
 			playerID = playid;
 			score = sco;
+			kills = kil;
+			deaths = dea;
 		}
 
 		public int compareTo(playerscore o) {
@@ -109,7 +114,8 @@ public class DeathMatch extends Match {
 		LinkedList<playerscore> scores = new LinkedList<playerscore>();
 		
 		for(PlayerObject play: players) {
-			scores.add(new playerscore(play.getID(), play.getKills() - play.getDeaths()));
+			scores.add(new playerscore(play.getID(), play.getKills() - play.getDeaths()
+			, play.getKills(), play.getDeaths()));
 			play.setHealth(0);
 		}
 
@@ -117,7 +123,7 @@ public class DeathMatch extends Match {
 
 		for (playerscore ps : scores) {
 			String msg = "Deathmatch score: " + ps.playerID + " scored:"
-			+ ps.score;
+			+ ps.score + "Kills: " + ps.kills + "Deaths: " + ps.deaths;
 			System.out.println(msg);
 			Server.getServer().sendPublicMessage(msg);
 		}
