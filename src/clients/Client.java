@@ -310,13 +310,10 @@ public class Client extends ScrollingScreenGame {
 
 	}
 
-	/**
-	 * This method checks player's state and returns True if player has joined a
-	 * server game and false otherwise
-	 * 
-	 * @return - boolean
-	 */
-	public boolean areWeInGame() {
+	public void processPrivateMsg() {
+		if (msgQueue.size() < 1)
+			return;
+
 		// When joining the game, request for a player ID is sent and this loop
 		// awaits Server's response
 		while (msgQueue.size() > 0) {
@@ -345,17 +342,19 @@ public class Client extends ScrollingScreenGame {
 		// response
 		if (player.state != Player.JOINED) {
 			showPrivateMessage("Conecting to the server...");
-			return false;
 		}
-		return true;
 	}
-
+	
 	public void update(long deltaMs) {
-		if (areWeInGame() == false)
-			return;
 
 		super.update(deltaMs);
+		
+		processPrivateMsg();
+		processActions(netStateMan.getState());
 
+		if (player.state != Player.JOINED)
+			return;
+		
 		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation()
 				.getX(), mouse.getLocation().getY()));
 
@@ -422,7 +421,6 @@ public class Client extends ScrollingScreenGame {
 			}
 		}
 
-		processActions(netStateMan.getState());
 		keyboardMovementHandler(deltaMs);
 	}
 	
@@ -433,6 +431,8 @@ public class Client extends ScrollingScreenGame {
 	 * @param alist
 	 */
 	public void processActions(NetState state) {
+		if (state.getActions().size() < 1)
+			return;
 		
 		for (Action a : state.getActions()) {
 			switch(a.getType()) {
@@ -449,6 +449,10 @@ public class Client extends ScrollingScreenGame {
 		state.clearActions();
 	}
 
+	/**
+	 * This should probably be displayed on some timer, 2-3 secs
+	 * @param msg
+	 */
 	public void showPublicMessage(String msg) {
 		publicMsg = msg;
 	}
