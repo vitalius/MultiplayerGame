@@ -452,7 +452,9 @@ public class Client extends ScrollingScreenGame {
 		if (boomList.size() < 100) {
 			// make new one and add it.
 			Explode boomy = new Explode(SPRITES + "#Explosion");
-			grenadeSfx.play();
+			double dist = Math.sqrt(loc.distance2(gameSprites.spriteList.get(player.getID()).getCenterPosition()));
+			//System.out.println("Client.addBoom explosion dist: " + dist);
+			grenadeSfx.play(50/dist);
 			boomy.setCenterPosition(loc);
 			front.add(boomy);
 			boomList.add(boomy);
