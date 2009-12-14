@@ -15,7 +15,7 @@ public abstract class Match {
 	public static int RUNNING = 0;
 	public static int RESULTS = 1;
 
-	public static long MATCH_LEN = 1000 * 60 * 1; // ms * seconds * minutes
+	public static long MATCH_LEN = 1000 * 60 * 5; // ms * seconds * minutes
 	public static long RESULTS_LEN = 1000 * 10; // ms * seconds
 
 	// list of players
