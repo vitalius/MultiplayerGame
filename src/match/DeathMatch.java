@@ -91,6 +91,7 @@ public class DeathMatch extends Match {
 			NetObject nplay = Server.getServer().gameState.getNetState().objectList.get(play.getID());
 			// get ip
 			String ip = nplay.getIp();
+			Server.getServer().sendMsg(ip,msg);
 			// use server tcpsender to send action a. 
 			//Server.getServer().tcpSender.sendSocket(ip, Server.getServer().netStateMan.prot.encodeAction(a));
 			//System.out.println("Deathmatch Sent to " + ip + "this message: " + Server.getServer().netStateMan.prot.encodeAction(a) + "message: " + msg);
@@ -115,8 +116,6 @@ public class DeathMatch extends Match {
 		
 		LinkedList<playerscore> scores = new LinkedList<playerscore>();
 		
-		
-		int count= 0;
 		// reset all scores
 		for(PlayerObject p: players) {
 			scores.add(new playerscore(p.getID(), p.getKills() - p.getDeaths()));
@@ -131,9 +130,12 @@ public class DeathMatch extends Match {
 		for(playerscore ps : scores) {
 			System.out.println("Deathmatch score: " + ps.playerID + " scored:" + ps.score);		
 		}
+		
+		//Server.getServer().clear();
+		//loadLevel(1);
 
 		// FOR ow force exit
-		System.exit(0);
+		//System.exit(0);
 		
 		// disable input?
 		
@@ -159,10 +161,13 @@ public class DeathMatch extends Match {
 	}
 	
 	@Override
-	public void spawnPlayer(PlayerObject p, Vector2D loc) {
-		p.setSpawn(0);
+	public void spawnPlayer(PlayerObject p, int n) {
+		if (n > this.levels.getThisLevel(this.curLevel).playerInitSpots.size())
+			return;
+		
+		p.setSpawn(n);
 		p.setActivation(true);
-		p.setCenterPosition(loc);
+		p.setCenterPosition(this.levels.getThisLevel(this.curLevel).playerInitSpots.get(n));
 		p.setHealth(PlayerObject.MAXHEALTH);
 	}
 

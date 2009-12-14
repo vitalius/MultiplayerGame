@@ -45,7 +45,7 @@ public abstract class Match {
 	public abstract void endMatch(); // Add parameters when needed.
 	public abstract void addPlayer(PlayerObject p);	
 	public abstract void removePlayer(PlayerObject p);
-	public abstract void spawnPlayer(PlayerObject p, Vector2D loc);
+	public abstract void spawnPlayer(PlayerObject p, int n);
 	public abstract boolean acceptPlayer();
 	
 	public ArrayList<PlayerObject> getPlayers() {
@@ -56,8 +56,7 @@ public abstract class Match {
 		// spawn players if need be
 		for (PlayerObject po : players) {
 			if(po.getSpawn() > 0) {
-				spawnPlayer(po, levels.getThisLevel(curLevel)
-						.playerInitSpots.get(po.getSpawn()-1));
+				spawnPlayer(po, po.getSpawn()-1);
 			}
 		}
 		

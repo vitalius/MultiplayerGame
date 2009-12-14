@@ -7,6 +7,7 @@ import world.GameObject;
 
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.physics.BodyLayer;
+
 import net.NetStateManager;
 import net.NetObject;
 

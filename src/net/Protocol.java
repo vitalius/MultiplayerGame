@@ -28,13 +28,10 @@ public class Protocol {
 				output += a.getArg().getX() + "#";
 				output += a.getArg().getY() + "#";
 				break;
-			case Action.JOIN_REQUEST:
-				output += a.getMsg() + "#";
-				break;
 			case Action.JOIN_ACCEPT:
-				output += a.getMsg() + "#";
-				break;
+			case Action.JOIN_REQUEST:
 			case Action.LEAVE_SERVER:
+			case Action.SPAWN:
 				output += a.getMsg() + "#";
 				break;
 			case Action.INPUT:
@@ -43,11 +40,8 @@ public class Protocol {
 				output += (a.left  ? "1" : "0") + "#";
 				output += (a.right ? "1" : "0") + "#";
 				output += (a.jump  ? "1" : "0") + "#";
-				output += (a.shoot ? "1" : "0") + "#";
+				output += (a.faceLeft ? "1" : "0") + "#";
 				output += a.weapon + "#";
-				output += a.spawn + "#";
-				output += a.getArg().getX() + "#";
-				output += a.getArg().getY() + "#";
 				break;
 			case Action.SHOOT:
 				output += a.getArg().getX() + "#";
@@ -89,13 +83,10 @@ public class Protocol {
 			y = Double.valueOf(token[3]).doubleValue();
 			returnAction = new Action(id, type, new Vector2D(x,y));
 			break;
-		case Action.JOIN_REQUEST:
-			returnAction = new Action(id, type, token[2]);
-			break;
 		case Action.JOIN_ACCEPT:
-			returnAction = new Action(id, type, token[2]);
-			break;
+		case Action.JOIN_REQUEST:
 		case Action.LEAVE_SERVER:
+		case Action.SPAWN:
 			returnAction = new Action(id, type, token[2]);
 			break;
 		case Action.INPUT:
@@ -105,13 +96,8 @@ public class Protocol {
 			returnAction.left  = Integer.valueOf(token[4]).intValue() == 1 ? true : false;
 			returnAction.right = Integer.valueOf(token[5]).intValue() == 1 ? true : false;
 			returnAction.jump  = Integer.valueOf(token[6]).intValue() == 1 ? true : false;
-			returnAction.shoot = Integer.valueOf(token[7]).intValue() == 1 ? true : false;
+			returnAction.faceLeft = Integer.valueOf(token[7]).intValue() == 1 ? true : false;
 			returnAction.weapon = Integer.valueOf(token[8]);
-			returnAction.spawn =  Integer.valueOf(token[9]);
-			//if (returnAction.spawn > 0) 
-			//	System.out.println("Protocol decodeAction Spawn: " + returnAction.spawn);
-			returnAction.arg0 = new Vector2D(Double.valueOf(token[10]).doubleValue(),
-					Double.valueOf(token[11]).doubleValue());
 			break;
 		case Action.SHOOT:
 			x = Double.valueOf(token[2]).doubleValue();

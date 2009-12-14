@@ -78,9 +78,10 @@ public class Client extends ScrollingScreenGame {
 
 	public static final int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
 	private static final int MAXJETFUEL = 2000;
-
-	boolean keyPressed = false;
-	boolean keyReleased = true;
+	
+	public static final int SHOOT_THROTTLE = 250; // milliseconds
+	private int shootTimer = 0;
+	private int shootCurTime = 0;
 
 	Action input;
 
@@ -234,7 +235,19 @@ public class Client extends ScrollingScreenGame {
 			return;
 		}
 
+		Vector2D mousePos = screenToWorld(new Vector2D(mouse.getLocation().getX(), mouse.getLocation().getY()));
+		
+		// Sending cursor input information to server every frame to display correct facing of the sprite
+		// is silly. 
+		Vector2D playerPos = netStateMan.getState().objectList.get(player.getID()).getPosition();
+		if (mousePos.getX() < playerPos.getX()) 
+			input.faceLeft = true;
+		else
+			input.faceLeft = false;
+		
 		keyboard.poll();
+		
+		// Player is alive, do some input reading
 		if (netStateMan.getState().objectList.get(player.getID()).getHealth() > 0) {
 			input.crouch = keyboard.isPressed(KeyEvent.VK_DOWN)
 					|| keyboard.isPressed(KeyEvent.VK_S);
@@ -257,7 +270,7 @@ public class Client extends ScrollingScreenGame {
 			input.right = keyboard.isPressed(KeyEvent.VK_RIGHT)
 					|| keyboard.isPressed(KeyEvent.VK_D);
 			input.jump = keyboard.isPressed(KeyEvent.VK_SPACE);
-			input.shoot = mouse.isLeftButtonPressed();
+
 			if (keyboard.isPressed(KeyEvent.VK_1)) {
 				input.weapon = 1;
 			} else if (keyboard.isPressed(KeyEvent.VK_2)) {
@@ -267,35 +280,43 @@ public class Client extends ScrollingScreenGame {
 			} else {
 				input.weapon = 0;
 			}
-			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
-					mouse.getLocation().getY()));
-			//System.out.println("Client keyboard: alive" + input.spawn);
+			
+			// Throttling shooting, can't shoot every frame because TCP can't handle so much traffic
+			shootCurTime += deltaMs;
+			if (mouse.isLeftButtonPressed()) {
+				if (shootTimer < shootCurTime) {
+					player.shoot(mousePos);
+					shootTimer = shootCurTime + SHOOT_THROTTLE;
+				}
+			}
+			
 			player.move(input);
+			
+		// Player is dead, we can only request to respawn at some location now	
 		} else {
+			
 			input.crouch = false;
 			input.jet = false;
 			input.left = false;
 			input.right = false;
 			input.jump = false;
 			if (keyboard.isPressed(KeyEvent.VK_F1)) {
-				input.spawn = 1;
+				player.spawn(0);
 			} else if (keyboard.isPressed(KeyEvent.VK_F2)) {
-				input.spawn = 2;
+				player.spawn(1);
 			} else if (keyboard.isPressed(KeyEvent.VK_F3)) {
-				input.spawn = 3;
+				player.spawn(2);
 			} else if (keyboard.isPressed(KeyEvent.VK_F4)) {
-				input.spawn = 4;
+				player.spawn(3);
 			} else {
-				input.spawn = 0;
-			}
-			input.arg0 = screenToWorld(new Vector2D(mouse.getLocation().getX(),
-					mouse.getLocation().getY()));
-			//System.out.println("Client keyboard: dead" + input.spawn);
+				player.spawn(-1);
+			}		
 			player.move(input);
 		}
+		
+		// Debug
 		if (keyboard.isPressed(KeyEvent.VK_B)) {
-			addBoom(this.screenToWorld(new Vector2D(mouse.getLocation().x,
-					mouse.getLocation().y)));
+			addBoom(mousePos);
 		}
 
 	}
@@ -419,8 +440,9 @@ public class Client extends ScrollingScreenGame {
 			System.out.println(a.getType() + "client update");
 			if(a.getType() == Action.EXPLOSION)
 				addBoom(a.getArg());
-			else {
-				System.out.println(a.getType() + "client update");				
+			else if( a.getType() == Action.TALK){
+				msg = a.getMsg();
+				System.out.println(msg + "client update");				
 			}
 		}
 	}

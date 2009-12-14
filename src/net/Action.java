@@ -15,13 +15,14 @@ public class Action {
 	public static final int CHANGE_JETPACK 	= 9;
 	public static final int EXPLOSION       = 10;
 	public static final int TALK            = 11;
+	public static final int SPAWN           = 12;
 
-	public boolean jet    = false;
-	public boolean left  = false;
-	public boolean right = false;
-	public boolean crouch  = false;
-	public boolean jump  = false;
-	public boolean shoot = false;
+	public boolean jet      = false;
+	public boolean left     = false;
+	public boolean right    = false;
+	public boolean crouch   = false;
+	public boolean jump     = false;
+	public boolean faceLeft = false;
 	public int weapon = 0;
 	public int spawn = 0;
 
@@ -97,33 +98,38 @@ public class Action {
 	}
 	
 	/**
-	 * Used to compare key strokes in Actions
+	 * Used to compare input information in Actions
 	 * 
 	 * @param a
 	 * @return
 	 */
 	public boolean equals(Action a) {
-		if (a.jet == jet && a.left == left && a.right == right &&
-				a.crouch == crouch && a.shoot == shoot && a.jump == jump &&
-				a.weapon == weapon && a.spawn == spawn)
+		if (    a.jet      == jet &&
+				a.left     == left && 
+				a.right    == right && 
+				a.crouch   == crouch && 
+				a.jump     == jump &&
+				a.weapon   == weapon && 
+				a.spawn    == spawn && 
+				a.faceLeft == faceLeft     )
 			return true;
 		return false;
 	}
 
 	/**
-	 * Copy the key strokes information
+	 * Copy input information used in .equals(Action a) information
 	 * 
 	 * @param a
 	 */
 	public void copy(Action a) {
-		jet = a.jet;
-		crouch = a.crouch;
-		left = a.left;
-		right = a.right;
-		jump = a.jump;
-		shoot = a.shoot;
-		weapon = a.weapon;
-		spawn = a.spawn;
+		jet      = a.jet;
+		crouch   = a.crouch;
+		left     = a.left;
+		right    = a.right;
+		jump     = a.jump;
+		weapon   = a.weapon;
+		spawn    = a.spawn;
+		faceLeft = a.faceLeft;
 	}
 	
 	public int getType () { return type; }
